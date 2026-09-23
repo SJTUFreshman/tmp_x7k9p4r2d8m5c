@@ -1,49 +1,87 @@
-# Reallocating Reasoning across Models via Learned Collaboration
+<h1 align="center">Reallocating Reasoning across Models<br>via Learned Collaboration</h1>
 
-This repository is the curated reproduction release for **Collaborative Learning (CL)**, a heterogeneous multi-agent reasoning system. It contains the selected experiment implementations, benchmark-specific evaluators, paper-result records, configurations, analysis outputs, logs, and the five rendered figures used in the paper.
+<p align="center">
+  <strong>ModelCrew / Collaborative Learning (CL)</strong><br>
+  Heterogeneous model slicing · Learned handoffs · Process-aware supervision
+</p>
 
-The release is intentionally focused on the experiments reported in the paper. It does not include the manuscript source, model weights, adapter checkpoints, benchmark datasets, teacher pools, or unrelated historical debugging material.
+<p align="center">
+  <a href="https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c"><img src="https://img.shields.io/badge/Repository-code%20%26%20artifacts-111827?style=flat-square" alt="Repository"></a>
+  <a href="#quickstart"><img src="https://img.shields.io/badge/Quickstart-CPU%20scoring-2563eb?style=flat-square" alt="Quickstart"></a>
+  <a href="#evaluation"><img src="https://img.shields.io/badge/Benchmarks-5-f59e0b?style=flat-square" alt="Five benchmarks"></a>
+  <a href="https://git-lfs.com/"><img src="https://img.shields.io/badge/Git%20LFS-required-7c3aed?style=flat-square" alt="Git LFS required"></a>
+</p>
 
-## What the method does
+<p align="center">
+  <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-2.png" alt="ModelCrew overview: model slicing and learned collaboration" width="960"></a>
+</p>
 
-CL reallocates the parameter budget of a single large model across three independently parameterized collaborators:
+<p align="center">
+  <b>A heterogeneous team of small language models that learns when to hand off, verify, and preserve reasoning.</b>
+</p>
 
-- Qwen3-1.7B (A1), Qwen3-4B (A2), and Qwen3-8B (A3), totaling 13.7B parameters;
-- explicit handoffs of task state, so each model can question, extend, revise, or preserve another model's reasoning;
-- pyramid supervision, which combines protocol distillation, step-level deliberative scores, and task-level rewards.
+<p align="center">
+  <a href="https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c">Code and results</a>
+  &nbsp;·&nbsp;
+  <a href="https://anonymous.4open.science/r/modelcrew">Paper</a>
+  &nbsp;·&nbsp;
+  <a href="#quickstart">Quickstart</a>
+  &nbsp;·&nbsp;
+  <a href="#evaluation">Evaluation</a>
+  &nbsp;·&nbsp;
+  <a href="#citation">Citation</a>
+</p>
 
-The paper evaluates this system on five tasks: multi-hop question answering (MuSiQue), mathematical reasoning (GSM-Hard and MATH), code generation (an eight-language MultiPL-E subset), and constrained generation (Conifer).
+This repository is the public code and artifact release for **ModelCrew**, called **Collaborative Learning (CL)** in the paper's tables. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 agents and trains them to exchange intermediate task state. The release contains selected training and evaluation code, benchmark scorers, result records, configurations, analysis outputs, and rendered paper figures.
 
-## Paper figures
+> **Release status.** The checked-in records reproduce the reported tables. A new end-to-end training run still requires the external datasets, model weights, adapters, and serving infrastructure described in [System requirements and release scope](#system-requirements-and-release-scope).
 
-The original rendered figures are available for reuse. They are kept as standalone PDFs; the paper's TeX, BibTeX, style files, and figure-generation source are not part of this repository.
+## ✨ Overview
 
-| Figure | Description | File |
+CL uses three collaborators with different capacities:
+
+| Agent | Backbone | Collaboration role |
 | --- | --- | --- |
-| 1 | Model slicing and learned collaboration | [Figure1.pdf](assets/figures/Figure1.pdf) |
-| 2 | Collaborative-learning and pyramid-supervision overview | [Figure2.pdf](assets/figures/Figure2.pdf) |
-| 3 | Ablation study across the five benchmarks | [Figure3.pdf](assets/figures/Figure3.pdf) |
-| 4 | Computation cost versus task performance | [Figure4.pdf](assets/figures/Figure4.pdf) |
-| 5 | Post-training interaction topology | [Figure5.pdf](assets/figures/Figure5.pdf) |
+| **A1** | Qwen3-1.7B | Produces an initial solution or focused correction |
+| **A2** | Qwen3-4B | Rechecks the current state and develops the next step |
+| **A3** | Qwen3-8B | Higher-capacity collaborator that may verify or finalize under the learned protocol |
 
-### Figure previews
+These are three independently parameterized models, not slices of one checkpoint. Together they contain **13.7B parameters**, comparable to Qwen3-14B, while each forward pass uses one collaborator. Every agent receives the current task state and chooses one protocol action:
 
-Click a preview to open the original PDF.
+- `continue`: extend or refine the current reasoning;
+- `handoff(j)`: pass the state to another collaborator;
+- `terminate`: emit the final answer and stop.
 
-[![Figure 1, page 1](assets/figures/previews/Figure1-1.png)](assets/figures/Figure1.pdf)
-[![Figure 1, page 2](assets/figures/previews/Figure1-2.png)](assets/figures/Figure1.pdf)
+The training protocol combines:
 
-[![Figure 2](assets/figures/previews/Figure2-1.png)](assets/figures/Figure2.pdf)
+1. **Explicit handoffs:** an agent receives the current task state and may extend, revise, verify, or preserve it.
+2. **Protocol distillation:** useful collaboration traces supervise how agents interact.
+3. **Step-level supervision:** intermediate reasoning quality is scored during the interaction.
+4. **Task-level rewards:** the final answer remains tied to the benchmark evaluator.
 
-[![Figure 3](assets/figures/previews/Figure3-1.png)](assets/figures/Figure3.pdf)
+The resulting supervision forms a pyramid: protocol behavior at the bottom, deliberative process signals in the middle, and task success at the top.
 
-[![Figure 4](assets/figures/previews/Figure4-1.png)](assets/figures/Figure4.pdf)
+<p align="center">
+  <a href="assets/figures/Figure2.pdf">
+    <img src="assets/figures/previews/Figure2-1.png" alt="Collaborative learning and pyramid supervision" width="920">
+  </a>
+</p>
 
-[![Figure 5](assets/figures/previews/Figure5-1.png)](assets/figures/Figure5.pdf)
+## 🧪 Evaluation
 
-## Reported results
+The release covers four task categories and five benchmarks:
 
-The table below records the paper's main comparison. Values are percentages and are shown as **first metric / second metric**: accuracy / F1 for MuSiQue, GSM-Hard, and MATH; weighted / macro-language pass@1 for MultiPL-E; and Coverage / Explicit for Conifer.
+| Category | Benchmark | Capability tested | Code and artifact paths |
+| --- | --- | --- | --- |
+| Multi-hop QA | [MuSiQue](https://github.com/StonyBrookNLP/musique) | Compositional retrieval and reasoning | <code>reproduction/code/jca/</code>, <code>reproduction/results/MuSiQue/</code> |
+| Mathematical reasoning | **GSM-Hard** | Robust numerical reasoning | <code>reproduction/code/jca_homo_gsm/</code>, <code>reproduction/results/GSM-Hard/</code> |
+| Mathematical reasoning | **MATH** | Competition-level problem solving | <code>reproduction/code/jca/experiments/math_specific_sft_rl_v1/</code>, <code>reproduction/results/MATH/</code> |
+| Code generation | [MultiPL-E](https://github.com/nuprl/MultiPL-E) | Pass@1 across eight languages | <code>reproduction/code/jca/Code/MultiPL-E/</code>, <code>reproduction/results/MultiPL-E/</code> |
+| Constrained generation | **Conifer** | Coverage and explicit constraint satisfaction | <code>reproduction/code/jca/conifer_training_hub/</code>, <code>reproduction/results/Conifer/</code> |
+
+### 📊 Reported results
+
+The table reports the paper's main comparison. Values are percentages. MuSiQue, GSM-Hard, and MATH use **accuracy / F1**; MultiPL-E uses **weighted / macro-language pass@1**; Conifer uses **Coverage / Explicit**.
 
 | Method | MuSiQue | GSM-Hard | MATH | MultiPL-E | Conifer |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -60,48 +98,90 @@ The table below records the paper's main comparison. Values are percentages and 
 | Homo. CL | 36.00 / 47.19 | 60.61 / 76.51 | 68.60 / 77.95 | 53.33 / 52.65 | 88.15 / 95.22 |
 | **CL (ours)** | **42.37 / 53.43** | **71.97 / 81.15** | **78.40 / 85.25** | **59.39 / 59.63** | **88.90 / 95.90** |
 
-CL is best or joint-best on six of the ten reported metrics and improves on Qwen3-14B across all ten. These values are the paper's reported results; they should not be interpreted as a claim that every historical experiment was rerun while preparing this release.
+<p align="center">
+  <a href="assets/figures/Figure3.pdf">
+    <img src="assets/figures/previews/Figure3-1.png" alt="Ablation study across the five benchmarks" width="760">
+  </a>
+</p>
 
-## Repository layout
+The retained CL records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 500 MATH problems, 1,352 MultiPL-E test problems, and 1,402 Conifer trajectories. CL is best or joint-best on **6 of 10 metrics**, improves over Qwen3-14B on all ten, and gains an average of **2.38 percentage points** over that single-model reference. The stored MATH evaluation scores **392/500 correct**, or **78.40% accuracy and 85.25% F1**, under the paper scorer.
 
-~~~text
+> **Result provenance.** These are the paper's reported results and the retained evaluation records. Preparing this repository does not claim to rerun every historical training or baseline experiment.
+
+### 📉 Efficiency and task performance
+
+The paper also reports the trade-off between task performance, parameter-weighted output cost, and average model invocations. Each panel compares CL with established multi-agent baselines on one benchmark.
+
+<p align="center">
+  <a href="assets/figures/Figure4.pdf"><img src="assets/figures/previews/Figure4-1.png" alt="Computation cost versus task performance across five benchmarks" width="960"></a>
+</p>
+
+### 🧭 Emergent interaction topology
+
+The learned policy does not force one universal agent order. Its interaction topology changes with the task: agents learn when to draft, review, refine, enrich, or terminate.
+
+<p align="center">
+  <a href="assets/figures/Figure5.pdf"><img src="assets/figures/previews/Figure5-1.png" alt="Task-dependent learned interaction topology" width="960"></a>
+</p>
+
+## 🧭 Workflow
+
+```text
+task query
+    |
+    v
+ A1: Qwen3-1.7B ---- continue ----+
+    |                              |
+    +--------- handoff(j) ---------+--> A2: Qwen3-4B --> A3: Qwen3-8B
+                                      |                    |
+                                      +---- handoff -------+
+                                                           |
+                                      terminate <-----------+
+                                                           |
+                                                           v
+                                                  task-specific evaluator
+```
+
+Protocol distillation supplies coordination traces, the large-model inspector scores each reasoning and interaction step, and the benchmark grader supplies the final task reward. The learned protocol can produce different interaction patterns for QA, math, code, and constrained generation.
+
+## 📦 Repository layout
+
+~~~
 assets/
-  figures/                  Rendered paper figures (PDF only)
+  figures/                         Paper figures (PDF) and GitHub previews (PNG)
 reproduction/
-  code/                     Selected experiment implementations and evaluators
-    jca/                    CL code, shared utilities, benchmark evaluators, analyses
-    jca_homo_gsm/           Homogeneous GSM-Hard implementation
-    jca_homo_math/          Homogeneous MATH implementation
-    jca_homo_launchers/     Homogeneous launchers
-    MAGRPO/                 MAGRPO baseline
-    MAPoRL/                 MAPoRL baseline
-    AT-GRPO/                AT-GRPO baseline
-    math_se_rl/             MATH self-evaluated RL implementation
-  results/                  Selected paper-result records, configs, and logs
-  training/                 Selected training records and summaries
-  analysis/                 Saved analysis artifacts
+  code/
+    jca/                           CL implementation, utilities, evaluators, analysis
+    jca_homo_gsm/                  Homogeneous GSM-Hard implementation
+    jca_homo_math/                 Homogeneous MATH implementation
+    jca_homo_launchers/            Cluster launchers and helpers
+    AT-GRPO/ MAGRPO/ MAPoRL/       Baseline implementations
+    math_se_rl/                    MATH self-evaluated RL baseline
+  results/                         Outputs, configs, manifests, and logs
+  training/                        Selected SFT/RL records and metrics
+  analysis/                        Saved analysis artifacts
 ~~~
 
-The retained files are grouped by MuSiQue, GSM-Hard, MATH, MultiPL-E, and Conifer. The MATH entry point and related evaluators are in reproduction/code/jca/experiments/math_specific_sft_rl_v1/. Shared analysis utilities are in reproduction/code/jca/analysis/.
+Each benchmark result tree keeps the method name, run configuration, raw or scored records, and summaries together.
 
-## Download the release
+## 🚀 Quickstart
 
-Several result files are large and are tracked with Git LFS.
+### 1️⃣ Download the artifact release
 
-~~~bash
+Eight large Conifer scored files are tracked with Git LFS.
+
+~~~
 git lfs install
 git clone https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c.git
 cd tmp_x7k9p4r2d8m5c
 git lfs pull
 ~~~
 
-If a JSONL file contains only a short LFS pointer instead of its recorded content, run git lfs pull before scoring.
+### 2️⃣ Re-score the stored MATH result
 
-## Quickstart: score the stored MATH result
+This CPU-only path needs no benchmark download, model server, or GPU.
 
-This CPU-only command recomputes the MATH CL main-table metrics from the retained result records. It does not need a GPU, a model server, or a benchmark download.
-
-~~~bash
+~~~
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -113,15 +193,13 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
   --output runs/math-main-table-summary.log
 ~~~
 
-The expected summary is **500 problems, 392 correct, 78.40% accuracy, and 85.25% F1**. The command writes a separate summary, records the input hash and scorer version, and leaves the retained JSONL unchanged. The output path must not already exist.
+The output path must be new. The scorer retains the final answer within three recorded protocol turns; if a trajectory exceeds the limit or does not stop by turn three, it falls back to the first tentative answer. The fixed shard has SHA-256 <code>3d4b0649a1a4f6198ed22b138fb82b31d7339be65997af4175bf9bdcc6343183</code>.
 
-The paper rule keeps the final answer within the three recorded protocol turns. Trajectories that exceed the limit, or reach the limit without a successful stop, fall back to their first tentative answer. The retained evaluation.log is a consolidated scoring summary of the stored records and should be read as such rather than as a raw execution transcript.
+### 3️⃣ Run a fresh MATH evaluation
 
-## Run a new MATH evaluation
+Supply the external MATH parquet root, the original <code>shard_04.jsonl</code>, and three OpenAI-compatible endpoints serving the final A1/A2/A3 adapters.
 
-The run subcommand starts a fresh evaluation against external MATH parquet files and three already-running OpenAI-compatible model endpoints. It requires the intended Qwen3-1.7B, Qwen3-4B, and Qwen3-8B adapters, plus the original fixed shard.
-
-~~~bash
+~~~
 python -m pip install pandas pyarrow
 
 python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py \
@@ -134,36 +212,73 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
   --api-base-a3 http://127.0.0.1:8223/v1 --api-model-a3 A3
 ~~~
 
-source-root must contain one MATH subject directory per subject, each with test-00000-of-00001.parquet. The fixed shard used by this release has SHA-256 3d4b0649a1a4f6198ed22b138fb82b31d7339be65997af4175bf9bdcc6343183. The endpoints must support the runner's structured JSON requests. Provide authentication through the environment variables supported by the selected client; credentials are not stored in this repository.
+The source root must contain one subject directory per MATH subject, each with <code>test-00000-of-00001.parquet</code>. The runner creates a new output root, executes shard construction, initialization, evaluation, and finalization, then writes the score summary. Authentication is supplied through the client environment or <code>--api-key</code>; credentials are not stored here.
 
-The runner creates a new output directory, generates raw records, finalizes them, and writes the same paper-rule score summary. It does not reuse an existing output directory. The shell wrapper 06_eval_suite.sh accepts the same arguments after the run subcommand.
+## 🧰 Training and other evaluations
 
-## Other benchmarks and training
-
-The release keeps benchmark-specific launchers and evaluators together with the selected records that support the paper table.
-
-| Area | Starting point |
+| Goal | Entry point |
 | --- | --- |
-| CL and shared evaluation utilities | reproduction/code/jca/scripts/ |
-| MATH CL | reproduction/code/jca/experiments/math_specific_sft_rl_v1/ |
-| Conifer | reproduction/code/jca/conifer_training_hub/ |
-| MultiPL-E evaluators | reproduction/code/jca/Code/MultiPL-E/ |
-| Multi-agent baselines | reproduction/code/jca/baseline/ |
-| Training records | reproduction/training/ |
+| Shared CL utilities and analysis | <code>reproduction/code/jca/scripts/</code> |
+| MATH CL training and evaluation | <code>reproduction/code/jca/experiments/math_specific_sft_rl_v1/</code> |
+| Conifer pipeline | <code>reproduction/code/jca/conifer_training_hub/</code> |
+| MultiPL-E scoring | <code>reproduction/code/jca/Code/MultiPL-E/</code> |
+| Homogeneous controls | <code>reproduction/code/jca_homo_gsm/</code>, <code>reproduction/code/jca_homo_math/</code> |
+| Baseline methods | <code>reproduction/code/AT-GRPO/</code>, <code>reproduction/code/MAGRPO/</code>, <code>reproduction/code/MAPoRL/</code> |
+| Saved training records | <code>reproduction/training/</code> |
 
-There is no single environment lockfile for all experiments. Depending on the benchmark, a run may need Python 3.10+, PyTorch/CUDA, Transformers, PEFT, Accelerate, vLLM, language runtimes, or the evaluator container used by MultiPL-E. Before launching a job, use the retained configuration and logs to set local dataset, adapter, interpreter, and output paths; server-specific paths in individual scripts are historical experiment settings.
+There is no single environment lockfile. A full run may require Python 3.10+, PyTorch/CUDA, Transformers, PEFT, Accelerate, vLLM, language runtimes, and benchmark-specific evaluators. Use the checked-in configs and logs for paths, seeds, model servers, and output conventions.
 
-## Release boundaries
+The MATH training chain is an external-resource workflow: `00_build_sft_data.sh` → `01_train_sft.sh` → `02_reuse_sampled_rl.sh` → `03_score_rl.sh` → `04_prepare_rl.sh` → `05_train_rl.sh` → `06_eval_suite.sh`. These stages expect model checkpoints, benchmark data, GPU workers, and endpoint configuration from `config.env`; the CPU-only scorer below is the reproducible starting point for a fresh checkout.
 
-The following are deliberately obtained separately and are not included here:
+## 🖼️ Figures
+
+All five paper figures are included as standalone PDFs with PNG previews for GitHub.
+
+| Figure | Contents | Files |
+| --- | --- | --- |
+| 1 | Model slicing and learned collaboration | [PDF](assets/figures/Figure1.pdf), [page 1](assets/figures/previews/Figure1-1.png), [page 2](assets/figures/previews/Figure1-2.png) |
+| 2 | Collaboration protocol and pyramid supervision | [PDF](assets/figures/Figure2.pdf), [preview](assets/figures/previews/Figure2-1.png) |
+| 3 | Benchmark ablations | [PDF](assets/figures/Figure3.pdf), [preview](assets/figures/previews/Figure3-1.png) |
+| 4 | Computation cost versus task performance | [PDF](assets/figures/Figure4.pdf), [preview](assets/figures/previews/Figure4-1.png) |
+| 5 | Learned interaction topology | [PDF](assets/figures/Figure5.pdf), [preview](assets/figures/previews/Figure5-1.png) |
+
+## 📚 Documentation
+
+- [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): the consolidated MATH `run` and `summarize` entry point.
+- [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh): shell wrapper for a fresh MATH evaluation.
+- [`reproduction/code/jca/scripts/`](reproduction/code/jca/scripts/): shared rollout, serving, evaluation, and analysis utilities.
+- [Anonymous paper page](https://anonymous.4open.science/r/modelcrew): method, experimental protocol, and full discussion.
+
+## 🛠️ System requirements and release scope
+
+Included:
+
+- selected implementation code, benchmark evaluators, launchers, and vendor utilities;
+- paper-result records, manifests, configurations, logs, and selected training metrics;
+- five rendered paper figures and GitHub-friendly previews;
+- public code with embedded API keys and authenticated proxy defaults removed.
+
+Obtained separately for full training or fresh evaluation:
 
 - base-model weights, LoRA/adapters, and checkpoints;
-- benchmark datasets and the teacher-model pool;
-- SFT/RL training inputs and other external private resources;
-- manuscript TeX/BibTeX sources and unrelated historical scripts or logs.
+- benchmark datasets, teacher-model pools, and external SFT/RL inputs;
+- manuscript TeX/BibTeX source and unrelated historical material;
+- GPU resources and model-serving endpoints.
 
-The rendered figures in assets/figures/ are the exception: they are included because they are reusable paper artifacts and do not require the manuscript source to view. Public code has had embedded API-key and authenticated-proxy defaults removed; use environment variables or local configuration when a selected script requires credentials, and do not commit secrets.
+Do not commit credentials or private dataset paths. Use environment variables or a local untracked configuration when a selected script requires authentication.
 
-## Citation
+## 📝 Citation
 
-If you use this release, cite **Reallocating Reasoning across Models via Learned Collaboration** and identify the benchmark, result record, and code entry point used. The repository contains the artifacts needed to inspect the reported results, while the manuscript source remains outside the release.
+If you use the code or result records, cite **“Reallocating Reasoning across Models via Learned Collaboration”**, identify the benchmark and artifact used, and link back to this repository. The anonymous paper page is [available here](https://anonymous.4open.science/r/modelcrew).
+
+~~~bibtex
+@misc{reallocating_reasoning_learned_collaboration,
+  title = {Reallocating Reasoning across Models via Learned Collaboration},
+  note = {Code and reproduction artifacts},
+  url = {https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c}
+}
+~~~
+
+## 🤝 Acknowledgements
+
+This release builds on the public benchmark implementations and evaluators linked above. Please cite the original benchmark and baseline papers when using their data or code paths.
