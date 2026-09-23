@@ -18,8 +18,6 @@
   <a href="#-training-and-other-evaluations">Training and other evaluations</a>
   &nbsp;·&nbsp;
   <a href="#-documentation">Documentation</a>
-  &nbsp;·&nbsp;
-  <a href="#-system-requirements-and-release-scope">System requirements and release scope</a>
 </p>
 
 ## ✨ Overview
@@ -71,9 +69,9 @@ The table below compares CL with the main single-model and multi-model baselines
   </a>
 </p>
 
-The released evaluation records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 500 MATH problems, 1,352 MultiPL-E test problems, and 1,402 Conifer trajectories.
+The evaluation records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 500 MATH problems, 1,352 MultiPL-E test problems, and 1,402 Conifer trajectories.
 
-CL is best or joint-best on **6 of 10 metrics**, improves over Qwen3-14B on all ten, and gains an average of **2.38 percentage points** over that single-model reference. On the released MATH shard, CL scores **392/500 correct**, or **78.40% accuracy and 85.25% F1**, under the released scorer.
+CL is best or joint-best on **6 of 10 metrics**, improves over Qwen3-14B on all ten, and gains an average of **2.38 percentage points** over that single-model reference. On the MATH evaluation, CL scores **392/500 correct**, or **78.40% accuracy and 85.25% F1**, under the evaluation scorer.
 
 ### 📉 Efficiency and task performance
 
@@ -196,20 +194,3 @@ The MATH training chain is an external-resource workflow: `00_build_sft_data.sh`
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): consolidated MATH `run` and `summarize` commands.
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh): shell wrapper for a fresh MATH evaluation.
 - [`reproduction/code/jca/scripts/`](reproduction/code/jca/scripts/): shared rollout, serving, evaluation, and analysis utilities.
-
-## 🛠️ System requirements and release scope
-
-The repository includes:
-
-- all implementation code included in this release, benchmark evaluators, launchers, and vendor utilities;
-- result records, manifests, configurations, logs, and training metrics;
-- sanitized public code with embedded API keys and authenticated proxy defaults removed.
-
-A full training run or fresh evaluation additionally requires:
-
-- base-model weights, LoRA/adapters, and checkpoints;
-- benchmark datasets, teacher-model pools, and external SFT/RL inputs;
-- manuscript TeX/BibTeX source and unrelated historical material;
-- GPU resources and model-serving endpoints.
-
-Keep credentials and private dataset paths out of commits. Use environment variables or a local untracked configuration when a script requires authentication.
