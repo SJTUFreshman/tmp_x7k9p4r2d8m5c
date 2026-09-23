@@ -15,7 +15,7 @@
   &nbsp;·&nbsp;
   <a href="#-quickstart">Quickstart</a>
   &nbsp;·&nbsp;
-  <a href="#-training-and-evaluation">Training and evaluation</a>
+  <a href="#-code-and-experiment-entry-points">Code and experiment entry points</a>
 </p>
 
 ## ✨ Overview
@@ -171,7 +171,7 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
 
 The source root must contain one subject directory per MATH subject, each with <code>test-00000-of-00001.parquet</code>. The runner creates a new output root, builds the shard, initializes the evaluation, runs the endpoints, and writes the score summary. Authentication comes from the client environment or <code>--api-key</code>; credentials are not stored here.
 
-## 🧪 Training and evaluation
+## 🧰 Code and experiment entry points
 
 | Area | Entry point |
 | --- | --- |
