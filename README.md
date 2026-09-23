@@ -18,7 +18,7 @@
   <a href="#documentation">Documentation</a>
 </p>
 
-This repository is the public code and artifact release for **Collaborative Learning (CL)**. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 models and trains them to exchange intermediate task state. The release contains selected training and evaluation code, benchmark scorers, result records, configurations, analysis outputs, and rendered paper figures.
+This repository is the public code and artifact release for **Collaborative Learning (CL)**. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 models and trains them to exchange intermediate task state. The release contains all training and evaluation code, benchmark scorers, result records, configurations, and analysis outputs.
 
 > **Release status.** The checked-in records reproduce the reported tables. A new end-to-end training run still requires the external datasets, model weights, adapters, and serving infrastructure described in [System requirements and release scope](#system-requirements-and-release-scope).
 
