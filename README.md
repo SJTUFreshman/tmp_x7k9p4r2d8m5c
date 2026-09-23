@@ -1,18 +1,6 @@
 <h1 align="center">Reallocating Reasoning across Models<br>via Learned Collaboration</h1>
 
 <p align="center">
-  <strong>Collaborative Learning (CL)</strong><br>
-  Model slicing · Protocol distillation · Pyramid supervision
-</p>
-
-<p align="center">
-  <a href="https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c"><img src="https://img.shields.io/badge/Repository-code%20%26%20artifacts-111827?style=flat-square" alt="Repository"></a>
-  <a href="#quickstart"><img src="https://img.shields.io/badge/Quickstart-CPU%20scoring-2563eb?style=flat-square" alt="Quickstart"></a>
-  <a href="#evaluation"><img src="https://img.shields.io/badge/Benchmarks-5-f59e0b?style=flat-square" alt="Five benchmarks"></a>
-  <a href="https://git-lfs.com/"><img src="https://img.shields.io/badge/Git%20LFS-required-7c3aed?style=flat-square" alt="Git LFS required"></a>
-</p>
-
-<p align="center">
   <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-1.png" alt="Collaborative Learning overview: model slicing and learned collaboration" width="960"></a>
 </p>
 
@@ -23,8 +11,6 @@
 <p align="center">
   <a href="https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c">Code and results</a>
   &nbsp;·&nbsp;
-  <a href="https://anonymous.4open.science/r/modelcrew">Paper</a>
-  &nbsp;·&nbsp;
   <a href="#quickstart">Quickstart</a>
   &nbsp;·&nbsp;
   <a href="#evaluation">Evaluation</a>
@@ -32,7 +18,7 @@
   <a href="#documentation">Documentation</a>
 </p>
 
-This repository is the public code and artifact release for **Collaborative Learning (CL)**. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 agents and trains them to exchange intermediate task state. The release contains selected training and evaluation code, benchmark scorers, result records, configurations, analysis outputs, and rendered paper figures.
+This repository is the public code and artifact release for **Collaborative Learning (CL)**. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 models and trains them to exchange intermediate task state. The release contains selected training and evaluation code, benchmark scorers, result records, configurations, analysis outputs, and rendered paper figures.
 
 > **Release status.** The checked-in records reproduce the reported tables. A new end-to-end training run still requires the external datasets, model weights, adapters, and serving infrastructure described in [System requirements and release scope](#system-requirements-and-release-scope).
 
@@ -40,13 +26,13 @@ This repository is the public code and artifact release for **Collaborative Lear
 
 CL uses three collaborators with different capacities:
 
-| Agent | Backbone | Collaboration role |
+| Model | Backbone | Collaboration role |
 | --- | --- | --- |
 | **A1** | Qwen3-1.7B | Produces an initial solution or focused correction |
 | **A2** | Qwen3-4B | Rechecks the current state and develops the next step |
 | **A3** | Qwen3-8B | Higher-capacity collaborator that may verify or finalize under the learned protocol |
 
-These are three independently parameterized models, not slices of one checkpoint. Together they contain **13.7B parameters**, comparable to Qwen3-14B, while each forward pass uses one collaborator. Every agent receives the current task state and chooses one protocol action:
+These are three independently parameterized models, not slices of one checkpoint. Together they contain **13.7B parameters**, comparable to Qwen3-14B, while each forward pass uses one collaborator. Every model receives the current task state and chooses one protocol action:
 
 - `continue`: extend or refine the current reasoning;
 - `handoff(j)`: pass the state to another collaborator;
@@ -54,8 +40,8 @@ These are three independently parameterized models, not slices of one checkpoint
 
 The training protocol combines:
 
-1. **Explicit handoffs:** an agent receives the current task state and may extend, revise, verify, or preserve it.
-2. **Protocol distillation:** useful collaboration traces supervise how agents interact.
+1. **Explicit handoffs:** a model receives the current task state and may extend, revise, verify, or preserve it.
+2. **Protocol distillation:** useful collaboration traces supervise how models interact.
 3. **Step-level supervision:** intermediate reasoning quality is scored during the interaction.
 4. **Task-level rewards:** the final answer remains tied to the benchmark evaluator.
 
@@ -110,7 +96,7 @@ The retained CL records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 5
 
 ### 📉 Efficiency and task performance
 
-The paper also reports the trade-off between task performance, parameter-weighted output cost, and average model invocations. Each panel compares CL with established multi-agent baselines on one benchmark.
+The paper also reports the trade-off between task performance, parameter-weighted output cost, and average model invocations. Each panel compares CL with established multi-model baselines on one benchmark.
 
 <p align="center">
   <a href="assets/figures/Figure4.pdf"><img src="assets/figures/previews/Figure4-1.png" alt="Computation cost versus task performance across five benchmarks" width="960"></a>
@@ -118,7 +104,7 @@ The paper also reports the trade-off between task performance, parameter-weighte
 
 ### 🧭 Emergent interaction topology
 
-The learned policy does not force one universal agent order. Its interaction topology changes with the task: agents learn when to draft, review, refine, enrich, or terminate.
+The learned policy does not force one universal model order. Its interaction topology changes with the task: models learn when to draft, review, refine, enrich, or terminate.
 
 <p align="center">
   <a href="assets/figures/Figure5.pdf"><img src="assets/figures/previews/Figure5-1.png" alt="Task-dependent learned interaction topology" width="960"></a>
@@ -247,7 +233,6 @@ All five paper figures are included as standalone PDFs with PNG previews for Git
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): the consolidated MATH `run` and `summarize` entry point.
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh): shell wrapper for a fresh MATH evaluation.
 - [`reproduction/code/jca/scripts/`](reproduction/code/jca/scripts/): shared rollout, serving, evaluation, and analysis utilities.
-- [Anonymous paper page](https://anonymous.4open.science/r/modelcrew): method, experimental protocol, and full discussion.
 
 ## 🛠️ System requirements and release scope
 
