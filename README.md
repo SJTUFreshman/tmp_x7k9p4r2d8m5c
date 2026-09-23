@@ -15,9 +15,7 @@
   &nbsp;·&nbsp;
   <a href="#-quickstart">Quickstart</a>
   &nbsp;·&nbsp;
-  <a href="#-training-and-other-evaluations">Training and other evaluations</a>
-  &nbsp;·&nbsp;
-  <a href="#-documentation">Documentation</a>
+  <a href="#-training-and-evaluation">Training and evaluation</a>
 </p>
 
 ## ✨ Overview
@@ -173,7 +171,7 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
 
 The source root must contain one subject directory per MATH subject, each with <code>test-00000-of-00001.parquet</code>. The runner creates a new output root, builds the shard, initializes the evaluation, runs the endpoints, and writes the score summary. Authentication comes from the client environment or <code>--api-key</code>; credentials are not stored here.
 
-## 🧰 Training and other evaluations
+## 🧪 Training and evaluation
 
 | Area | Entry point |
 | --- | --- |
@@ -189,7 +187,7 @@ The repository does not use a single environment lockfile. A full run may requir
 
 The MATH training chain is an external-resource workflow: `00_build_sft_data.sh` → `01_train_sft.sh` → `02_reuse_sampled_rl.sh` → `03_score_rl.sh` → `04_prepare_rl.sh` → `05_train_rl.sh` → `06_eval_suite.sh`. These stages require model checkpoints, benchmark data, GPU workers, and endpoint settings from `config.env`. For a fresh checkout, start with the CPU-only scorer in Quickstart.
 
-## 📚 Documentation
+Key entry points:
 
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): consolidated MATH `run` and `summarize` commands.
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh): shell wrapper for a fresh MATH evaluation.
