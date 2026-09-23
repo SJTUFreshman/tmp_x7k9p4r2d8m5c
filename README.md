@@ -24,7 +24,7 @@
 
 ## ✨ Overview
 
-This repository is the public code and artifact release for **Collaborative Learning (CL)**. It contains all training and evaluation code, benchmark scorers, reported result records, configurations, and analysis outputs associated with the project.
+This repository is the public code and artifact release for **Collaborative Learning (CL)**. It contains all training and evaluation code, benchmark scorers, result records, configurations, and analysis outputs associated with the project.
 
 CL studies collaborative reasoning across heterogeneous model parameterizations. It reallocates a comparable parameter budget across smaller models and trains them to reassess, extend, and refine shared reasoning through model slicing, protocol distillation, and pyramid supervision.
 
@@ -48,9 +48,9 @@ Evaluation is organized around four task categories and five benchmarks:
 | Code generation | [MultiPL-E](https://github.com/nuprl/MultiPL-E) | Pass@1 across eight languages | <code>reproduction/code/jca/Code/MultiPL-E/</code>, <code>reproduction/results/MultiPL-E/</code> |
 | Constrained generation | **Conifer** | Coverage and explicit constraint satisfaction | <code>reproduction/code/jca/conifer_training_hub/</code>, <code>reproduction/results/Conifer/</code> |
 
-### 📊 Reported results
+### 📊 Results
 
-The table reports the paper's main comparison. Values are percentages. MuSiQue, GSM-Hard, and MATH use **accuracy / F1**; MultiPL-E uses **weighted / macro-language pass@1**; Conifer uses **Coverage / Explicit**.
+The table presents the paper's main comparison. Values are percentages. MuSiQue, GSM-Hard, and MATH use **accuracy / F1**; MultiPL-E uses **weighted / macro-language pass@1**; Conifer uses **Coverage / Explicit**.
 
 | Method | MuSiQue | GSM-Hard | MATH | MultiPL-E | Conifer |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -75,11 +75,11 @@ The table reports the paper's main comparison. Values are percentages. MuSiQue, 
 
 The retained CL records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 500 MATH problems, 1,352 MultiPL-E test problems, and 1,402 Conifer trajectories. CL is best or joint-best on **6 of 10 metrics**, improves over Qwen3-14B on all ten, and gains an average of **2.38 percentage points** over that single-model reference. The stored MATH evaluation scores **392/500 correct**, or **78.40% accuracy and 85.25% F1**, under the paper scorer.
 
-> **Result provenance.** These are the paper's reported results and the retained evaluation records. Preparing this repository does not claim to rerun every historical training or baseline experiment.
+> **Result provenance.** These are the paper's results and the retained evaluation records. Preparing this repository does not claim to rerun every historical training or baseline experiment.
 
 ### 📉 Efficiency and task performance
 
-The paper also reports the trade-off between task performance, parameter-weighted output cost, and average model invocations. Each panel compares CL with established multi-model baselines on one benchmark.
+The paper also presents the trade-off between task performance, parameter-weighted output cost, and average model invocations. Each panel compares CL with established multi-model baselines on one benchmark.
 
 <p align="center">
   <a href="assets/figures/Figure4.pdf"><img src="assets/figures/previews/Figure4-1.png" alt="Computation cost versus task performance across five benchmarks" width="960"></a>
