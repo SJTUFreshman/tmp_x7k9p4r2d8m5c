@@ -1,8 +1,8 @@
 <h1 align="center">Reallocating Reasoning across Models<br>via Learned Collaboration</h1>
 
 <p align="center">
-  <strong>ModelCrew / Collaborative Learning (CL)</strong><br>
-  Heterogeneous model slicing · Learned handoffs · Process-aware supervision
+  <strong>Collaborative Learning (CL)</strong><br>
+  Model slicing · Protocol distillation · Pyramid supervision
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-2.png" alt="ModelCrew overview: model slicing and learned collaboration" width="960"></a>
+  <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-1.png" alt="Collaborative Learning overview: model slicing and learned collaboration" width="960"></a>
 </p>
 
 <p align="center">
@@ -29,10 +29,10 @@
   &nbsp;·&nbsp;
   <a href="#evaluation">Evaluation</a>
   &nbsp;·&nbsp;
-  <a href="#citation">Citation</a>
+  <a href="#documentation">Documentation</a>
 </p>
 
-This repository is the public code and artifact release for **ModelCrew**, called **Collaborative Learning (CL)** in the paper's tables. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 agents and trains them to exchange intermediate task state. The release contains selected training and evaluation code, benchmark scorers, result records, configurations, analysis outputs, and rendered paper figures.
+This repository is the public code and artifact release for **Collaborative Learning (CL)**. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 agents and trains them to exchange intermediate task state. The release contains selected training and evaluation code, benchmark scorers, result records, configurations, analysis outputs, and rendered paper figures.
 
 > **Release status.** The checked-in records reproduce the reported tables. A new end-to-end training run still requires the external datasets, model weights, adapters, and serving infrastructure described in [System requirements and release scope](#system-requirements-and-release-scope).
 
@@ -236,7 +236,7 @@ All five paper figures are included as standalone PDFs with PNG previews for Git
 
 | Figure | Contents | Files |
 | --- | --- | --- |
-| 1 | Model slicing and learned collaboration | [PDF](assets/figures/Figure1.pdf), [page 1](assets/figures/previews/Figure1-1.png), [page 2](assets/figures/previews/Figure1-2.png) |
+| 1 | Model slicing and learned collaboration | [PDF](assets/figures/Figure1.pdf), [preview](assets/figures/previews/Figure1-1.png) |
 | 2 | Collaboration protocol and pyramid supervision | [PDF](assets/figures/Figure2.pdf), [preview](assets/figures/previews/Figure2-1.png) |
 | 3 | Benchmark ablations | [PDF](assets/figures/Figure3.pdf), [preview](assets/figures/previews/Figure3-1.png) |
 | 4 | Computation cost versus task performance | [PDF](assets/figures/Figure4.pdf), [preview](assets/figures/previews/Figure4-1.png) |
@@ -266,19 +266,3 @@ Obtained separately for full training or fresh evaluation:
 - GPU resources and model-serving endpoints.
 
 Do not commit credentials or private dataset paths. Use environment variables or a local untracked configuration when a selected script requires authentication.
-
-## 📝 Citation
-
-If you use the code or result records, cite **“Reallocating Reasoning across Models via Learned Collaboration”**, identify the benchmark and artifact used, and link back to this repository. The anonymous paper page is [available here](https://anonymous.4open.science/r/modelcrew).
-
-~~~bibtex
-@misc{reallocating_reasoning_learned_collaboration,
-  title = {Reallocating Reasoning across Models via Learned Collaboration},
-  note = {Code and reproduction artifacts},
-  url = {https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c}
-}
-~~~
-
-## 🤝 Acknowledgements
-
-This release builds on the public benchmark implementations and evaluators linked above. Please cite the original benchmark and baseline papers when using their data or code paths.
