@@ -26,6 +26,21 @@ The original rendered figures are available for reuse. They are kept as standalo
 | 4 | Computation cost versus task performance | [Figure4.pdf](assets/figures/Figure4.pdf) |
 | 5 | Post-training interaction topology | [Figure5.pdf](assets/figures/Figure5.pdf) |
 
+### Figure previews
+
+Click a preview to open the original PDF.
+
+[![Figure 1, page 1](assets/figures/previews/Figure1-1.png)](assets/figures/Figure1.pdf)
+[![Figure 1, page 2](assets/figures/previews/Figure1-2.png)](assets/figures/Figure1.pdf)
+
+[![Figure 2](assets/figures/previews/Figure2-1.png)](assets/figures/Figure2.pdf)
+
+[![Figure 3](assets/figures/previews/Figure3-1.png)](assets/figures/Figure3.pdf)
+
+[![Figure 4](assets/figures/previews/Figure4-1.png)](assets/figures/Figure4.pdf)
+
+[![Figure 5](assets/figures/previews/Figure5-1.png)](assets/figures/Figure5.pdf)
+
 ## Reported results
 
 The table below records the paper's main comparison. Values are percentages and are shown as **first metric / second metric**: accuracy / F1 for MuSiQue, GSM-Hard, and MATH; weighted / macro-language pass@1 for MultiPL-E; and Coverage / Explicit for Conifer.
