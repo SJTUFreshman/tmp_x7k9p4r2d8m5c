@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="${SCRIPT_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)}"
+# shellcheck source=common.sh
+source "$SCRIPT_DIR/common.sh"
+validate_common
+
+mkdir -p "$(dirname "$MAS_EVAL_OUTPUT")" "$LOG_DIR/00_3x8b_zero_shot"
+if [[ "$RESUME" == 0 ]]; then
+  reject_existing "$MAS_EVAL_OUTPUT" "$MAS_EVAL_SCORED" "$MAS_EVAL_RL_RECORDS" "$MAS_EVAL_SUMMARY"
+fi
+if [[ "$RESUME" == 1 ]] && \
+   jsonl_complete "$MAS_EVAL_OUTPUT" "$TEST_DATA" "$MAS_EVAL_START" "$MAS_EVAL_LIMIT" "$MAS_EVAL_NUM_ROLLOUTS" && \
+   jsonl_complete "$MAS_EVAL_SCORED" "$TEST_DATA" "$MAS_EVAL_START" "$MAS_EVAL_LIMIT" "$MAS_EVAL_NUM_ROLLOUTS"; then
+  "$PYTHON_BIN" "$CONIFER_ROOT/06_evaluation/summarize_conifer.py" --input "3x8b_zero_shot=$MAS_EVAL_SCORED" --output "$MAS_EVAL_SUMMARY"
+  echo "[resume] 3x8B zero-shot evaluation already complete"
+  exit 0
+fi
+
+env DATA_PATH="$TEST_DATA" MODE=zero_shot_mas RUN_ID="${RUN_ID}_3x8b_zero_shot" \
+  OUTPUT="$MAS_EVAL_OUTPUT" SCORED_OUTPUT="$MAS_EVAL_SCORED" RL_OUTPUT="$MAS_EVAL_RL_RECORDS" \
+  MODEL_A1="$MODEL_8B" MODEL_A2="$MODEL_8B" MODEL_A3="$MODEL_8B" \
+  ROLLOUT_MODEL_A1="$MODEL_8B" ROLLOUT_MODEL_A2="$MODEL_8B" ROLLOUT_MODEL_A3="$MODEL_8B" \
+  ROLLOUT_IS_TEACHER=0 ROLLOUT_SOURCE_POLICY="3xQwen3-8B-zero-shot-balanced" ROLLOUT_STAGE=test \
+  START="$MAS_EVAL_START" LIMIT="$MAS_EVAL_LIMIT" NUM_ROLLOUTS="$MAS_EVAL_NUM_ROLLOUTS" \
+  START_AGENT="$MAS_EVAL_START_AGENT" START_AGENT_SEED="$MAS_EVAL_START_AGENT_SEED" \
+  TEMPERATURE="$MAS_EVAL_TEMPERATURE" TOP_P="$MAS_EVAL_TOP_P" \
+  MAX_NEW_TOKENS="$MAS_EVAL_MAX_NEW_TOKENS" PROTOCOL_MAX_NEW_TOKENS="$MAS_EVAL_PROTOCOL_MAX_NEW_TOKENS" \
+  MAX_CONCURRENCY="$MAS_EVAL_MAX_CONCURRENCY" SHARED_VLLM=1 SHARED_VLLM_BACKEND=replicas \
+  SHARED_VLLM_GPUS="$GPU_IDS" SHARED_VLLM_MAX_NUM_SEQS="$MAX_NUM_SEQS" \
+  SHARED_VLLM_MAX_NUM_BATCHED_TOKENS="$MAX_NUM_BATCHED_TOKENS" \
+  VLLM_PYTHON_BIN="$VLLM_PYTHON_BIN" VLLM_LD_LIBRARY_PATH="$VLLM_LD_LIBRARY_PATH" \
+  GPU_MEMORY_UTILIZATION="$GPU_MEMORY_UTILIZATION" MAX_MODEL_LEN="$MAX_MODEL_LEN" \
+  JUDGE_MODE=deterministic SCORE_OUTPUTS=1 MOCK="$MOCK" DRY_RUN="$DRY_RUN" \
+  bash "$CONIFER_ROOT/06_evaluation/run_conifer_eval.sh" \
+  2>&1 | tee -a "$LOG_DIR/00_3x8b_zero_shot/run.log"
+
+if [[ "$DRY_RUN" == 0 ]]; then
+  "$PYTHON_BIN" "$CONIFER_ROOT/06_evaluation/summarize_conifer.py" \
+    --input "3x8b_zero_shot=$MAS_EVAL_SCORED" --output "$MAS_EVAL_SUMMARY"
+fi

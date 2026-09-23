@@ -1,0 +1,117 @@
+================================================================
+JCA RL (RWR) launcher — MultiPL-E α=0.3
+================================================================
+TAG           = multipl_e_a1_8b_gpt5_paired_rwr_20260830
+ROLLOUT       = /data/wangyuheng/jca/rl_data/clean/multipl_e_8lang_best_sft_gpt5_a1_paired_core_20260825.jsonl
+REWARD_FIELD  = train_weight
+REWARD_SCHEMA = per_turn_execution_v2
+ALLOW_FAILED  = 0
+REWARD_ALPHA  = 0.3  (baked into ROLLOUT.reward)
+AGENTS        = A1
+
+SFT_A1        = /data/wangyuheng/jca/sft_runs/multipl_e_8lang_v5_diverse_a3_5ep/A3/final
+SFT_A2        = /data/wangyuheng/jca/sft_runs/20260726_211500_multipl_e_8lang_3x8b_score_v2-1ep/A2/final
+SFT_A3        = /data/wangyuheng/jca/sft_runs/20260726_211500_multipl_e_8lang_3x8b_score_v2-1ep/A3/final
+
+MODEL_A1      = /data/wangyuheng/models/Qwen3-8B
+MODEL_A2      = /data/wangyuheng/models/Qwen3-4B
+MODEL_A3      = /data/wangyuheng/models/Qwen3-8B
+
+KL_COEF       = 0.2
+NUM_EPOCHS    = 1
+LR            = 5e-8
+SEED          = 42
+PER_DEV_BATCH = 1
+GRAD_ACCUM    = 2
+MAX_SEQ       = 12000
+LORA_RANK     = 64
+LORA_ALPHA    = 64
+NUM_GPUS      = 8
+MIXED_PREC    = bf16
+RL_RUNS_DIR   = /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830
+================================================================
+
+[ok] rollout validation: rows=1860 groups=1860 judge_failed=0 agents={'A1': 1860}
+================================================================
+[RL] Training A1
+  base:        /data/wangyuheng/models/Qwen3-8B
+  sft adapter: /data/wangyuheng/jca/sft_runs/multipl_e_8lang_v5_diverse_a3_5ep/A3/final
+  rollout:     /data/wangyuheng/jca/rl_data/clean/multipl_e_8lang_best_sft_gpt5_a1_paired_core_20260825.jsonl
+  out:         /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1
+================================================================
+The following values were not passed to `accelerate launch` and had defaults used instead:
+	`--num_machines` was set to a value of `1`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+2026-08-30 10:44:55 [INFO] Agent:       A1
+2026-08-30 10:44:55 [INFO] Base model:  /data/wangyuheng/models/Qwen3-8B
+2026-08-30 10:44:55 [INFO] SFT adapter: /data/wangyuheng/jca/sft_runs/multipl_e_8lang_v5_diverse_a3_5ep/A3/final
+2026-08-30 10:44:55 [INFO] Rollout:     /data/wangyuheng/jca/rl_data/clean/multipl_e_8lang_best_sft_gpt5_a1_paired_core_20260825.jsonl
+2026-08-30 10:44:55 [INFO] Reward field: train_weight
+2026-08-30 10:44:55 [INFO] Output:      /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1
+2026-08-30 10:44:55 [INFO] Loaded 1860 turn records for agent A1
+2026-08-30 10:44:55 [INFO] Reward stats: mean=0.0000 min=-1.0000 max=1.0000
+2026-08-30 10:44:55 [INFO] Thinking contract: enabled=0 (explicit template argument)
+2026-08-30 10:45:03 [INFO] Accelerator: rank=0/8  device=cuda:0
+2026-08-30 10:45:03 [INFO] Training seed: 42
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s][transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11104.73it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10818.66it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10202.26it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11606.48it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10421.57it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10704.68it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10124.12it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10472.24it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10736.55it/s]
+trainable params: 61,341,696 || all params: 8,252,077,056 || trainable%: 0.7433
+2026-08-30 10:45:56 [INFO] Loading frozen reference model (starting adapter)...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10406.21it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 9753.46it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 9954.84it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 8947.76it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 9409.35it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 9384.70it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10446.29it/s]
+2026-08-30 10:46:53 [INFO] total_records=1860  world_size=8  effective_batch=16  total_steps=117  warmup=5
+2026-08-30 10:46:56 [INFO] Epoch 1/1  total_n=1860  padded_n=1872  per_rank_n=234
+2026-08-30 10:47:02 [INFO] step 5  loss=0.0801  kl=0.0002  reward_mean=0.186  tokens_per_sec=1562.5  lr=5.00e-08
+2026-08-30 10:47:06 [INFO] step 10  loss=-0.6906  kl=0.0002  reward_mean=-0.446  tokens_per_sec=1892.2  lr=4.98e-08
+2026-08-30 10:47:10 [INFO] step 15  loss=-0.0072  kl=0.0001  reward_mean=0.173  tokens_per_sec=1974.6  lr=4.90e-08
+2026-08-30 10:47:14 [INFO] step 20  loss=-0.0903  kl=0.0002  reward_mean=0.074  tokens_per_sec=2032.8  lr=4.78e-08
+2026-08-30 10:47:18 [INFO] step 25  loss=-0.0761  kl=0.0001  reward_mean=0.102  tokens_per_sec=2058.9  lr=4.62e-08
+2026-08-30 10:47:20 [INFO] Saved resumable checkpoint: /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1/checkpoint-25
+2026-08-30 10:47:24 [INFO] step 30  loss=-0.0004  kl=0.0002  reward_mean=0.130  tokens_per_sec=1944.9  lr=4.41e-08
+2026-08-30 10:47:28 [INFO] step 35  loss=0.0745  kl=0.0002  reward_mean=0.211  tokens_per_sec=1972.9  lr=4.17e-08
+2026-08-30 10:47:33 [INFO] step 40  loss=-0.1651  kl=0.0001  reward_mean=0.067  tokens_per_sec=1986.1  lr=3.89e-08
+2026-08-30 10:47:37 [INFO] step 45  loss=-0.0248  kl=0.0002  reward_mean=0.077  tokens_per_sec=2008.3  lr=3.58e-08
+2026-08-30 10:47:41 [INFO] step 50  loss=-0.1275  kl=0.0002  reward_mean=0.010  tokens_per_sec=2030.1  lr=3.26e-08
+2026-08-30 10:47:42 [INFO] Saved resumable checkpoint: /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1/checkpoint-50
+2026-08-30 10:47:46 [INFO] step 55  loss=-0.1750  kl=0.0002  reward_mean=-0.147  tokens_per_sec=1997.3  lr=2.92e-08
+2026-08-30 10:47:50 [INFO] step 60  loss=-0.4153  kl=0.0002  reward_mean=-0.095  tokens_per_sec=2012.8  lr=2.57e-08
+2026-08-30 10:47:54 [INFO] step 65  loss=0.1609  kl=0.0002  reward_mean=0.257  tokens_per_sec=2028.6  lr=2.22e-08
+2026-08-30 10:47:59 [INFO] step 70  loss=-0.3462  kl=0.0002  reward_mean=-0.193  tokens_per_sec=2055.5  lr=1.88e-08
+2026-08-30 10:48:03 [INFO] step 75  loss=0.0706  kl=0.0002  reward_mean=0.229  tokens_per_sec=2063.8  lr=1.54e-08
+2026-08-30 10:48:04 [INFO] Saved resumable checkpoint: /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1/checkpoint-75
+2026-08-30 10:48:08 [INFO] step 80  loss=-0.5194  kl=0.0002  reward_mean=-0.288  tokens_per_sec=2035.4  lr=1.23e-08
+2026-08-30 10:48:12 [INFO] step 85  loss=-0.0541  kl=0.0002  reward_mean=0.162  tokens_per_sec=2044.8  lr=9.41e-09
+2026-08-30 10:48:16 [INFO] step 90  loss=-0.3571  kl=0.0002  reward_mean=-0.028  tokens_per_sec=2051.1  lr=6.83e-09
+2026-08-30 10:48:20 [INFO] step 95  loss=-0.0073  kl=0.0002  reward_mean=0.108  tokens_per_sec=2060.7  lr=4.61e-09
+2026-08-30 10:48:24 [INFO] step 100  loss=-0.3777  kl=0.0002  reward_mean=-0.225  tokens_per_sec=2068.4  lr=2.79e-09
+2026-08-30 10:48:26 [INFO] Saved resumable checkpoint: /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1/checkpoint-100
+2026-08-30 10:48:30 [INFO] step 105  loss=-0.3187  kl=0.0002  reward_mean=-0.193  tokens_per_sec=2042.2  lr=1.40e-09
+2026-08-30 10:48:34 [INFO] step 110  loss=-0.0650  kl=0.0002  reward_mean=0.052  tokens_per_sec=2054.4  lr=4.80e-10
+2026-08-30 10:48:38 [INFO] step 115  loss=-0.1511  kl=0.0002  reward_mean=0.137  tokens_per_sec=2062.5  lr=3.93e-11
+2026-08-30 10:48:40 [INFO] Final adapter saved: /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1/final
+2026-08-30 10:48:41 [INFO] RL training complete.
+[rank0]:[W830 10:48:41.367127182 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[done] A1 — final adapter at /data/wangyuheng/jca/rl_runs/multipl_e_a1_8b_gpt5_paired_rwr_20260830/A1/final
+
+================================================================

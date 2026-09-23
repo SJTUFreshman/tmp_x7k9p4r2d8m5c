@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+EXPERIMENT_ROOT="${EXPERIMENT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+# shellcheck source=common.sh
+source "${EXPERIMENT_ROOT}/common.sh"
+validate_static_config
+
+BASE_STAGE="${UPSTREAM_MATH_ROOT}/03_prepare.sh"
+ANNOTATOR="${EXPERIMENT_ROOT}/annotate_math_awr.py"
+require_file "$BASE_STAGE"
+require_file "$ANNOTATOR"
+if [[ "$DRY_RUN" != "1" ]]; then
+  require_file "$JUDGED_ROLLOUT"
+  require_file "$SFT_DATA_DIR/stats.json"
+  require_adapter "$SFT_A1"
+  require_adapter "$SFT_A2"
+  require_adapter "$SFT_A3"
+fi
+
+BASE_CMD=(
+  env
+  "EXPERIMENT_ROOT=$UPSTREAM_MATH_ROOT" "PROJECT_ROOT=$PROJECT_ROOT"
+  "PYTHONPATH_ROOT=$PYTHONPATH_ROOT" "PYTHON_BIN=$PYTHON_BIN"
+  "TAG=${TAG}_fresh_math_sft" "ARTIFACT_ROOT=$ARTIFACT_ROOT"
+  "JUDGED_ROLLOUT=$JUDGED_ROLLOUT"
+  "TRAIN_DATA=$PREPARE_BASE_TRAIN" "HOLDOUT_DATA=$PREPARE_BASE_HOLDOUT"
+  "PREPARE_STATS=$PREPARE_BASE_STATS" "MANIFEST=$PREPARE_BASE_MANIFEST"
+  "PREPARE_DONE=${PREPARE_BASE_ROOT}/.done" "LOG_ROOT=$LOG_ROOT"
+  "MATH_DATA_ROOT=$MATH_DATA_ROOT" "TRAIN_START=$TRAIN_START" "TRAIN_LIMIT=$TRAIN_LIMIT"
+  "EVAL_START=$EVAL_START" "EVAL_LIMIT=$EVAL_LIMIT" "SUBJECTS=$SUBJECTS"
+  "NUM_ROLLOUTS=$NUM_ROLLOUTS" "T_MAX=$T_MAX"
+  "SAMPLE_START_AGENT=$SAMPLE_START_AGENT"
+  "SAMPLE_TEMPERATURE=$SAMPLE_TEMPERATURE" "SAMPLE_TOP_P=$SAMPLE_TOP_P"
+  "SAMPLE_MAX_NEW_TOKENS=$SAMPLE_MAX_NEW_TOKENS"
+  "SAMPLE_GENERATION_SEED=$SAMPLE_GENERATION_SEED"
+  "SAMPLE_ENABLE_THINKING=$SAMPLE_ENABLE_THINKING"
+  "SAMPLE_REQUIRE_THINKING=$SAMPLE_REQUIRE_THINKING"
+  "TRAIN_ENABLE_THINKING=$TRAIN_ENABLE_THINKING"
+  "ENABLE_THINKING=$ENABLE_THINKING" "REQUIRE_THINKING=$REQUIRE_THINKING"
+  "ALLOW_THINKING_MODE_MISMATCH=$ALLOW_THINKING_MODE_MISMATCH"
+  "SAMPLE_JSON_TRANSPORT=$SAMPLE_JSON_TRANSPORT"
+  "JUDGE_MAX_TOKENS=$JUDGE_MAX_TOKENS"
+  "JUDGE_TEMPERATURE=$JUDGE_TEMPERATURE" "JUDGE_TOP_P=$JUDGE_TOP_P"
+  "JUDGE_AUTO_RESUME_PASSES=$JUDGE_AUTO_RESUME_PASSES"
+  "HOLDOUT_FRACTION=$HOLDOUT_FRACTION" "MIX_A1_CORRECT=$MIX_A1_CORRECT"
+  "MIX_NO_CORRECTION=$MIX_NO_CORRECTION"
+  "MIX_CORRECTION_SUCCESS=$MIX_CORRECTION_SUCCESS"
+  "MIX_CORRECTION_FAILED=$MIX_CORRECTION_FAILED"
+  "BASE_REWARD_WEIGHT=$BASE_REWARD_WEIGHT" "JUDGE_REWARD_WEIGHT=$JUDGE_REWARD_WEIGHT"
+  "TRANSITION_BOOST=$TRANSITION_BOOST"
+  "CORRECT_TO_CORRECT_COEF_A1=$CORRECT_TO_CORRECT_COEF_A1"
+  "CORRECT_TO_CORRECT_COEF_A2=$CORRECT_TO_CORRECT_COEF_A2"
+  "CORRECT_TO_CORRECT_COEF_A3=$CORRECT_TO_CORRECT_COEF_A3"
+  "TRAIN_MAX_SEQ=$RL_MAX_SEQ" "LR=$RL_LR" "KL_COEF=$REFERENCE_COEF"
+  "NUM_EPOCHS=$RL_NUM_EPOCHS"
+  "EVAL_START_AGENT=$EVAL_BOOTSTRAP_AGENT"
+  "EVAL_START_AGENT_SEED=$EVAL_START_AGENT_SEED"
+  "EVAL_GENERATION_SEED=$EVAL_GENERATION_SEED"
+  "EVAL_TEMPERATURE=$EVAL_TEMPERATURE" "EVAL_TOP_P=$EVAL_TOP_P"
+  "EVAL_MAX_NEW_TOKENS=$EVAL_MAX_NEW_TOKENS"
+  "MODEL_A1=$MODEL_A1" "MODEL_A2=$MODEL_A2" "MODEL_A3=$MODEL_A3"
+  "SFT_ROOT=$SFT_RUN_ROOT" "SFT_A1=$SFT_A1" "SFT_A2=$SFT_A2" "SFT_A3=$SFT_A3"
+  "RESUME=$RESUME" "DRY_RUN=$DRY_RUN"
+  bash "$BASE_STAGE"
+)
+ANNOTATE_CMD=(
+  env "PYTHONPATH=$PYTHONPATH_ROOT" "$PYTHON_BIN" -u "$ANNOTATOR"
+  --train-input "$PREPARE_BASE_TRAIN" --holdout-input "$PREPARE_BASE_HOLDOUT"
+  --base-stats "$PREPARE_BASE_STATS" --base-manifest "$PREPARE_BASE_MANIFEST"
+  --sft-stats "$SFT_DATA_DIR/stats.json"
+  --sft-a1 "$SFT_A1" --sft-a2 "$SFT_A2" --sft-a3 "$SFT_A3"
+  --train-output "$TRAIN_DATA" --holdout-output "$HOLDOUT_DATA"
+  --stats-output "$PREPARE_STATS" --manifest-output "$MANIFEST"
+  --sample-source-v4 "$RL_SAMPLE_SOURCE_V4"
+  --sampling-policy-lineage "$RL_SAMPLING_POLICY_LINEAGE"
+)
+if [[ "$RL_REUSE_LEGACY_SAMPLED_DATA" == "1" ]]; then
+  ANNOTATE_CMD+=(--reuse-legacy-sampled-data)
+else
+  ANNOTATE_CMD+=(--no-reuse-legacy-sampled-data)
+fi
+
+echo "Fresh MATH RL preparation"
+echo "  judged source: $JUDGED_ROLLOUT"
+echo "  base prepare:  full success-mix rebuild (no direct patch)"
+echo "  objective:     semantic-only negative masks + protocol reference floor"
+echo "  sample source: $RL_SAMPLING_POLICY_LINEAGE"
+echo "  output:        $TRAIN_DATA"
+print_command "${BASE_CMD[@]}"
+print_command "${ANNOTATE_CMD[@]}"
+if [[ "$DRY_RUN" == "1" ]]; then
+  echo "[dry-run] preparation not started; future judged rollout and adapters are not required"
+  exit 0
+fi
+
+"${BASE_CMD[@]}"
+if [[ "$RESUME" == "1" && -s "$MANIFEST" ]]; then
+  "${ANNOTATE_CMD[@]}" --validate-existing
+  echo "[resume] conservative-AWR data already complete and validated"
+else
+  if [[ -e "$TRAIN_DATA" || -e "$HOLDOUT_DATA" || -e "$PREPARE_STATS" || -e "$MANIFEST" ]]; then
+    fatal "partial AWR outputs exist; archive them or choose a new TAG"
+  fi
+  "${ANNOTATE_CMD[@]}"
+fi
+echo "[done] MATH RL data rebuilt and bound to the MATH-specific SFT fingerprints"

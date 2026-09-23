@@ -1,0 +1,366 @@
+================ AFlow (A1/A2/A3 solvers + 14B optimizer) 8-GPU vLLM Run ================
+time: 2026-08-16 19:10:09 CST
+mode: eval
+host: d1n41a24g03
+project_root: /data/wangyuheng/jca
+run_id: gsmhard_latest_roles_raw8192_20260816_aflow
+run_dir: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/logs/gsmhard_latest_roles_raw8192_20260816_aflow
+
+---------------- Configuration ----------------
+Config snapshot written to /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/logs/gsmhard_latest_roles_raw8192_20260816_aflow/config.env
+WORKFLOW_FILE=/data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_aflow_hetero_search20_eval132_20260814_113713/search/workflows/round_00_initial.py START=0 LIMIT=132
+MAX_CONCURRENCY=32  TORCH_DTYPE=bfloat16
+ENABLE_THINKING=1
+JUDGE_AGENT=random JUDGE_AGENT_SEED=42
+A1:    model=/data/wangyuheng/models/Qwen3-1.7B served=A1_base port=8201 gpus=0,1 tp=2
+A2:    model=/data/wangyuheng/models/Qwen3-4B served=A2_base port=8202 gpus=2,3 tp=2
+A3:    model=/data/wangyuheng/models/Qwen3-8B served=A3_base port=8203 gpus=4,5 tp=2
+OPT:   model=/data/wangyuheng/models/Qwen3-14B  served=Optimizer_14B  port=8204  gpus=6,7  tp=2
+GPU_MEMORY_UTILIZATION=0.85  MAX_MODEL_LEN=40960
+
+---------------- Preflight ----------------
+Python 3.12.13
+torch: OK
+transformers: OK
+vllm: OK
+torch_version: 2.10.0+cu128
+cuda_available: True
+cuda_device_count: 8
+vllm_version: 0.18.1
+
+---------------- nvidia-smi before ----------------
+Sun Aug 16 19:10:14 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   44C    P0             63W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   39C    P0             62W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   38C    P0             59W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   43C    P0             65W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   51C    P0             67W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   56C    P0             73W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   38C    P0             61W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   43C    P0             62W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+---------------- Starting vLLM Base Servers ----------------
+Starting A1 server on GPUs 0,1, TP=2, port=8201
+  model:  /data/wangyuheng/models/Qwen3-1.7B
+  served: A1_base
+  log:    /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/logs/gsmhard_latest_roles_raw8192_20260816_aflow/A1_server.log
+  process_group: 2308777
+Starting A2 server on GPUs 2,3, TP=2, port=8202
+  model:  /data/wangyuheng/models/Qwen3-4B
+  served: A2_base
+  log:    /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/logs/gsmhard_latest_roles_raw8192_20260816_aflow/A2_server.log
+  process_group: 2308781
+Starting A3 server on GPUs 4,5, TP=2, port=8203
+  model:  /data/wangyuheng/models/Qwen3-8B
+  served: A3_base
+  log:    /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/logs/gsmhard_latest_roles_raw8192_20260816_aflow/A3_server.log
+  process_group: 2308785
+
+---------------- Waiting for Base Models ----------------
+A1 ready: ['A1_base']
+A2 ready: ['A2_base']
+A3 ready: ['A3_base']
+
+---------------- nvidia-smi after server start ----------------
+Sun Aug 16 19:10:57 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   43C    P0             68W /  400W |   70455MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   37C    P0             67W /  400W |   70455MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   37C    P0             64W /  400W |   70505MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   42C    P0             70W /  400W |   70505MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   48C    P0             71W /  400W |   69929MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   51C    P0             76W /  400W |   69929MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   37C    P0             60W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   42C    P0             62W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         2310266      C   VLLM::Worker_TP0                      70446MiB |
+|    1   N/A  N/A         2310268      C   VLLM::Worker_TP1                      70446MiB |
+|    2   N/A  N/A         2310267      C   VLLM::Worker_TP0                      70496MiB |
+|    3   N/A  N/A         2310269      C   VLLM::Worker_TP1                      70496MiB |
+|    4   N/A  N/A         2310275      C   VLLM::Worker_TP0                      69920MiB |
+|    5   N/A  N/A         2310276      C   VLLM::Worker_TP1                      69920MiB |
++-----------------------------------------------------------------------------------------+
+
+---------------- Eval Command (workflow=/data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_aflow_hetero_search20_eval132_20260814_113713/search/workflows/round_00_initial.py) ----------------
+/data/conda_envs/qwen35/bin/python baseline/GSM-Hard/AFlow/run_eval_gsmhard.py --workflow-file /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_aflow_hetero_search20_eval132_20260814_113713/search/workflows/round_00_initial.py --split dev --data-dir /data/wangyuheng/jca/Math/data/GSM-HARD/splits/gsmhardv2_dev.jsonl --start 0 --limit 132 --max-new-tokens 8192 --temperature 0.7 --top-p 0.95 --api-base-a1 http://127.0.0.1:8201/v1 --api-base-a2 http://127.0.0.1:8202/v1 --api-base-a3 http://127.0.0.1:8203/v1 --api-model-a1 A1_base --api-model-a2 A2_base --api-model-a3 A3_base --api-timeout 900 --judge-agent random --judge-agent-seed 42 --max-concurrency 32 --enable-thinking --output /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/eval_results.jsonl 
+AFlow eval
+  workflow_file:   /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_aflow_hetero_search20_eval132_20260814_113713/search/workflows/round_00_initial.py
+  split:           dev
+  selected:        start=0, n=132
+  solve pool:      A1_1.7B, A2_4B, A3_8B (round-robin)
+  judge_agent:     random seed=42
+  judge[A1]:    http://127.0.0.1:8201/v1 model=A1_base
+  judge[A2]:    http://127.0.0.1:8202/v1 model=A2_base
+  judge[A3]:    http://127.0.0.1:8203/v1 model=A3_base
+  max_concurrency: 32
+  enable_thinking: True
+  output:          /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/eval_results.jsonl
+[1/132   0.8% elapsed=30.1s eta=1h05m44s] id=gsm_00014 em=1 f1=1.00 n_ops=5 err=False final=216
+[2/132   1.5% elapsed=41.3s eta=44m45s] id=gsm_00022 em=1 f1=1.00 n_ops=5 err=False final=8
+[3/132   2.3% elapsed=43.9s eta=31m26s] id=gsm_00012 em=1 f1=1.00 n_ops=5 err=False final=23
+[4/132   3.0% elapsed=48.1s eta=25m38s] id=gsm_00018 em=1 f1=1.00 n_ops=5 err=False final=8
+[5/132   3.8% elapsed=51.2s eta=21m40s] id=gsm_00030 em=1 f1=1.00 n_ops=5 err=False final=5
+[6/132   4.5% elapsed=1m19s eta=27m32s] id=gsm_00007 em=1 f1=1.00 n_ops=5 err=False final=571464
+[7/132   5.3% elapsed=1m22s eta=24m18s] id=gsm_00017 em=1 f1=1.00 n_ops=5 err=False final=1884094
+[8/132   6.1% elapsed=1m28s eta=22m39s] id=gsm_00013 em=1 f1=1.00 n_ops=5 err=False final=7199289
+[9/132   6.8% elapsed=1m28s eta=20m07s] id=gsm_00016 em=1 f1=1.00 n_ops=5 err=False final=1973643
+[10/132   7.6% elapsed=1m39s eta=20m13s] id=gsm_00024 em=1 f1=1.00 n_ops=5 err=False final=5220928
+[11/132   8.3% elapsed=1m40s eta=18m25s] id=gsm_00015 em=1 f1=1.00 n_ops=5 err=False final=4083344
+[12/132   9.1% elapsed=1m42s eta=17m05s] id=gsm_00025 em=1 f1=1.00 n_ops=5 err=False final=2062213125
+[13/132   9.8% elapsed=1m43s eta=15m39s] id=gsm_00020 em=0 f1=0.33 n_ops=5 err=False final=2030919.5
+[14/132  10.6% elapsed=1m46s eta=14m54s] id=gsm_00027 em=1 f1=1.00 n_ops=5 err=False final=27
+[15/132  11.4% elapsed=1m50s eta=14m17s] id=gsm_00029 em=1 f1=1.00 n_ops=5 err=False final=712071.6
+[16/132  12.1% elapsed=1m52s eta=13m35s] id=gsm_00005 em=0 f1=0.00 n_ops=5 err=False final=2.5
+[17/132  12.9% elapsed=1m54s eta=12m52s] id=gsm_00023 em=1 f1=1.00 n_ops=5 err=False final=1726970
+[18/132  13.6% elapsed=2m02s eta=12m53s] id=gsm_00034 em=1 f1=1.00 n_ops=5 err=False final=153
+[19/132  14.4% elapsed=2m11s eta=12m57s] id=gsm_00031 em=1 f1=1.00 n_ops=5 err=False final=261280.125
+[20/132  15.2% elapsed=2m17s eta=12m48s] id=gsm_00008 em=0 f1=0.57 n_ops=5 err=False final=21370188
+[21/132  15.9% elapsed=2m18s eta=12m11s] id=gsm_00011 em=1 f1=1.00 n_ops=5 err=False final=23628338.5
+[22/132  16.7% elapsed=2m21s eta=11m44s] id=gsm_00009 em=1 f1=1.00 n_ops=5 err=False final=15155263
+[23/132  17.4% elapsed=2m25s eta=11m27s] id=gsm_00006 em=1 f1=1.00 n_ops=5 err=False final=336332346
+[24/132  18.2% elapsed=2m25s eta=10m53s] id=gsm_00036 em=1 f1=1.00 n_ops=5 err=False final=34796720
+[25/132  18.9% elapsed=2m55s eta=12m27s] id=gsm_00010 em=1 f1=1.00 n_ops=5 err=False final=162741.666...
+[26/132  19.7% elapsed=2m55s eta=11m54s] id=gsm_00003 em=0 f1=0.00 n_ops=5 err=False final=0
+[27/132  20.5% elapsed=2m59s eta=11m36s] id=gsm_00048 em=1 f1=1.00 n_ops=5 err=False final=109
+[28/132  21.2% elapsed=3m03s eta=11m20s] id=gsm_00053 em=1 f1=1.00 n_ops=5 err=False final=112
+[29/132  22.0% elapsed=3m05s eta=10m56s] id=gsm_00038 em=1 f1=1.00 n_ops=5 err=False final=25145393
+[30/132  22.7% elapsed=3m09s eta=10m42s] id=gsm_00019 em=1 f1=1.00 n_ops=5 err=False final=8710409
+[31/132  23.5% elapsed=3m11s eta=10m23s] id=gsm_00002 em=0 f1=0.00 n_ops=5 err=False final=50627672
+[32/132  24.2% elapsed=3m31s eta=10m58s] id=gsm_00028 em=1 f1=1.00 n_ops=5 err=False final=-3056417
+[33/132  25.0% elapsed=3m36s eta=10m47s] id=gsm_00039 em=1 f1=1.00 n_ops=5 err=False final=235728136
+[34/132  25.8% elapsed=3m39s eta=10m30s] id=gsm_00050 em=1 f1=1.00 n_ops=5 err=False final=959304
+[35/132  26.5% elapsed=3m43s eta=10m17s] id=gsm_00032 em=1 f1=1.00 n_ops=5 err=False final=-263735172
+[36/132  27.3% elapsed=3m55s eta=10m27s] id=gsm_00056 em=1 f1=1.00 n_ops=5 err=False final=7500
+[37/132  28.0% elapsed=3m59s eta=10m14s] id=gsm_00051 em=1 f1=1.00 n_ops=5 err=False final=4865122
+[38/132  28.8% elapsed=4m09s eta=10m16s] id=gsm_00059 em=1 f1=1.00 n_ops=5 err=False final=16
+[39/132  29.5% elapsed=4m11s eta=10m00s] id=gsm_00035 em=0 f1=1.00 n_ops=5 err=False final=98836
+[40/132  30.3% elapsed=4m15s eta=9m46s] id=gsm_00054 em=0 f1=0.00 n_ops=5 err=False final=0
+[41/132  31.1% elapsed=4m18s eta=9m32s] id=gsm_00042 em=1 f1=1.00 n_ops=5 err=False final=46060138
+[42/132  31.8% elapsed=4m18s eta=9m13s] id=gsm_00040 em=0 f1=0.65 n_ops=5 err=False final=17
+[43/132  32.6% elapsed=4m23s eta=9m04s] id=gsm_00033 em=1 f1=1.00 n_ops=5 err=False final=-1044056.76
+[44/132  33.3% elapsed=4m30s eta=9m00s] id=gsm_00063 em=0 f1=0.00 n_ops=5 err=False final=50
+[45/132  34.1% elapsed=4m37s eta=8m55s] id=gsm_00061 em=0 f1=0.00 n_ops=5 err=False final=...
+[46/132  34.8% elapsed=4m47s eta=8m57s] id=gsm_00065 em=0 f1=0.00 n_ops=5 err=False final=20
+[47/132  35.6% elapsed=4m53s eta=8m50s] id=gsm_00021 em=1 f1=1.00 n_ops=5 err=False final=778670
+[48/132  36.4% elapsed=4m59s eta=8m43s] id=gsm_00001 em=1 f1=1.00 n_ops=5 err=False final=132079517.5
+[49/132  37.1% elapsed=5m00s eta=8m28s] id=gsm_00052 em=1 f1=1.00 n_ops=5 err=False final=106
+[50/132  37.9% elapsed=5m00s eta=8m12s] id=gsm_00062 em=1 f1=1.00 n_ops=5 err=False final=32
+[51/132  38.6% elapsed=5m02s eta=8m00s] id=gsm_00000 em=1 f1=1.00 n_ops=5 err=False final=0.000005975
+[52/132  39.4% elapsed=5m02s eta=7m45s] id=gsm_00026 em=1 f1=1.00 n_ops=5 err=False final=2
+[53/132  40.2% elapsed=5m10s eta=7m43s] id=gsm_00057 em=0 f1=0.00 n_ops=5 err=False final=42
+[54/132  40.9% elapsed=5m15s eta=7m36s] id=gsm_00075 em=1 f1=1.00 n_ops=5 err=False final=374
+[55/132  41.7% elapsed=5m19s eta=7m26s] id=gsm_00043 em=0 f1=0.78 n_ops=5 err=False final=46
+[56/132  42.4% elapsed=5m28s eta=7m25s] id=gsm_00044 em=1 f1=1.00 n_ops=5 err=False final=2709395.5
+[57/132  43.2% elapsed=5m28s eta=7m12s] id=gsm_00066 em=1 f1=1.00 n_ops=5 err=False final=-22868213
+[58/132  43.9% elapsed=5m52s eta=7m29s] id=gsm_00058 em=1 f1=1.00 n_ops=5 err=False final=43500
+[59/132  44.7% elapsed=5m53s eta=7m16s] id=gsm_00069 em=1 f1=1.00 n_ops=5 err=False final=45989937
+[60/132  45.5% elapsed=6m04s eta=7m17s] id=gsm_00085 em=1 f1=1.00 n_ops=5 err=False final=10
+[61/132  46.2% elapsed=6m09s eta=7m10s] id=gsm_00076 em=1 f1=1.00 n_ops=5 err=False final=200987640
+[62/132  47.0% elapsed=6m10s eta=6m57s] id=gsm_00072 em=1 f1=1.00 n_ops=5 err=False final=17208936
+[63/132  47.7% elapsed=6m11s eta=6m46s] id=gsm_00088 em=1 f1=1.00 n_ops=5 err=False final=105
+[64/132  48.5% elapsed=6m16s eta=6m39s] id=gsm_00081 em=1 f1=1.00 n_ops=5 err=False final=3
+[65/132  49.2% elapsed=6m23s eta=6m35s] id=gsm_00082 em=1 f1=1.00 n_ops=5 err=False final=5023266
+[66/132  50.0% elapsed=6m41s eta=6m41s] id=gsm_00055 em=0 f1=0.00 n_ops=5 err=False final=4345223
+[67/132  50.8% elapsed=6m53s eta=6m41s] id=gsm_00073 em=1 f1=1.00 n_ops=5 err=False final=16127300
+[68/132  51.5% elapsed=6m53s eta=6m29s] id=gsm_00080 em=1 f1=1.00 n_ops=5 err=False final=2000
+[69/132  52.3% elapsed=6m54s eta=6m18s] id=gsm_00068 em=1 f1=1.00 n_ops=5 err=False final=7753432
+[70/132  53.0% elapsed=7m07s eta=6m18s] id=gsm_00084 em=0 f1=0.86 n_ops=5 err=False final=7
+[71/132  53.8% elapsed=7m13s eta=6m12s] id=gsm_00060 em=0 f1=0.00 n_ops=5 err=False final=4607969
+[72/132  54.5% elapsed=7m24s eta=6m10s] id=gsm_00078 em=1 f1=1.00 n_ops=5 err=False final=4083406
+[73/132  55.3% elapsed=7m25s eta=5m59s] id=gsm_00071 em=1 f1=1.00 n_ops=5 err=False final=2390629.2
+[74/132  56.1% elapsed=7m26s eta=5m49s] id=gsm_00086 em=1 f1=1.00 n_ops=5 err=False final=17396676
+[75/132  56.8% elapsed=7m32s eta=5m44s] id=gsm_00070 em=0 f1=0.23 n_ops=5 err=False final=3730069
+[76/132  57.6% elapsed=7m42s eta=5m41s] id=gsm_00096 em=1 f1=1.00 n_ops=5 err=False final=12
+[77/132  58.3% elapsed=7m49s eta=5m35s] id=gsm_00046 em=1 f1=1.00 n_ops=5 err=False final=1227498
+[78/132  59.1% elapsed=7m52s eta=5m27s] id=gsm_00037 em=0 f1=1.00 n_ops=5 err=False final=2047410
+[79/132  59.8% elapsed=7m58s eta=5m20s] id=gsm_00004 em=0 f1=0.00 n_ops=5 err=False final=0
+[80/132  60.6% elapsed=8m11s eta=5m19s] id=gsm_00091 em=1 f1=1.00 n_ops=5 err=False final=27089169.25
+[81/132  61.4% elapsed=8m13s eta=5m10s] id=gsm_00077 em=1 f1=1.00 n_ops=5 err=False final=2548774.666
+[82/132  62.1% elapsed=8m29s eta=5m11s] id=gsm_00083 em=1 f1=1.00 n_ops=5 err=False final=1550109.75
+[83/132  62.9% elapsed=8m32s eta=5m02s] id=gsm_00045 em=0 f1=0.00 n_ops=5 err=False final=373700527410270
+[84/132  63.6% elapsed=8m36s eta=4m55s] id=gsm_00110 em=1 f1=1.00 n_ops=5 err=False final=60
+[85/132  64.4% elapsed=8m38s eta=4m46s] id=gsm_00087 em=0 f1=0.00 n_ops=5 err=False final=0
+[86/132  65.2% elapsed=8m40s eta=4m38s] id=gsm_00094 em=0 f1=0.00 n_ops=5 err=False final=1
+[87/132  65.9% elapsed=8m43s eta=4m30s] id=gsm_00079 em=1 f1=1.00 n_ops=5 err=False final=785784.96
+[88/132  66.7% elapsed=8m43s eta=4m22s] id=gsm_00099 em=0 f1=0.00 n_ops=5 err=False final=<one numeric value>
+[89/132  67.4% elapsed=8m46s eta=4m14s] id=gsm_00108 em=1 f1=1.00 n_ops=5 err=False final=31800
+[90/132  68.2% elapsed=8m56s eta=4m10s] id=gsm_00089 em=0 f1=0.00 n_ops=5 err=False final=0
+[91/132  68.9% elapsed=9m00s eta=4m03s] id=gsm_00090 em=0 f1=0.02 n_ops=5 err=False final=19089712
+[92/132  69.7% elapsed=9m02s eta=3m56s] id=gsm_00098 em=1 f1=1.00 n_ops=5 err=False final=14532132
+[93/132  70.5% elapsed=9m04s eta=3m48s] id=gsm_00105 em=1 f1=1.00 n_ops=5 err=False final=82
+[94/132  71.2% elapsed=9m05s eta=3m40s] id=gsm_00067 em=0 f1=0.33 n_ops=5 err=False final=2174466.67
+[95/132  72.0% elapsed=9m15s eta=3m36s] id=gsm_00114 em=1 f1=1.00 n_ops=5 err=False final=100
+[96/132  72.7% elapsed=9m16s eta=3m28s] id=gsm_00117 em=1 f1=1.00 n_ops=5 err=False final=3
+[97/132  73.5% elapsed=9m27s eta=3m25s] id=gsm_00112 em=1 f1=1.00 n_ops=5 err=False final=41920164
+[98/132  74.2% elapsed=9m52s eta=3m25s] id=gsm_00106 em=0 f1=0.00 n_ops=5 err=False final=227
+[99/132  75.0% elapsed=9m56s eta=3m19s] id=gsm_00120 em=1 f1=1.00 n_ops=5 err=False final=98
+[100/132  75.8% elapsed=9m59s eta=3m12s] id=gsm_00116 em=1 f1=1.00 n_ops=5 err=False final=1800
+[101/132  76.5% elapsed=9m59s eta=3m04s] id=gsm_00104 em=1 f1=1.00 n_ops=5 err=False final=1693236
+[102/132  77.3% elapsed=10m09s eta=2m59s] id=gsm_00041 em=0 f1=0.00 n_ops=5 err=False final=3916477
+[103/132  78.0% elapsed=10m11s eta=2m52s] id=gsm_00049 em=0 f1=1.00 n_ops=5 err=False final=0.0836
+[104/132  78.8% elapsed=10m12s eta=2m45s] id=gsm_00102 em=1 f1=1.00 n_ops=5 err=False final=-8089886
+[105/132  79.5% elapsed=10m31s eta=2m42s] id=gsm_00123 em=0 f1=0.00 n_ops=5 err=False final=33
+[106/132  80.3% elapsed=10m47s eta=2m39s] id=gsm_00103 em=1 f1=1.00 n_ops=5 err=False final=5407463
+[107/132  81.1% elapsed=10m49s eta=2m32s] id=gsm_00097 em=0 f1=0.00 n_ops=5 err=False final=10136100374993.33
+[108/132  81.8% elapsed=10m58s eta=2m26s] id=gsm_00129 em=1 f1=1.00 n_ops=5 err=False final=280
+[109/132  82.6% elapsed=11m02s eta=2m20s] id=gsm_00121 em=1 f1=1.00 n_ops=5 err=False final=43200
+[110/132  83.3% elapsed=11m04s eta=2m13s] id=gsm_00047 em=0 f1=0.50 n_ops=5 err=False final=-2
+[111/132  84.1% elapsed=11m06s eta=2m06s] id=gsm_00124 em=1 f1=1.00 n_ops=5 err=False final=18068022
+[112/132  84.8% elapsed=11m10s eta=2m00s] id=gsm_00127 em=1 f1=1.00 n_ops=5 err=False final=28226616
+[113/132  85.6% elapsed=11m25s eta=1m55s] id=gsm_00093 em=0 f1=0.00 n_ops=5 err=False final=-33625990000000
+[114/132  86.4% elapsed=11m32s eta=1m49s] id=gsm_00101 em=0 f1=0.00 n_ops=5 err=False final=9
+[115/132  87.1% elapsed=11m32s eta=1m42s] id=gsm_00113 em=0 f1=1.00 n_ops=5 err=False final=161868
+[116/132  87.9% elapsed=11m54s eta=1m38s] id=gsm_00100 em=1 f1=1.00 n_ops=5 err=False final=5.158e-7
+[117/132  88.6% elapsed=12m00s eta=1m32s] id=gsm_00126 em=1 f1=1.00 n_ops=5 err=False final=3453167
+[118/132  89.4% elapsed=12m10s eta=1m27s] id=gsm_00092 em=0 f1=0.33 n_ops=5 err=False final=107628900
+[119/132  90.2% elapsed=12m29s eta=1m22s] id=gsm_00111 em=0 f1=0.00 n_ops=5 err=False final=24
+[120/132  90.9% elapsed=12m45s eta=1m16s] id=gsm_00128 em=1 f1=1.00 n_ops=5 err=False final=1526448.5
+[121/132  91.7% elapsed=12m47s eta=1m10s] id=gsm_00119 em=1 f1=1.00 n_ops=5 err=False final=6956407
+[122/132  92.4% elapsed=12m59s eta=1m04s] id=gsm_00118 em=0 f1=0.00 n_ops=5 err=False final=78
+[123/132  93.2% elapsed=13m25s eta=58.9s] id=gsm_00125 em=0 f1=0.77 n_ops=5 err=False final=82925928
+[124/132  93.9% elapsed=13m55s eta=53.9s] id=gsm_00064 em=1 f1=1.00 n_ops=5 err=False final=9099577.916666
+[125/132  94.7% elapsed=13m56s eta=46.8s] id=gsm_00122 em=0 f1=0.00 n_ops=5 err=False final=<one numeric value>
+[126/132  95.5% elapsed=14m05s eta=40.2s] id=gsm_00115 em=1 f1=1.00 n_ops=5 err=False final=12274570.666
+[127/132  96.2% elapsed=14m18s eta=33.8s] id=gsm_00131 em=0 f1=1.00 n_ops=5 err=False final=0.01456
+[128/132  97.0% elapsed=14m30s eta=27.2s] id=gsm_00095 em=1 f1=1.00 n_ops=5 err=False final=179.99992624
+[129/132  97.7% elapsed=14m47s eta=20.6s] id=gsm_00107 em=1 f1=1.00 n_ops=5 err=False final=99.99812
+[130/132  98.5% elapsed=14m57s eta=13.8s] id=gsm_00074 em=1 f1=1.00 n_ops=5 err=False final=15.999972
+[131/132  99.2% elapsed=15m02s eta=6.9s] id=gsm_00109 em=0 f1=0.00 n_ops=5 err=False final=112430688
+[132/132 100.0% elapsed=16m33s eta=0.0s] id=gsm_00130 em=1 f1=1.00 n_ops=5 err=False final=-7145252
+
+Done.
+  accuracy_em:  0.682
+  avg_f1:       0.760
+  avg_ops/prob: 5.00
+  errors:       0/132
+  output: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/eval_results.jsonl
+  total_time: 16m33s
+
+---------------- Completed ----------------
+time: 2026-08-16 19:27:33 CST
+Summary written to /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/03_aflow/logs/gsmhard_latest_roles_raw8192_20260816_aflow/summary.txt
+Stopping vLLM server process groups: 2308777 2308781 2308785
+
+---------------- nvidia-smi after cleanup ----------------
+Sun Aug 16 19:27:38 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   47C    P0             89W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   41C    P0             86W /  400W |       4MiB /  81920MiB |     75%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   44C    P0             82W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   51C    P0             97W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   61C    P0            105W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   71C    P0            120W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   38C    P0             62W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   43C    P0             62W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+

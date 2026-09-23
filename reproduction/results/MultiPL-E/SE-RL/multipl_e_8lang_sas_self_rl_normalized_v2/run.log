@@ -1,0 +1,128 @@
+validated_rollout_records=3128
+[1/7] start base policy and judge servers
+[2/7] train70 policy rollout
+reused_train_rollout=logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_full_20260820/train_rollout.jsonl
+[3/7] normalize, execute, and judge train70
+prepared_completions=3128
+Parallel evaluator: files=3128 shards=64 inner_workers=1 image=multipl-e-evaluation:jca-current
+Parallel evaluation took 49.15 seconds
+outcomes=3128 passed=1948
+scored_records=3114 rejected_records=14 judge_failed=8 max_concurrency=32
+[4/7] evaluate same-protocol Qwen3-14B Base
+policy_rollout_records=1352 max_concurrency=32
+prepared_completions=1352
+Parallel evaluator: files=1352 shards=64 inner_workers=1 image=multipl-e-evaluation:jca-current
+Parallel evaluation took 26.39 seconds
+outcomes=1352 passed=811
+===== Final evaluation scores =====
+Model: SAS-Qwen3-14B-Base
+Evaluation: sas-base-test30
+Overall test problems: 1352
+Overall correct: 811
+Overall weighted pass@1: 0.599852
+Overall macro-language pass@1: 0.619366
+
+root_dataset	language	test_count	correct_count	pass@1
+humaneval	cpp	49	34	0.693878
+humaneval	cs	49	33	0.673469
+humaneval	java	49	30	0.612245
+humaneval	js	49	37	0.755102
+humaneval	php	49	35	0.714286
+humaneval	py	49	40	0.816327
+humaneval	sh	49	12	0.244898
+humaneval	ts	49	40	0.816327
+mbpp	cpp	120	81	0.675000
+mbpp	cs	120	73	0.608333
+mbpp	java	120	78	0.650000
+mbpp	js	120	68	0.566667
+mbpp	php	120	71	0.591667
+mbpp	py	120	77	0.641667
+mbpp	sh	120	24	0.200000
+mbpp	ts	120	78	0.650000
+overall	all	1352	811	0.599852
+Summary: /data/wangyuheng/jca/logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_normalized_v2/base_test_scores.json
+[5/7] train fresh SAS LoRA
+The following values were not passed to `accelerate launch` and had defaults used instead:
+		More than one GPU was found, enabling multi-GPU training.
+		If this was unintended please pass in `--num_processes=1`.
+	`--num_machines` was set to a value of `1`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+2026-08-21 11:01:43 [INFO] Agent:       SAS
+2026-08-21 11:01:43 [INFO] Base model:  /data/wangyuheng/models/Qwen3-14B
+2026-08-21 11:01:43 [INFO] SFT adapter: None
+2026-08-21 11:01:43 [INFO] Rollout:     /data/wangyuheng/jca/logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_normalized_v2/train_scored.jsonl
+2026-08-21 11:01:43 [INFO] Reward field: reward
+2026-08-21 11:01:43 [INFO] Output:      /data/wangyuheng/jca/logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_normalized_v2/rl_train
+2026-08-21 11:01:43 [INFO] Loaded 3114 turn records for agent SAS
+2026-08-21 11:01:43 [INFO] Reward stats: mean=0.6551 min=-1.0000 max=1.0000
+2026-08-21 11:01:50 [INFO] Accelerator: rank=0/8  device=cuda:0
+2026-08-21 11:01:50 [INFO] Training seed: 42
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights: 100%|██████████| 443/443 [00:00<00:00, 11930.56it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 443/443 [00:00<00:00, 11650.48it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 443/443 [00:00<00:00, 11429.96it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights: 100%|██████████| 443/443 [00:00<00:00, 12554.66it/s]
+Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights: 100%|██████████| 443/443 [00:00<00:00, 11730.80it/s]
+Loading weights:   0%|          | 0/443 [00:00<?, ?it/s]Loading weights: 100%|██████████| 443/443 [00:00<00:00, 11239.95it/s]
+Loading weights: 100%|██████████| 443/443 [00:00<00:00, 10622.80it/s]
+Loading weights: 100%|██████████| 443/443 [00:00<00:00, 11523.38it/s]
+trainable params: 41,943,040 || all params: 14,810,250,240 || trainable%: 0.2832
+2026-08-21 11:03:24 [INFO] Frozen reference: shared policy base weights with LoRA disabled
+2026-08-21 11:03:32 [INFO] total_records=3114  world_size=8  effective_batch=128  total_steps=25  warmup=1
+2026-08-21 11:03:32 [INFO] Epoch 1/1  total_n=3114  padded_n=3200  per_rank_n=400
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+2026-08-21 11:04:34 [INFO] step 10  loss=0.1420  kl=0.0000  reward_mean=0.621  tokens_per_sec=866.6  lr=2.07e-06
+2026-08-21 11:05:32 [INFO] step 20  loss=0.1559  kl=0.0000  reward_mean=0.674  tokens_per_sec=899.3  lr=3.10e-07
+2026-08-21 11:06:04 [INFO] Final adapter saved: /data/wangyuheng/jca/logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_normalized_v2/rl_train/final
+2026-08-21 11:06:04 [INFO] RL training complete.
+[rank0]:[W821 11:06:04.229445257 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[6/7] test30 rollout with trained adapter
+policy_rollout_records=1352 max_concurrency=32
+prepared_completions=1352
+Parallel evaluator: files=1352 shards=64 inner_workers=1 image=multipl-e-evaluation:jca-current
+Parallel evaluation took 22.64 seconds
+outcomes=1352 passed=817
+[7/7] summarize trained test30
+===== Final evaluation scores =====
+Model: SAS-Qwen3-14B-RL
+Evaluation: sas-self-rl-test30
+Overall test problems: 1352
+Overall correct: 817
+Overall weighted pass@1: 0.604290
+Overall macro-language pass@1: 0.625510
+
+root_dataset	language	test_count	correct_count	pass@1
+humaneval	cpp	49	34	0.693878
+humaneval	cs	49	32	0.653061
+humaneval	java	49	31	0.632653
+humaneval	js	49	37	0.755102
+humaneval	php	49	35	0.714286
+humaneval	py	49	41	0.836735
+humaneval	sh	49	15	0.306122
+humaneval	ts	49	40	0.816327
+mbpp	cpp	120	78	0.650000
+mbpp	cs	120	75	0.625000
+mbpp	java	120	78	0.650000
+mbpp	js	120	70	0.583333
+mbpp	php	120	71	0.591667
+mbpp	py	120	79	0.658333
+mbpp	sh	120	21	0.175000
+mbpp	ts	120	80	0.666667
+overall	all	1352	817	0.604290
+Summary: /data/wangyuheng/jca/logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_normalized_v2/test_scores.json
+completed: /data/wangyuheng/jca/logs/multipl_e_8lang_baselines/sas_self_judged_14b_rl/multipl_e_8lang_sas_self_rl_normalized_v2

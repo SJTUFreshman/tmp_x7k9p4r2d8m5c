@@ -1,0 +1,130 @@
+task: math
+run_id: math_v1
+seed: 20260914
+reward_mode: execution
+task_options:
+  data_root: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/data/Math/data/MATH
+maporl:
+  agent_num: 3
+  round_num: 3
+  rule_horizon: discounted_sum
+  rule_agent_share: all
+  rule_discount: 0.3
+  alpha:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  correct_threshold: 0.5
+  wrong_threshold: 0.5
+  others_tiebreak: dead
+  forward_sign: official
+  binarize: strict
+  adapter_mode: collaboration
+  task_training: false
+  value_simplification: true
+  reward_feedback: false
+  verifier: null
+  no_early_stopping: true
+ppo:
+  learning_rate: 1.0e-05
+  kl_coef: 0.002
+  vf_coef: 0.1
+  num_ppo_epochs: 1
+  parallel_agent_updates: false
+  cliprange: 0.2
+  cliprange_value: 0.2
+  gamma: 1.0
+  lam: 0.95
+  whiten_rewards: false
+  num_mini_batches: 8
+  gradient_accumulation_steps: 4
+  per_device_train_batch_size: 1
+  accumulate_mode: official
+  max_grad_norm: null
+  ratio_tolerance: 0.001
+rollout:
+  temperature: 0.7000001
+  top_k: 0
+  top_p: 1.0
+  response_length: 512
+  min_output_length: 50
+  force_fixed_length: false
+  penalty_reward_value: -10.0
+  non_eos_penalty: true
+  prompts_per_iter: 24
+  max_concurrency: 32
+  step_retries: 1
+train:
+  lora:
+    r: 8
+    alpha: 16
+    dropout: 0.05
+    target_modules:
+    - up_proj
+    - down_proj
+    - gate_proj
+    - k_proj
+    - q_proj
+    - v_proj
+    - o_proj
+  value_lora:
+    r: 8
+    alpha: 16
+    dropout: 0.0
+    target_modules:
+    - up_proj
+    - down_proj
+    - gate_proj
+    - k_proj
+    - q_proj
+    - v_proj
+    - o_proj
+  max_seq_length: 32768
+  gradient_checkpointing: true
+  enable_thinking: false
+  quantization: none
+  max_encode_skip_frac: 0.0
+serving:
+  gpu_plan: split44
+  lora_naming: inplace
+  enable_prefix_caching: false
+  host: 127.0.0.1
+  ports:
+    A1: 35435
+    A2: 35436
+    A3: 35437
+  models:
+    A1: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/models/Qwen3-1.7B
+    A2: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/models/Qwen3-4B
+    A3: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/models/Qwen3-8B
+  serve_gpus:
+    A1: '0'
+    A2: '1'
+    A3: '2'
+  train_gpus:
+    A1: '3'
+    A2: '3'
+    A3: '3'
+  gpu_memory_utilization:
+    A1: 0.6
+    A2: 0.65
+    A3: 0.75
+  max_model_len: 32768
+  startup_timeout_s: 1200
+  vllm_python: /data/apps/miniforge3/25.11.0-1/bin/python
+pool:
+  prescreen: false
+  keep_band:
+  - 1
+  - 2
+  prescreen_sample: 3000
+  shuffle_seed: 20260914
+budget:
+  max_iterations: 120
+  max_wall_clock_hours: 48.0
+  eval_every: 10
+  eval_subset: 200
+  save_every: 10
+  keep_last: 1
+mock: false

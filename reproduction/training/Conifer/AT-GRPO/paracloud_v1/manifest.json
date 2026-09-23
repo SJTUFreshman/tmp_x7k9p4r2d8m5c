@@ -1,0 +1,156 @@
+{
+  "created_at": "2026-09-18T01:26:41",
+  "hostname": "d1n41a28g02",
+  "python": "3.12.12",
+  "platform": "Linux-5.15.0-119-generic-x86_64-with-glibc2.35",
+  "config": {
+    "task": "conifer",
+    "run_id": "paracloud_v1",
+    "seed": 20260911,
+    "reward_mode": "execution",
+    "task_options": {
+      "data_root": "/data/run01/scwb515/yangrunde/atgrpo_baseline/resources/data/conifer_training_hub/01_dataset/processed"
+    },
+    "atgrpo": {
+      "agent_num": 3,
+      "round_num": 3,
+      "group_size_K": 8,
+      "prompts_per_iter": 24,
+      "branch_mode": "spine",
+      "inner_epochs": 1,
+      "clip_epsilon": 0.2,
+      "kl_coef": 0.02,
+      "clip_advantage": 4.0,
+      "loss_agg": "seq_mean",
+      "std_floor": 1e-08,
+      "strict_fingerprint": true,
+      "max_degenerate_frac": 0.9,
+      "degenerate_patience": 3
+    },
+    "train": {
+      "learning_rate": {
+        "A1": 2e-05,
+        "A2": 1.5e-05,
+        "A3": 1e-05
+      },
+      "per_device_batch_size": {
+        "A1": 4,
+        "A2": 2,
+        "A3": 1
+      },
+      "lora": {
+        "r": 64,
+        "alpha": 64,
+        "dropout": 0.05,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj"
+        ]
+      },
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "lr_schedule": "constant_with_warmup",
+      "warmup_iters": 5,
+      "max_seq_length": 4096,
+      "gradient_checkpointing": true,
+      "enable_thinking": false,
+      "daemon_timeout_s": 1800,
+      "max_encode_skip_frac": 0.1,
+      "ratio_tolerance": 0.001
+    },
+    "rollout": {
+      "joint_mode": "synchronous",
+      "t_max": 4,
+      "temperature": 1.0,
+      "top_p": 1.0,
+      "max_new_tokens": 2048,
+      "step_retries": 1,
+      "max_concurrency": 48,
+      "start_agent": "A1"
+    },
+    "serving": {
+      "gpu_plan": "split44",
+      "lora_naming": "inplace",
+      "enable_prefix_caching": false,
+      "ports": {
+        "A1": 8401,
+        "A2": 8402,
+        "A3": 8403
+      },
+      "host": "127.0.0.1",
+      "models": {
+        "A1": "/data/run01/scwb515/yangrunde/atgrpo_baseline/resources/models/Qwen3-1.7B",
+        "A2": "/data/run01/scwb515/yangrunde/atgrpo_baseline/resources/models/Qwen3-4B",
+        "A3": "/data/run01/scwb515/yangrunde/atgrpo_baseline/resources/models/Qwen3-8B"
+      },
+      "serve_gpus": {
+        "A1": "0",
+        "A2": "1",
+        "A3": "2"
+      },
+      "train_gpus": {
+        "A1": "3",
+        "A2": "4",
+        "A3": "5"
+      },
+      "gpu_memory_utilization": {
+        "A1": 0.8,
+        "A2": 0.8,
+        "A3": 0.8
+      },
+      "cpu_threads_per_server": 8,
+      "cpu_affinity": {
+        "A1": "0-7",
+        "A2": "8-15",
+        "A3": "16-23"
+      },
+      "max_model_len": 8192,
+      "startup_timeout_s": 900,
+      "vllm_python": "/data/apps/miniforge3/25.11.0-1/bin/python"
+    },
+    "pool": {
+      "prescreen": false,
+      "keep_band": [
+        1,
+        7
+      ],
+      "prescreen_sample": 3000,
+      "shuffle_seed": 20260911
+    },
+    "budget": {
+      "max_iterations": 120,
+      "max_wall_clock_hours": 0.0,
+      "eval_every": 10,
+      "eval_subset": 200,
+      "save_every": 10,
+      "keep_last": 3
+    },
+    "mock": false
+  },
+  "config_sha256": "a1844fcc4f36ff58392ef724ab3147c25b779d6a925d5ef19b50d985b2b1b354",
+  "code_sha256": "8acd01352cbcb16f794563513873a9db73afd4c99249f639b97c1ec1dbb1f3e1",
+  "vendor_sha256": {
+    "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build_eval_shard_root.py": "d16393c0e5f90026f1b1f31e515a4d8903fe298725556ec970b7684cedbfeddb",
+    "conifer_protocol.py": "7113ca28080795a379a4ffb50cda839258f72297013a60e0920618406c6cf86e",
+    "conifer_scoring.py": "4af61b9738d00c4c76df019c22edfe4d2e28b3683c3c0248343f8608182a5916",
+    "gpu_guard.sh": "9c0ed3e05513dc38bf64608297d09aa548bf137962f225d30d43a337b898e7d1",
+    "gsm_agents.py": "a06b299eb0933dee9ba0fdd744f8d56a813cf93716544103d7061a225dfd34da",
+    "gsm_data.py": "55a447adf7bd27ac7eaccc9c3dedd3ced828b3a256981c6fd2fbd93b50f7207d",
+    "gsm_grader.py": "1c8aa73358f91a258ad913768880105ca1577004bc3158286e44a841d80183e3",
+    "math_eval_v4.py": "d3ca1f8401ff0e52c590df85f14778babe0d6dd09de47b9e3a74cea9171b6a20",
+    "multipl_e_completion_adapter.py": "58cc2ad12088ab08e2fb7fe91d685c680cdb4aed2cd249d9b9142d5d35272ea6",
+    "musique_data.py": "88a0991ba4897c27c1dfbc21e81043283a08b7494ee72c9b5967c15564fa9c8a",
+    "musique_grader.py": "c32ad07db94e28842d995e0fefaa7c42f7c7ae18cf74d878dc9d1050899e3ec6",
+    "musique_prompt.py": "1f4682529a5344ffc309f31042bab117125215d7c1896413446c6f6f5b483f46",
+    "protocol_json.py": "1852e0576d5e89fbab48fc05d52ead0ce5bae5c5c77481dad5f7805b41ef4d88"
+  },
+  "reward_mode": "execution",
+  "joint_mode": "synchronous",
+  "gpu_plan": "split44",
+  "lora_naming": "inplace",
+  "prefix_caching": false,
+  "hyperparameter_origin": "All numeric hyperparameters are OURS, not the MAGRPO paper's; the paper's algorithm box and hyperparameter table were unavailable. See PAPER_NOTES.md."
+}

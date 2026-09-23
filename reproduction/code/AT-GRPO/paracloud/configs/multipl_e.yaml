@@ -1,0 +1,12 @@
+extends: _base.yaml
+task: multipl_e
+run_id: multipl_e_v1
+# Real docker execution for the training reward; smaller batch keeps the
+# per-iteration container count (B*G) affordable.
+reward_mode: execution
+atgrpo: {prompts_per_iter: 16}
+rollout: {t_max: 3, max_new_tokens: 1536}
+# Run the full pool directly; no complete prescreen allowlist is available.
+pool: {prescreen: false, keep_band: [1, 7]}
+# Zero disables the wall-clock stop. The run still finishes after 120 iterations.
+budget: {max_iterations: 120, max_wall_clock_hours: 0.0}

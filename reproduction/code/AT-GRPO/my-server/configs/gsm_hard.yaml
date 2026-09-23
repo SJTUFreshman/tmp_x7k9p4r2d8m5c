@@ -1,0 +1,17 @@
+extends: _base.yaml
+task: gsm_hard
+run_id: gsm_hard_v1
+# Run the full pool directly; the cancelled prescreen produced no complete allowlist.
+pool: {prescreen: false, keep_band: [1, 7]}
+# Zero disables the wall-clock stop. The run still finishes after 120 iterations.
+budget: {max_iterations: 120, max_wall_clock_hours: 0.0}
+rollout: {max_concurrency: 32}
+# Preserve the exact topology/hash loaded by the already-running v2 job. New
+# datasets inherit the faster split53 replica layout from _base.yaml.
+serving:
+  gpu_plan: split44
+  serve_gpus: {A1: "0", A2: "1", A3: "2,3"}
+  train_gpus: {A1: "4", A2: "5", A3: "6,7"}
+  gpu_memory_utilization: {A1: 0.32, A2: 0.38, A3: 0.42}
+  # split44 has one tensor-parallel A3 server, not the three split53 replicas.
+  cpu_affinity: {A3: "16-31"}

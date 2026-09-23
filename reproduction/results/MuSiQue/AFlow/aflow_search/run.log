@@ -1,0 +1,238 @@
+================ AFlow (A1/A2/A3 solvers + 14B optimizer) 8-GPU vLLM Run ================
+time: 2026-09-11 16:59:28 CST
+mode: search
+host: d1n41a24g03
+project_root: /data/wangyuheng/jca
+run_id: 20260911_165928_aflow_search_eval_dev_start0_n2417_x5_search
+run_dir: /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search
+
+---------------- Configuration ----------------
+Config snapshot written to /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/config.env
+MAX_ITERATIONS=20 DEV_SIZE=20
+MAX_CONCURRENCY=32  TORCH_DTYPE=bfloat16
+ENABLE_THINKING=0
+JUDGE_AGENT=A3 JUDGE_AGENT_SEED=42
+A1:    model=/data/wangyuheng/models/Qwen3-1.7B served=A1_base port=8201 gpus=0,1 tp=2
+A2:    model=/data/wangyuheng/models/Qwen3-4B served=A2_base port=8202 gpus=2,3 tp=2
+A3:    model=/data/wangyuheng/models/Qwen3-8B served=A3_base port=8203 gpus=4,5 tp=2
+OPT:   model=/data/wangyuheng/models/Qwen3-14B  served=Optimizer_14B  port=8204  gpus=6,7  tp=2
+GPU_MEMORY_UTILIZATION=0.85  MAX_MODEL_LEN=8192
+
+---------------- Preflight ----------------
+Python 3.12.13
+torch: OK
+transformers: OK
+vllm: OK
+torch_version: 2.10.0+cu128
+cuda_available: True
+cuda_device_count: 8
+vllm_version: 0.18.0
+
+---------------- nvidia-smi before ----------------
+Fri Sep 11 16:59:34 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   26C    P0             56W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   24C    P0             56W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   24C    P0             55W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   26C    P0             57W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   25C    P0             55W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   25C    P0             59W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   25C    P0             56W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   26C    P0             56W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+---------------- Starting vLLM Base Servers ----------------
+Starting A1 server on GPUs 0,1, TP=2, port=8201
+  model:  /data/wangyuheng/models/Qwen3-1.7B
+  served: A1_base
+  log:    /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/A1_server.log
+  process_group: 2020086
+Starting A2 server on GPUs 2,3, TP=2, port=8202
+  model:  /data/wangyuheng/models/Qwen3-4B
+  served: A2_base
+  log:    /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/A2_server.log
+  process_group: 2020092
+Starting A3 server on GPUs 4,5, TP=2, port=8203
+  model:  /data/wangyuheng/models/Qwen3-8B
+  served: A3_base
+  log:    /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/A3_server.log
+  process_group: 2020114
+Starting OPT server on GPUs 6,7, TP=2, port=8204
+  model:  /data/wangyuheng/models/Qwen3-14B
+  served: Optimizer_14B
+  log:    /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/OPT_server.log
+  process_group: 2020118
+
+---------------- Waiting for Base Models ----------------
+A1 ready: ['A1_base']
+A2 ready: ['A2_base']
+A3 ready: ['A3_base']
+OPT ready: ['Optimizer_14B']
+
+---------------- nvidia-smi after server start ----------------
+Fri Sep 11 17:00:18 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   26C    P0             61W /  400W |   70427MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   24C    P0             63W /  400W |   70427MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   24C    P0             61W /  400W |   70433MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   26C    P0             64W /  400W |   70433MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   25C    P0             60W /  400W |   70503MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   26C    P0             64W /  400W |   70503MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   25C    P0             63W /  400W |   70503MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   26C    P0             62W /  400W |   70503MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         2022184      C   VLLM::Worker_TP0                      70418MiB |
+|    1   N/A  N/A         2022185      C   VLLM::Worker_TP1                      70418MiB |
+|    2   N/A  N/A         2022191      C   VLLM::Worker_TP0                      70424MiB |
+|    3   N/A  N/A         2022192      C   VLLM::Worker_TP1                      70424MiB |
+|    4   N/A  N/A         2022205      C   VLLM::Worker_TP0                      70494MiB |
+|    5   N/A  N/A         2022206      C   VLLM::Worker_TP1                      70494MiB |
+|    6   N/A  N/A         2022198      C   VLLM::Worker_TP0                      70494MiB |
+|    7   N/A  N/A         2022199      C   VLLM::Worker_TP1                      70494MiB |
++-----------------------------------------------------------------------------------------+
+
+---------------- Search Command ----------------
+/data/conda_envs/qwen35/bin/python baseline/MuSiQue/AFlow/run_search.py --data-dir musique_data --dev-split train --dev-size 20 --dev-shuffle-seed 20260810 --max-iterations 20 --rng-seed 20260810 --initial-workflow baseline/MuSiQue/AFlow/workflows/round_00_initial.py --max-new-tokens-executor 2048 --max-new-tokens-optimizer 2048 --temperature-executor 0.7 --temperature-optimizer 0.8 --top-p 0.95 --api-base-a1 http://127.0.0.1:8201/v1 --api-base-a2 http://127.0.0.1:8202/v1 --api-base-a3 http://127.0.0.1:8203/v1 --api-base-optimizer http://127.0.0.1:8204/v1 --api-model-a1 A1_base --api-model-a2 A2_base --api-model-a3 A3_base --api-model-optimizer Optimizer_14B --api-timeout 900 --max-concurrency 32 --run-dir /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search 
+AFlow MCTS search
+  run_dir:         /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search
+  initial:         baseline/MuSiQue/AFlow/workflows/round_00_initial.py
+  dev_split:       train
+  dev_size:        20 (shuffle seed 20260810)
+  max_iterations:  20
+  max_concurrency: 32
+  enable_thinking: False
+  solve pool:      A1_1.7B, A2_4B, A3_8B (round-robin)
+  judge:           http://127.0.0.1:8203/v1 model=A3_base
+  optimizer:       http://127.0.0.1:8204/v1 model=Optimizer_14B
+
+================ Search Complete ================
+  total_nodes:   21  parse_ok=20
+  best node:     round=7 name=proposed EM=0.400 F1=0.517
+  best source:   /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/workflows/round_07_proposed.py
+
+---------------- Completed ----------------
+time: 2026-09-11 17:00:22 CST
+Summary written to /data/wangyuheng/jca/logs/baseline_queue/rq09110842/070_musique_aflow_repeat5/search/summary.txt
+Stopping vLLM server process groups: 2020086 2020092 2020114 2020118
+
+---------------- nvidia-smi after cleanup ----------------
+Fri Sep 11 17:00:27 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   27C    P0             76W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   25C    P0             78W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   25C    P0             75W /  400W |       0MiB /  81920MiB |     25%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   27C    P0             79W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   26C    P0             74W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   26C    P0             79W /  400W |       0MiB /  81920MiB |    100%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   26C    P0             78W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   27C    P0             76W /  400W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+

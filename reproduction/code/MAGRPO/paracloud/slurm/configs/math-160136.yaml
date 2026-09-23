@@ -1,0 +1,102 @@
+task: math
+run_id: paracloud_parallel_160136
+seed: 20260911
+reward_mode: execution
+task_options:
+  data_root: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/data/Math/data/MATH
+magrpo:
+  group_size_G: 8
+  prompts_per_iter: 24
+  inner_epochs: 1
+  clip_epsilon: 0.2
+  kl_coef: 0.02
+  clip_advantage: 4.0
+  advantage_granularity: episode
+  gamma: 1.0
+  loss_agg: seq_mean
+  std_floor: 1.0e-08
+  max_degenerate_frac: 0.9
+  degenerate_patience: 3
+  reward_shaping: none
+  dynamic_sampling: true
+  dynamic_sampling_max_factor: 3.0
+train:
+  learning_rate:
+    A1: 5.0e-06
+    A2: 5.0e-06
+    A3: 5.0e-06
+  per_device_batch_size:
+    A1: 1
+    A2: 1
+    A3: 1
+  lora:
+    r: 64
+    alpha: 64
+    dropout: 0.0
+    target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+  weight_decay: 0.0
+  max_grad_norm: 1.0
+  lr_schedule: constant_with_warmup
+  warmup_iters: 5
+  max_seq_length: 16384
+  gradient_checkpointing: true
+  enable_thinking: false
+  daemon_timeout_s: 1800
+  max_encode_skip_frac: 0.1
+  ratio_tolerance: 0.001
+rollout:
+  joint_mode: synchronous
+  t_max: 2
+  temperature: 1.0
+  top_p: 1.0
+  max_new_tokens: 1536
+  step_retries: 1
+  max_concurrency: 32
+  start_agent: A1
+serving:
+  gpu_plan: split44
+  lora_naming: inplace
+  enable_prefix_caching: false
+  ports:
+    A1: 21408
+    A2: 21409
+    A3: 21410
+  host: 127.0.0.1
+  models:
+    A1: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/models/Qwen3-1.7B
+    A2: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/models/Qwen3-4B
+    A3: /data/run01/scwb515/yangrunde/magrpo_baseline/resources/models/Qwen3-8B
+  serve_gpus:
+    A1: '0'
+    A2: '1'
+    A3: '2'
+  train_gpus:
+    A1: '3'
+    A2: '3'
+    A3: '3'
+  gpu_memory_utilization:
+    A1: 0.6
+    A2: 0.65
+    A3: 0.75
+  max_model_len: 32768
+  startup_timeout_s: 1200
+  vllm_python: /data/apps/miniforge3/25.11.0-1/bin/python
+pool:
+  prescreen: true
+  keep_band:
+  - 1
+  - 7
+  prescreen_sample: 3000
+  shuffle_seed: 20260911
+budget:
+  max_iterations: 120
+  max_wall_clock_hours: 24.0
+  eval_every: 10
+  eval_subset: 200
+  save_every: 10
+  keep_last: 3
+mock: false

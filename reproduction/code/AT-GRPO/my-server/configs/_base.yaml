@@ -1,0 +1,110 @@
+# AT-GRPO baseline - shared defaults.
+#
+# ORIGIN TAGS. The AT-GRPO paper (Liu et al., arXiv:2508.04652) could not be
+# retrieved in this environment (arXiv, OpenReview and AAAI are all blocked by
+# network policy), so its Algorithm box and hyperparameter table were never
+# available. Every numeric value below is tagged:
+#
+#   origin: ours          <- our choice, from GRPO-standard practice
+#   origin: paper-structure <- follows the method as described in the abstract
+#                              and secondary sources, not a quoted number
+#
+# No value here may be attributed to the paper's authors. See PAPER_NOTES.md.
+
+seed: 20260911
+reward_mode: execution          # origin: ours (MultiPL-E only; others ignore it)
+mock: false
+
+atgrpo:
+  group_size_K: 8               # origin: ours (GRPO-standard 8-16)
+  branch_mode: spine          # origin: ours -- see PAPER_NOTES (paper does not pin this)
+  strict_fingerprint: true    # a group must share one frozen prompt
+  prompts_per_iter: 24          # origin: ours -> 192 joint rollouts/iteration
+  inner_epochs: 1               # origin: ours (mu=1 => fully on-policy, ratio==1)
+  clip_epsilon: 0.2             # origin: ours (PPO/GRPO standard)
+  kl_coef: 0.02                 # origin: ours (GRPO uses 0.04; halved for small models)
+  clip_advantage: 4.0           # origin: ours
+  loss_agg: seq_mean            # origin: ours (token_mean = Dr.GRPO ablation)
+  std_floor: 1.0e-8
+  max_degenerate_frac: 0.90     # origin: ours (abort threshold)
+  degenerate_patience: 3        # origin: ours
+
+train:
+  learning_rate:                # origin: ours (scaled down with model size)
+    A1: 2.0e-5
+    A2: 1.5e-5
+    A3: 1.0e-5
+  per_device_batch_size:        # origin: ours (memory-driven)
+    A1: 4
+    A2: 2
+    A3: 1
+  lora:                         # origin: ours; q/k/v/o matches the deployed MAS arms
+    r: 64
+    alpha: 64
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj]
+  weight_decay: 0.0
+  max_grad_norm: 1.0
+  # Constant, not cosine: an online loop must resume cleanly and cosine needs a
+  # horizon fixed up front.
+  lr_schedule: constant_with_warmup
+  warmup_iters: 5
+  max_seq_length: 4096
+  gradient_checkpointing: true
+  enable_thinking: false
+  daemon_timeout_s: 1800
+  max_encode_skip_frac: 0.10
+  ratio_tolerance: 1.0e-3       # the on-policy ratio_mean canary
+
+rollout:
+  joint_mode: synchronous       # origin: paper-structure (Dec-POMDP, N agents act each turn)
+  t_max: 4                      # origin: ours
+  temperature: 1.0              # MUST be > 0: group variance is the entire signal
+  top_p: 1.0                    # truncated sampling would bias the importance ratio
+  max_new_tokens: 1024
+  step_retries: 1
+  # A true global request cap (not prompt_workers × candidate_workers).
+  max_concurrency: 96
+  start_agent: A1
+
+serving:
+  gpu_plan: split53             # vLLM on 0-3,7; training on 4-6; never shared
+  lora_naming: inplace
+  # MUST stay false with inplace naming: vLLM hashes prefix-cache KV blocks on
+  # lora_name alone, so an in-place swap would let the previous policy's cached
+  # KV leak into the next iteration's rollouts. Config validation enforces this.
+  enable_prefix_caching: false
+  host: 127.0.0.1
+  ports: {A1: 8401, A2: 8402, A3: 8403}
+  models:
+    A1: /data/wangyuheng/models/Qwen3-1.7B
+    A2: /data/wangyuheng/models/Qwen3-4B
+    A3: /data/wangyuheng/models/Qwen3-8B
+  # Semicolons create independent replicas; commas remain tensor parallel.
+  # Independent replicas avoid TP overhead for the 8B model. A3 gets three
+  # replicas because it is the rollout tail in nearly every observed iteration.
+  serve_gpus: {A1: "0", A2: "1", A3: "2;3;7"}
+  train_gpus: {A1: "4", A2: "5", A3: "6"}
+  gpu_memory_utilization: {A1: 0.80, A2: 0.80, A3: 0.80}
+  # vLLM otherwise creates hundreds of CPU threads per process. Five such
+  # processes oversubscribe this 128-thread host and starve every GPU.
+  cpu_threads_per_server: 8
+  cpu_affinity: {A1: "0-7", A2: "8-15", A3: "16-23;24-31;32-39"}
+  max_model_len: 8192
+  startup_timeout_s: 900
+  vllm_python: /data/conda_envs/drb_py311_clean/bin/python
+
+pool:
+  prescreen: true               # origin: ours (binary rewards saturate otherwise)
+  keep_band: [1, 7]             # of G=8, keep prompts the base team gets 1..7 right
+  prescreen_sample: 3000
+  shuffle_seed: 20260911
+
+budget:
+  max_iterations: 120           # origin: ours
+  # Zero disables the wall-clock cutoff; max_iterations remains the experiment endpoint.
+  max_wall_clock_hours: 0.0
+  eval_every: 10
+  eval_subset: 200
+  save_every: 10
+  keep_last: 3

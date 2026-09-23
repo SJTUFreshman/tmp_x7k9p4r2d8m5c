@@ -1,0 +1,121 @@
+# MAPoRL baseline - shared defaults.
+#
+# ORIGIN TAGS (see PAPER_NOTES.md):
+#   official         value from MAPoRL's GSM8k config, carried over
+#   official-adapted official mechanism, value changed for our setup
+#   ours             our choice (agent count, models, datasets, batch sizes)
+#   unrecoverable    not determinable from the released code
+#
+# The official code CANNOT BE RUN (syntax error at
+# ppov2_trainer_multi_different_model.py:443; trl/trl/trainer/utils.py missing;
+# four more blockers). Everything here comes from reading the source, and every
+# formula carries a file:line citation in REPRO_MAP.md.
+
+seed: 20260914
+reward_mode: execution          # origin: ours (MultiPL-E only)
+mock: false
+
+maporl:
+  agent_num: 3                  # origin: ours (official: 2) -- see PAPER_NOTES #B
+  round_num: 3                  # origin: official
+  rule_horizon: discounted_sum  # origin: official
+  rule_agent_share: all         # origin: official
+  rule_discount: 0.3            # origin: official
+  # origin: unrecoverable -- bonus_rule indexes alpha[0..3] but the only attested
+  # sweep (shell/training_turn2_3_gsm8k.sh) passes a scalar. See PAPER_NOTES #C.
+  alpha: [1.0, 1.0, 1.0, 1.0]
+  correct_threshold: 0.5        # origin: official
+  wrong_threshold: 0.5          # origin: official
+  # origin: official semantics. With 3 agents the peers' mean can be exactly 0.5,
+  # where the strict > / < comparison discards the bonus. "majority" removes the
+  # dead zone. Watch bonus_deadzone_frac. See PAPER_NOTES #B.
+  others_tiebreak: dead
+  forward_sign: official        # origin: official; the sign looks inverted (#D)
+  binarize: strict              # Conifer only: hard_score is continuous
+  adapter_mode: collaboration   # origin: official (declared intent)
+  task_training: false          # origin: official -- turn 0 IS the base model
+  value_simplification: true    # origin: official
+  reward_feedback: false        # the real ground-truth switch (#9)
+  verifier: null                # not implemented; no checkpoint upstream
+  no_early_stopping: true       # criteria_* = 1.1 upstream
+
+ppo:
+  learning_rate: 1.0e-5         # origin: official
+  kl_coef: 0.002                # origin: official
+  vf_coef: 0.1                  # origin: official
+  num_ppo_epochs: 4             # origin: official
+  parallel_agent_updates: false # enabled by the 6-GPU launcher
+  cliprange: 0.2                # origin: official
+  cliprange_value: 0.2          # origin: official
+  gamma: 1.0                    # origin: official
+  lam: 0.95                     # origin: official
+  whiten_rewards: false         # origin: official (advantage whitening is always on)
+  num_mini_batches: 8           # origin: official
+  gradient_accumulation_steps: 4  # origin: official
+  per_device_train_batch_size: 1  # origin: official
+  accumulate_mode: official     # origin: official (steps per turn/agent)
+  max_grad_norm: null           # origin: official (no clipping upstream)
+  ratio_tolerance: 1.0e-3       # ours: the on-policy canary
+
+rollout:
+  temperature: 0.7000001        # origin: official (0.7 + 1e-7)
+  top_k: 0                      # origin: official
+  top_p: 1.0                    # origin: official
+  response_length: 512          # origin: official-adapted (official 300)
+  min_output_length: 50         # origin: official
+  # origin: official-adapted. Official sets min_new_tokens == max_new_tokens,
+  # suppressing EOS and training on the post-answer tail. strict_official.yaml
+  # reproduces it literally.
+  force_fixed_length: false
+  penalty_reward_value: -10.0   # origin: official
+  non_eos_penalty: true         # origin: official-adapted (reloadF's false NameErrors)
+  prompts_per_iter: 24          # origin: ours
+  max_concurrency: 32           # origin: ours
+  step_retries: 1               # origin: ours
+
+train:
+  lora: {r: 8, alpha: 16, dropout: 0.05,        # origin: official
+         target_modules: [up_proj, down_proj, gate_proj,
+                          k_proj, q_proj, v_proj, o_proj]}
+  value_lora: {r: 8, alpha: 16, dropout: 0.0}   # critic: no dropout
+  max_seq_length: 4096
+  gradient_checkpointing: true
+  enable_thinking: false
+  quantization: none            # origin: ours (official 4-bit; we have 80GB)
+  max_encode_skip_frac: 0.10
+
+serving:
+  gpu_plan: split44             # vLLM on 0-3, training on 4-7; never shared
+  lora_naming: inplace
+  # MUST stay false with inplace naming: vLLM hashes prefix-cache KV on
+  # lora_name alone, so a hot-swap would leak the previous policy's cache.
+  enable_prefix_caching: false
+  host: 127.0.0.1
+  ports: {A1: 8401, A2: 8402, A3: 8403}   # offset from MAGRPO's 8301-8303
+  models:
+    A1: /data/wangyuheng/models/Qwen3-1.7B
+    A2: /data/wangyuheng/models/Qwen3-4B
+    A3: /data/wangyuheng/models/Qwen3-8B
+  serve_gpus: {A1: "0", A2: "1", A3: "2,3"}
+  train_gpus: {A1: "4", A2: "5", A3: "6,7"}
+  gpu_memory_utilization: {A1: 0.32, A2: 0.38, A3: 0.42}
+  max_model_len: 8192
+  startup_timeout_s: 900
+  vllm_python: /data/conda_envs/drb_py311_clean/bin/python
+
+pool:
+  # MAPoRL's reward is dense across turns (score_rule mixes future turns in), so
+  # a prompt the team always gets right still carries signal through the bonus.
+  # Off by default, unlike MAGRPO where a degenerate group is literally zero.
+  prescreen: false
+  keep_band: [1, 2]
+  prescreen_sample: 3000
+  shuffle_seed: 20260914
+
+budget:
+  max_iterations: 120
+  max_wall_clock_hours: 24.0
+  eval_every: 10
+  eval_subset: 200
+  save_every: 10
+  keep_last: 3

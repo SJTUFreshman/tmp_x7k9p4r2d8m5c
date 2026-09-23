@@ -1,0 +1,26 @@
+FROM ghcr.io/nuprl/multipl-e-evaluation:latest
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
+# The cached registry image predates the Ada and Dart evaluator modules. Keep
+# its existing toolchain and add only the runtimes needed by the current source.
+# The base image carries third-party sources for runtimes that are already
+# installed. They can block apt refreshes when those mirrors are unavailable.
+RUN rm -f /etc/apt/sources.list.d/d-apt.list \
+    /etc/apt/sources.list.d/mono-official-stable.list \
+    /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update -yqq && apt-get install -yqq \
+    ca-certificates \
+    gnat-12 \
+    wget
+
+RUN wget -q https://storage.googleapis.com/download.dartlang.org/linux/debian/pool/main/d/dart/dart_3.12.2-1_amd64.deb \
+    -O /tmp/dart.deb \
+    && apt-get install -yqq /tmp/dart.deb \
+    && rm -f /tmp/dart.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY src /code
+WORKDIR /code
+ENTRYPOINT ["python3", "main.py"]

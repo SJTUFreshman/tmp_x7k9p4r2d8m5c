@@ -1,0 +1,387 @@
+================ MAD (base, no LoRA) 8-GPU vLLM Run ================
+time: 2026-08-16 17:42:54 CST
+host: d1n41a24g03
+project_root: /data/wangyuheng/jca
+python: /data/conda_envs/qwen35/bin/python
+vllm_python: /data/conda_envs/deep_research/bin/python
+run_id: gsmhard_latest_roles_raw8192_20260816_mad
+run_dir: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run
+output_path: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/results.jsonl
+log_path: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/run.log
+config_path: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/config.env
+command_path: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/command.txt
+summary_path: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/summary.txt
+server_logs:
+  A1: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/A1_server.log
+  A2: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/A2_server.log
+  A3: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/A3_server.log
+
+---------------- Configuration ----------------
+Config snapshot written to /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/config.env
+SPLIT=dev START=0 LIMIT=132 N_ROUNDS=3 MAX_CONCURRENCY=64
+TEMPERATURE_ROUND0=0.9 TEMPERATURE_DEBATE=0.3
+TIE_BREAK_ORDER=A3,A2,A1
+TORCH_DTYPE=bfloat16 MAX_NEW_TOKENS=8192 TOP_P=0.95
+ENABLE_THINKING=1 LOG_RAW_CHARS=0 API_TIMEOUT=900
+HOST=127.0.0.1
+A1: model=/data/wangyuheng/models/Qwen3-1.7B served=A1_base port=8201 gpus=0,1 tp=2
+A2: model=/data/wangyuheng/models/Qwen3-4B served=A2_base port=8202 gpus=2,3 tp=2
+A3: model=/data/wangyuheng/models/Qwen3-8B served=A3_base port=8203 gpus=4,5,6,7 tp=4
+GPU_MEMORY_UTILIZATION=0.80 MAX_MODEL_LEN=40960 ENFORCE_EAGER=1
+DISABLE_PREFIX_CACHING=1 DISABLE_CHUNKED_PREFILL=1
+SERVER_WAIT_TIMEOUT=900 USE_EXISTING_SERVERS=0 KEEP_SERVERS=0 DRY_RUN=0
+EXTRA_ARGS=
+EXTRA_VLLM_ARGS=
+
+---------------- Preflight ----------------
+Python 3.12.13
+torch: OK
+transformers: OK
+vllm: OK
+torch_version: 2.10.0+cu128
+cuda_available: True
+cuda_device_count: 8
+vllm_version: 0.18.1
+
+---------------- nvidia-smi before ----------------
+Sun Aug 16 17:42:58 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   52C    P0             68W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   45C    P0             65W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   43C    P0             61W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   51C    P0             69W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   46C    P0             63W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   51C    P0             70W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   45C    P0             64W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   51C    P0             67W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+---------------- Runner Command ----------------
+/data/conda_envs/qwen35/bin/python baseline/GSM-Hard/MAD/run_mad_gsmhard.py --split dev --data-dir /data/wangyuheng/jca/Math/data/GSM-HARD/splits/gsmhardv2_dev.jsonl --start 0 --limit 132 --n-rounds 3 --max-new-tokens 8192 --temperature-round0 0.9 --temperature-debate 0.3 --top-p 0.95 --api-base-a1 http://127.0.0.1:8201/v1 --api-base-a2 http://127.0.0.1:8202/v1 --api-base-a3 http://127.0.0.1:8203/v1 --api-model-a1 A1_base --api-model-a2 A2_base --api-model-a3 A3_base --api-timeout 900 --max-concurrency 64 --tie-break-order A3\,A2\,A1 --output /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/results.jsonl --log-raw-chars 0 --enable-thinking 
+Runner command written to /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/command.txt
+
+---------------- Starting vLLM Base Servers ----------------
+Starting A1 base server on GPUs 0,1, TP=2, port=8201
+  base_model: /data/wangyuheng/models/Qwen3-1.7B
+  served name: A1_base
+  server log: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/A1_server.log
+  process_group: 2241626
+Starting A2 base server on GPUs 2,3, TP=2, port=8202
+  base_model: /data/wangyuheng/models/Qwen3-4B
+  served name: A2_base
+  server log: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/A2_server.log
+  process_group: 2241629
+Starting A3 base server on GPUs 4,5,6,7, TP=4, port=8203
+  base_model: /data/wangyuheng/models/Qwen3-8B
+  served name: A3_base
+  server log: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/A3_server.log
+  process_group: 2241632
+
+---------------- Waiting for Base Models ----------------
+A1 ready: ['A1_base']
+A2 ready: ['A2_base']
+A3 ready: ['A3_base']
+
+---------------- nvidia-smi after server start ----------------
+Sun Aug 16 17:43:37 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   51C    P0             74W /  400W |   66367MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   44C    P0             70W /  400W |   66367MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   43C    P0             67W /  400W |   66473MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   50C    P0             75W /  400W |   66473MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   45C    P0             69W /  400W |   66345MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   50C    P0             75W /  400W |   66345MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   44C    P0             70W /  400W |   66345MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   51C    P0             73W /  400W |   66345MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         2243143      C   VLLM::Worker_TP0                      66358MiB |
+|    1   N/A  N/A         2243144      C   VLLM::Worker_TP1                      66358MiB |
+|    2   N/A  N/A         2243150      C   VLLM::Worker_TP0                      66464MiB |
+|    3   N/A  N/A         2243151      C   VLLM::Worker_TP1                      66464MiB |
+|    4   N/A  N/A         2243134      C   VLLM::Worker_TP0                      66336MiB |
+|    5   N/A  N/A         2243135      C   VLLM::Worker_TP1                      66336MiB |
+|    6   N/A  N/A         2243136      C   VLLM::Worker_TP2                      66336MiB |
+|    7   N/A  N/A         2243137      C   VLLM::Worker_TP3                      66336MiB |
++-----------------------------------------------------------------------------------------+
+
+---------------- Run Output ----------------
+MAD MuSiQue inference
+  split: dev
+  selected: start=0, n=132
+  n_rounds: 3
+  temperature_round0: 0.9
+  temperature_debate: 0.3
+  max_new_tokens: 8192
+  tie_break_order: ['A3', 'A2', 'A1']
+  max_concurrency: 64
+  output: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/results.jsonl
+  A1 api: http://127.0.0.1:8201/v1 model=A1_base temps=(r0=0.9, deb=0.3)
+  A2 api: http://127.0.0.1:8202/v1 model=A2_base temps=(r0=0.9, deb=0.3)
+  A3 api: http://127.0.0.1:8203/v1 model=A3_base temps=(r0=0.9, deb=0.3)
+[1/132   0.8% elapsed=49.4s eta=1h47m51s] id=gsm_00012 em=1 f1=1.00 tie=False err=False voters=(A1=23, A3=23) final=\boxed{23}
+[2/132   1.5% elapsed=53.4s eta=57m48s] id=gsm_00018 em=1 f1=1.00 tie=False err=False voters=(A1=8, A3=8) final=\boxed{8}
+[3/132   2.3% elapsed=54.3s eta=38m56s] id=gsm_00014 em=1 f1=1.00 tie=False err=False voters=(A1=216, A3=216) final=\boxed{216}
+[4/132   3.0% elapsed=58.4s eta=31m10s] id=gsm_00022 em=1 f1=1.00 tie=False err=False voters=(A3=8) final=\boxed{8}
+[5/132   3.8% elapsed=1m02s eta=26m06s] id=gsm_00030 em=1 f1=1.00 tie=False err=False voters=(A1=5, A2=5, A3=5) final=\boxed{5}
+[6/132   4.5% elapsed=1m04s eta=22m24s] id=gsm_00056 em=1 f1=1.00 tie=False err=False voters=(A1=7500, A3=7500) final=\boxed{7500}
+[7/132   5.3% elapsed=1m04s eta=19m12s] id=gsm_00048 em=1 f1=1.00 tie=False err=False voters=(A1=109, A2=109, A3=109) final=\boxed{109}
+[8/132   6.1% elapsed=1m05s eta=16m54s] id=gsm_00059 em=1 f1=1.00 tie=False err=False voters=(A1=16, A3=16) final=\boxed{16}
+[9/132   6.8% elapsed=1m12s eta=16m27s] id=gsm_00024 em=1 f1=1.00 tie=False err=False voters=(A1=5220928, A3=5220928) final=\boxed{5220928}
+[10/132   7.6% elapsed=1m14s eta=15m08s] id=gsm_00053 em=1 f1=1.00 tie=False err=False voters=(A1=112, A3=112) final=\boxed{112}
+[11/132   8.3% elapsed=1m22s eta=14m59s] id=gsm_00005 em=0 f1=0.00 tie=False err=False voters=(A1=2.5, A3=2.5) final=\boxed{2.5}
+[12/132   9.1% elapsed=1m22s eta=13m42s] id=gsm_00034 em=1 f1=1.00 tie=False err=False voters=(A1=153, A3=153) final=\boxed{153}
+[13/132   9.8% elapsed=1m25s eta=13m02s] id=gsm_00063 em=0 f1=0.00 tie=False err=False voters=(A1=50, A2=50, A3=50) final=\boxed{50}
+[14/132  10.6% elapsed=1m29s eta=12m33s] id=gsm_00017 em=1 f1=1.00 tie=False err=False voters=(A1=1884094, A3=1884094) final=\boxed{1884094}
+[15/132  11.4% elapsed=1m34s eta=12m12s] id=gsm_00027 em=1 f1=1.00 tie=False err=False voters=(A1=27, A3=27) final=\boxed{27}
+[16/132  12.1% elapsed=1m39s eta=11m59s] id=gsm_00061 em=0 f1=0.00 tie=False err=False voters=() final=None
+[17/132  12.9% elapsed=1m45s eta=11m48s] id=gsm_00050 em=1 f1=1.00 tie=False err=False voters=(A1=959304, A3=959304) final=\boxed{959304}
+[18/132  13.6% elapsed=1m48s eta=11m27s] id=gsm_00057 em=1 f1=1.00 tie=False err=False voters=(A1=189707352, A3=189707352) final=\boxed{189707352}
+[19/132  14.4% elapsed=1m55s eta=11m26s] id=gsm_00023 em=1 f1=1.00 tie=False err=False voters=(A1=1726970, A3=1726970) final=\boxed{1726970}
+[20/132  15.2% elapsed=1m59s eta=11m09s] id=gsm_00007 em=1 f1=1.00 tie=False err=False voters=(A1=571464, A3=571464) final=\boxed{571464}
+[21/132  15.9% elapsed=2m11s eta=11m34s] id=gsm_00016 em=1 f1=1.00 tie=False err=False voters=(A1=1973643, A3=1973643) final=\boxed{1973643}
+[22/132  16.7% elapsed=2m12s eta=11m01s] id=gsm_00036 em=1 f1=1.00 tie=False err=False voters=(A1=34796720) final=\boxed{34796720}
+[23/132  17.4% elapsed=2m18s eta=10m54s] id=gsm_00009 em=1 f1=1.00 tie=False err=False voters=(A1=15155263, A3=15155263) final=\boxed{15155263}
+[24/132  18.2% elapsed=2m19s eta=10m24s] id=gsm_00058 em=1 f1=1.00 tie=False err=False voters=(A1=43500, A3=43500) final=\boxed{43500}
+[25/132  18.9% elapsed=2m22s eta=10m09s] id=gsm_00025 em=1 f1=1.00 tie=False err=False voters=(A1=2062213125, A3=2062213125) final=\boxed{2062213125}
+[26/132  19.7% elapsed=2m24s eta=9m45s] id=gsm_00013 em=1 f1=1.00 tie=False err=False voters=(A1=7199289, A3=7199289) final=\boxed{7199289}
+[27/132  20.5% elapsed=2m30s eta=9m45s] id=gsm_00003 em=0 f1=0.00 tie=False err=False voters=(A1=1, A2=1, A3=1) final=\boxed{1}
+[28/132  21.2% elapsed=2m31s eta=9m21s] id=gsm_00038 em=1 f1=1.00 tie=False err=False voters=(A1=25145393) final=\boxed{25145393}
+[29/132  22.0% elapsed=2m41s eta=9m31s] id=gsm_00015 em=1 f1=1.00 tie=False err=False voters=(A1=4083344) final=\boxed{4083344}
+[30/132  22.7% elapsed=2m47s eta=9m29s] id=gsm_00075 em=1 f1=1.00 tie=False err=False voters=(A1=374, A3=374) final=\boxed{374}
+[31/132  23.5% elapsed=2m52s eta=9m19s] id=gsm_00029 em=1 f1=1.00 tie=False err=False voters=(A1=712071.6, A2=712071.6) final=\boxed{712071.6}
+[32/132  24.2% elapsed=2m52s eta=8m59s] id=gsm_00031 em=1 f1=1.00 tie=False err=False voters=(A1=261280.125, A2=261280.125, A3=261280.125) final=\boxed{261280.125}
+[33/132  25.0% elapsed=3m03s eta=9m08s] id=gsm_00054 em=0 f1=0.00 tie=False err=False voters=(A1=0, A2=0, A3=0) final=\boxed{0}
+[34/132  25.8% elapsed=3m06s eta=8m57s] id=gsm_00039 em=1 f1=1.00 tie=False err=False voters=(A1=235728136, A3=235728136) final=\boxed{235728136}
+[35/132  26.5% elapsed=3m09s eta=8m43s] id=gsm_00085 em=1 f1=1.00 tie=False err=False voters=(A1=10, A3=10) final=\boxed{10}
+[36/132  27.3% elapsed=3m13s eta=8m34s] id=gsm_00078 em=1 f1=1.00 tie=False err=False voters=(A1=4083406, A3=4083406) final=\boxed{4083406}
+[37/132  28.0% elapsed=3m15s eta=8m20s] id=gsm_00081 em=1 f1=1.00 tie=False err=False voters=(A1=3, A2=3, A3=3) final=\boxed{3}
+[38/132  28.8% elapsed=3m23s eta=8m23s] id=gsm_00042 em=1 f1=1.00 tie=False err=False voters=(A1=46060138, A2=46060138, A3=46060138) final=\boxed{46060138}
+[39/132  29.5% elapsed=3m24s eta=8m06s] id=gsm_00069 em=1 f1=1.00 tie=False err=False voters=(A1=45989937, A3=45989937) final=\boxed{45989937}
+[40/132  30.3% elapsed=3m24s eta=7m50s] id=gsm_00006 em=1 f1=1.00 tie=False err=False voters=(A1=336332346) final=\boxed{336332346}
+[41/132  31.1% elapsed=3m33s eta=7m52s] id=gsm_00065 em=0 f1=0.00 tie=False err=False voters=(A1=20, A2=20, A3=20) final=\boxed{20}
+[42/132  31.8% elapsed=3m33s eta=7m36s] id=gsm_00020 em=0 f1=0.33 tie=False err=False voters=(A1=2030919.5, A2=676986.5, A3=2030919.5) final=\boxed{2030919.5}
+[43/132  32.6% elapsed=3m41s eta=7m36s] id=gsm_00073 em=1 f1=1.00 tie=False err=False voters=(A1=16127300, A3=16127300) final=\boxed{16127300}
+[44/132  33.3% elapsed=3m43s eta=7m26s] id=gsm_00070 em=0 f1=0.23 tie=False err=False voters=(A1=11515389, A2=3730069, A3=3730069) final=\boxed{3730069}
+[45/132  34.1% elapsed=3m43s eta=7m12s] id=gsm_00088 em=1 f1=1.00 tie=False err=False voters=(A1=105, A2=105, A3=105) final=\boxed{105}
+[46/132  34.8% elapsed=3m44s eta=6m59s] id=gsm_00008 em=0 f1=0.57 tie=False err=False voters=(A1=21370188, A3=21370188) final=\boxed{21370188}
+[47/132  35.6% elapsed=3m47s eta=6m51s] id=gsm_00084 em=0 f1=0.86 tie=False err=False voters=(A1=7, A2=7, A3=7) final=\boxed{7}
+[48/132  36.4% elapsed=3m56s eta=6m54s] id=gsm_00011 em=1 f1=1.00 tie=False err=False voters=(A1=23628338.5, A2=23628338.5) final=\boxed{23628338.5}
+[49/132  37.1% elapsed=3m57s eta=6m41s] id=gsm_00033 em=1 f1=1.00 tie=False err=False voters=(A1=-1044056.76) final=\boxed{-1044056.76}
+[50/132  37.9% elapsed=3m58s eta=6m31s] id=gsm_00066 em=0 f1=0.00 tie=False err=False voters=(A1=0, A2=0, A3=0) final=\boxed{0}
+[51/132  38.6% elapsed=4m03s eta=6m26s] id=gsm_00046 em=1 f1=1.00 tie=False err=False voters=(A1=1227498, A2=1227498, A3=1227498) final=\boxed{1227498}
+[52/132  39.4% elapsed=4m04s eta=6m16s] id=gsm_00072 em=1 f1=1.00 tie=False err=False voters=(A1=17208936, A3=17208936) final=\boxed{17208936}
+[53/132  40.2% elapsed=4m07s eta=6m08s] id=gsm_00096 em=1 f1=1.00 tie=False err=False voters=(A1=12, A2=12, A3=12) final=\boxed{12}
+[54/132  40.9% elapsed=4m16s eta=6m10s] id=gsm_00086 em=1 f1=1.00 tie=False err=False voters=(A1=17396676, A2=17396676, A3=17396676) final=\boxed{17396676}
+[55/132  41.7% elapsed=4m24s eta=6m10s] id=gsm_00080 em=1 f1=1.00 tie=False err=False voters=(A1=2000, A2=2000, A3=2000) final=\boxed{2000}
+[56/132  42.4% elapsed=4m24s eta=5m59s] id=gsm_00043 em=1 f1=1.00 tie=False err=False voters=(A1=36, A2=36, A3=36) final=\boxed{36}
+[57/132  43.2% elapsed=4m26s eta=5m50s] id=gsm_00028 em=0 f1=0.00 tie=False err=False voters=(A1=0, A3=0) final=\boxed{0}
+[58/132  43.9% elapsed=4m26s eta=5m39s] id=gsm_00032 em=0 f1=0.00 tie=False err=False voters=(A1=263735172) final=\boxed{263735172}
+[59/132  44.7% elapsed=4m34s eta=5m39s] id=gsm_00044 em=1 f1=1.00 tie=False err=False voters=(A1=2709395.5) final=\boxed{2709395.5}
+[60/132  45.5% elapsed=4m37s eta=5m33s] id=gsm_00026 em=1 f1=1.00 tie=False err=False voters=(A1=2, A2=2, A3=2) final=\boxed{2}
+[61/132  46.2% elapsed=4m43s eta=5m29s] id=gsm_00010 em=1 f1=1.00 tie=False err=False voters=(A1=162741.6666666667, A3=162741.6666666667) final=\boxed{162741.6666666667}
+[62/132  47.0% elapsed=4m43s eta=5m19s] id=gsm_00076 em=1 f1=1.00 tie=False err=False voters=(A1=200987640) final=\boxed{200987640}
+[63/132  47.7% elapsed=4m48s eta=5m16s] id=gsm_00040 em=0 f1=0.65 tie=False err=False voters=(A1=17, A2=17) final=\boxed{17}
+[64/132  48.5% elapsed=4m54s eta=5m13s] id=gsm_00110 em=1 f1=1.00 tie=False err=False voters=(A1=60, A2=60, A3=60) final=\boxed{60}
+[65/132  49.2% elapsed=4m57s eta=5m06s] id=gsm_00117 em=1 f1=1.00 tie=False err=False voters=(A1=3, A3=3) final=\boxed{3}
+[66/132  50.0% elapsed=4m58s eta=4m58s] id=gsm_00035 em=1 f1=1.00 tie=False err=False voters=(A1=98836.3333333333, A3=98836.3333333333) final=\boxed{98836.3333333333}
+[67/132  50.8% elapsed=5m03s eta=4m54s] id=gsm_00114 em=1 f1=1.00 tie=False err=False voters=(A1=100, A2=100, A3=100) final=\boxed{100}
+[68/132  51.5% elapsed=5m04s eta=4m46s] id=gsm_00082 em=1 f1=1.00 tie=False err=False voters=(A1=5023266, A2=5023266) final=\boxed{5023266}
+[69/132  52.3% elapsed=5m14s eta=4m46s] id=gsm_00087 em=0 f1=0.00 tie=False err=False voters=(A1=0, A2=0, A3=0) final=\boxed{0}
+[70/132  53.0% elapsed=5m25s eta=4m48s] id=gsm_00090 em=0 f1=0.02 tie=False err=False voters=(A1=19089712) final=\boxed{19089712}
+[71/132  53.8% elapsed=5m30s eta=4m43s] id=gsm_00120 em=1 f1=1.00 tie=False err=False voters=(A1=98, A3=98) final=\boxed{98}
+[72/132  54.5% elapsed=5m32s eta=4m37s] id=gsm_00098 em=1 f1=1.00 tie=False err=False voters=(A1=14532132, A3=14532132) final=\boxed{14532132}
+[73/132  55.3% elapsed=5m36s eta=4m31s] id=gsm_00068 em=1 f1=1.00 tie=False err=False voters=(A1=7753432, A3=7753432) final=\boxed{7753432}
+[74/132  56.1% elapsed=5m37s eta=4m24s] id=gsm_00079 em=1 f1=1.00 tie=False err=False voters=(A1=785784.96, A3=785784.96) final=\boxed{785784.96}
+[75/132  56.8% elapsed=5m39s eta=4m17s] id=gsm_00099 em=1 f1=1.00 tie=False err=False voters=(A1=1554736.5) final=\boxed{1554736.5}
+[76/132  57.6% elapsed=5m47s eta=4m16s] id=gsm_00106 em=0 f1=0.00 tie=False err=False voters=(A1=227, A3=227) final=\boxed{227}
+[77/132  58.3% elapsed=5m47s eta=4m08s] id=gsm_00121 em=1 f1=1.00 tie=False err=False voters=(A1=43200, A3=43200) final=\boxed{43200}
+[78/132  59.1% elapsed=5m47s eta=4m01s] id=gsm_00112 em=1 f1=1.00 tie=False err=False voters=(A1=41920164, A3=41920164) final=\boxed{41920164}
+[79/132  59.8% elapsed=5m58s eta=4m00s] id=gsm_00052 em=1 f1=1.00 tie=False err=False voters=(A3=106) final=\boxed{106}
+[80/132  60.6% elapsed=6m00s eta=3m54s] id=gsm_00062 em=1 f1=1.00 tie=False err=False voters=(A1=32, A3=32) final=\boxed{32}
+[81/132  61.4% elapsed=6m12s eta=3m54s] id=gsm_00129 em=1 f1=1.00 tie=False err=False voters=(A1=280, A3=280) final=\boxed{280}
+[82/132  62.1% elapsed=6m13s eta=3m47s] id=gsm_00071 em=1 f1=1.00 tie=False err=False voters=(A3=2390629.2) final=\boxed{2390629.2}
+[83/132  62.9% elapsed=6m15s eta=3m42s] id=gsm_00104 em=1 f1=1.00 tie=False err=False voters=(A1=1693236) final=\boxed{1693236}
+[84/132  63.6% elapsed=6m16s eta=3m35s] id=gsm_00091 em=1 f1=1.00 tie=False err=False voters=(A1=27089169.25, A3=27089169.25) final=\boxed{27089169.25}
+[85/132  64.4% elapsed=6m19s eta=3m30s] id=gsm_00124 em=1 f1=1.00 tie=False err=False voters=(A1=18068022, A3=18068022) final=\boxed{18068022}
+[86/132  65.2% elapsed=6m22s eta=3m24s] id=gsm_00105 em=1 f1=1.00 tie=False err=False voters=(A1=82, A2=82, A3=82) final=\boxed{82}
+[87/132  65.9% elapsed=6m22s eta=3m17s] id=gsm_00116 em=1 f1=1.00 tie=False err=False voters=(A1=1800, A2=1800, A3=1800) final=\boxed{1800}
+[88/132  66.7% elapsed=6m26s eta=3m13s] id=gsm_00019 em=1 f1=1.00 tie=False err=False voters=(A1=8710409, A3=8710409) final=\boxed{8710409}
+[89/132  67.4% elapsed=6m27s eta=3m07s] id=gsm_00123 em=1 f1=1.00 tie=False err=False voters=(A1=29506470, A2=29506470, A3=29506470) final=\boxed{29506470}
+[90/132  68.2% elapsed=6m41s eta=3m07s] id=gsm_00002 em=0 f1=0.00 tie=False err=False voters=(A1=50627679, A3=50627679) final=\boxed{50627679}
+[91/132  68.9% elapsed=6m47s eta=3m03s] id=gsm_00055 em=0 f1=0.00 tie=False err=False voters=(A1=4345223, A2=4345463, A3=4345223) final=\boxed{4345223}
+[92/132  69.7% elapsed=6m51s eta=2m59s] id=gsm_00060 em=0 f1=0.00 tie=False err=False voters=(A1=4607969, A2=4607969, A3=4607969) final=\boxed{4607969}
+[93/132  70.5% elapsed=6m58s eta=2m55s] id=gsm_00064 em=1 f1=1.00 tie=False err=False voters=(A1=9099577.9166666667, A2=9099577.9166666667) final=\boxed{9099577.9166666667}
+[94/132  71.2% elapsed=7m12s eta=2m54s] id=gsm_00094 em=0 f1=0.00 tie=False err=False voters=(A1=1, A2=1, A3=1) final=\boxed{1}
+[95/132  72.0% elapsed=7m12s eta=2m48s] id=gsm_00037 em=1 f1=1.00 tie=False err=False voters=(A1=2047414.8, A3=2047414.8) final=\boxed{2047414.8}
+[96/132  72.7% elapsed=7m38s eta=2m52s] id=gsm_00021 em=1 f1=1.00 tie=False err=False voters=(A1=778670.2) final=\boxed{778670.2}
+[97/132  73.5% elapsed=7m44s eta=2m47s] id=gsm_00113 em=0 f1=1.00 tie=False err=False voters=(A1=161868) final=\boxed{161868}
+[98/132  74.2% elapsed=8m06s eta=2m49s] id=gsm_00067 em=0 f1=0.33 tie=False err=False voters=(A1=2174466.67, A3=2174466.67) final=\boxed{2174466.67}
+[99/132  75.0% elapsed=8m06s eta=2m42s] id=gsm_00049 em=0 f1=1.00 tie=False err=False voters=(A1=0.0836, A2=0.0836, A3=0.0836) final=\boxed{0.0836}
+[100/132  75.8% elapsed=8m08s eta=2m36s] id=gsm_00127 em=1 f1=1.00 tie=False err=False voters=(A1=28226616, A3=28226616) final=\boxed{28226616}
+[101/132  76.5% elapsed=8m23s eta=2m34s] id=gsm_00000 em=0 f1=0.00 tie=False err=False voters=(A1=5.98) final=\boxed{5.98}
+[102/132  77.3% elapsed=8m31s eta=2m30s] id=gsm_00126 em=1 f1=1.00 tie=False err=False voters=(A1=3453167) final=\boxed{3453167}
+[103/132  78.0% elapsed=8m41s eta=2m27s] id=gsm_00092 em=0 f1=0.33 tie=False err=False voters=(A1=107628900, A2=107628900) final=\boxed{107628900}
+[104/132  78.8% elapsed=8m41s eta=2m20s] id=gsm_00083 em=1 f1=1.00 tie=False err=False voters=(A1=1550109.75) final=\boxed{1550109.75}
+[105/132  79.5% elapsed=8m57s eta=2m18s] id=gsm_00100 em=1 f1=1.00 tie=False err=False voters=(A1=5.16e-7, A2=5.16e-7) final=\boxed{5.16e-7}
+[106/132  80.3% elapsed=8m57s eta=2m12s] id=gsm_00103 em=1 f1=1.00 tie=False err=False voters=(A1=5407463, A2=5407463, A3=5407463) final=\boxed{5407463}
+[107/132  81.1% elapsed=9m04s eta=2m07s] id=gsm_00089 em=0 f1=0.00 tie=False err=False voters=(A1=0, A3=0) final=\boxed{0}
+[108/132  81.8% elapsed=9m32s eta=2m07s] id=gsm_00001 em=0 f1=0.99 tie=False err=False voters=(A1=131422405.47, A3=131422405.47) final=\boxed{131422405.47}
+[109/132  82.6% elapsed=9m43s eta=2m03s] id=gsm_00122 em=1 f1=1.00 tie=False err=False voters=(A1=716608.5, A3=716608.5) final=\boxed{716608.5}
+[110/132  83.3% elapsed=9m49s eta=1m58s] id=gsm_00128 em=1 f1=1.00 tie=False err=False voters=(A1=1526448.5, A3=1526448.5) final=\boxed{1526448.5}
+[111/132  84.1% elapsed=9m52s eta=1m52s] id=gsm_00118 em=0 f1=0.00 tie=False err=False voters=(A1=96, A3=96) final=\boxed{96}
+[112/132  84.8% elapsed=10m13s eta=1m49s] id=gsm_00111 em=0 f1=0.38 tie=False err=False voters=(A1=12408810, A3=12408810) final=\boxed{12408810}
+[113/132  85.6% elapsed=10m20s eta=1m44s] id=gsm_00131 em=0 f1=1.00 tie=False err=False voters=(A1=0.0146, A2=0.0146, A3=0.0146) final=\boxed{0.0146}
+[114/132  86.4% elapsed=10m33s eta=1m40s] id=gsm_00051 em=1 f1=1.00 tie=True err=False voters=(A1=4865087, A3=4865122) final=\boxed{4865122}
+[115/132  87.1% elapsed=10m41s eta=1m35s] id=gsm_00109 em=0 f1=0.00 tie=False err=False voters=(A1=112430688, A3=112430688) final=\boxed{112430688}
+[116/132  87.9% elapsed=11m01s eta=1m31s] id=gsm_00125 em=0 f1=0.77 tie=False err=False voters=(A1=82925928, A3=82925928) final=\boxed{82925928}
+[117/132  88.6% elapsed=11m59s eta=1m32s] id=gsm_00004 em=0 f1=0.00 tie=False err=False voters=(A1=2857760.5, A3=2857760.5) final=\boxed{2857760.5}
+[118/132  89.4% elapsed=12m47s eta=1m31s] id=gsm_00077 em=1 f1=1.00 tie=False err=False voters=(A1=2548774, A3=2548774) final=\boxed{2548774}
+[119/132  90.2% elapsed=13m56s eta=1m31s] id=gsm_00101 em=0 f1=0.00 tie=False err=False voters=(A1=17, A3=17) final=\boxed{17}
+[120/132  90.9% elapsed=15m15s eta=1m31s] id=gsm_00130 em=0 f1=0.00 tie=False err=False voters=(A1=0, A3=0) final=\boxed{0}
+[121/132  91.7% elapsed=15m37s eta=1m25s] id=gsm_00107 em=0 f1=0.00 tie=False err=False voters=() final=None
+[122/132  92.4% elapsed=16m43s eta=1m22s] id=gsm_00102 em=1 f1=1.00 tie=True err=False voters=(A1=8089886, A2=-8089886) final=\boxed{-8089886}
+[123/132  93.2% elapsed=16m57s eta=1m14s] id=gsm_00097 em=0 f1=0.00 tie=False err=False voters=(A1=10136100374994, A3=10136100374994) final=\boxed{10136100374994}
+[124/132  93.9% elapsed=17m32s eta=1m08s] id=gsm_00095 em=1 f1=1.00 tie=False err=False voters=(A1=179.99992624) final=\boxed{179.99992624}
+[125/132  94.7% elapsed=17m48s eta=59.8s] id=gsm_00115 em=1 f1=1.00 tie=False err=False voters=(A1=12274570) final=\boxed{12274570}
+[126/132  95.5% elapsed=18m32s eta=52.9s] id=gsm_00045 em=0 f1=0.00 tie=True err=False voters=(A1=37370060000000000, A2=373700600000000) final=\boxed{373700600000000}
+[127/132  96.2% elapsed=19m07s eta=45.2s] id=gsm_00047 em=0 f1=0.50 tie=False err=False voters=(A1=-2) final=\boxed{-2}
+[128/132  97.0% elapsed=19m32s eta=36.6s] id=gsm_00108 em=0 f1=0.95 tie=False err=False voters=(A1=30144) final=\boxed{30144}
+[129/132  97.7% elapsed=20m18s eta=28.3s] id=gsm_00074 em=1 f1=1.00 tie=False err=False voters=(A1=15.9999722) final=\boxed{15.9999722}
+[130/132  98.5% elapsed=21m01s eta=19.4s] id=gsm_00119 em=0 f1=0.00 tie=False err=False voters=(A1=0) final=\boxed{0}
+[131/132  99.2% elapsed=25m35s eta=11.7s] id=gsm_00041 em=0 f1=0.00 tie=False err=False voters=(A1=3916477, A2=40, A3=40) final=\boxed{40}
+[132/132 100.0% elapsed=28m54s eta=0.0s] id=gsm_00093 em=0 f1=0.00 tie=False err=False voters=(A1=0, A3=0) final=\boxed{0}
+
+Done.
+  accuracy_em: 0.667
+  avg_f1:      0.742
+  tie_break_used: 3/132
+  errors:         0/132
+  output: /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/results.jsonl
+  total_time: 28m54s
+
+---------------- Completed ----------------
+time: 2026-08-16 18:12:33 CST
+Summary written to /data/wangyuheng/jca/logs/gsm_hard_baselines/gsmhard_latest_roles_raw8192_20260816/01_mad/run/summary.txt
+Stopping vLLM server process groups: 2241626 2241629 2241632
+
+---------------- nvidia-smi after cleanup ----------------
+Sun Aug 16 18:12:38 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.08             Driver Version: 580.105.08     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A800-SXM4-80GB          On  |   00000000:10:00.0 Off |                    0 |
+| N/A   50C    P0             92W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A800-SXM4-80GB          On  |   00000000:16:00.0 Off |                    0 |
+| N/A   44C    P0             89W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A800-SXM4-80GB          On  |   00000000:49:00.0 Off |                    0 |
+| N/A   48C    P0             86W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A800-SXM4-80GB          On  |   00000000:4D:00.0 Off |                    0 |
+| N/A   55C    P0            103W /  400W |       4MiB /  81920MiB |     43%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A800-SXM4-80GB          On  |   00000000:8A:00.0 Off |                    0 |
+| N/A   54C    P0             94W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A800-SXM4-80GB          On  |   00000000:8F:00.0 Off |                    0 |
+| N/A   59C    P0            103W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A800-SXM4-80GB          On  |   00000000:C6:00.0 Off |                    0 |
+| N/A   53C    P0             96W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   7  NVIDIA A800-SXM4-80GB          On  |   00000000:CA:00.0 Off |                    0 |
+| N/A   61C    P0            103W /  400W |       4MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+

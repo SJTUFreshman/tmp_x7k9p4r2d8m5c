@@ -1,0 +1,1074 @@
+================================================================
+JCA SFT launcher
+================================================================
+PROJ_ROOT     = /data/wangyuheng
+TRAJ_FILE     = <prebuilt>
+TAG           = gsm_fixed_a1_corr30_20260723_v3
+PREBUILT_DATA = /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3
+SFT_DATA_DIR  = /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3
+SFT_RUNS_DIR  = jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3
+AGENTS        = A1 A2 A3
+MODEL_A1      = /data/wangyuheng/models/Qwen3-1.7B
+MODEL_A2      = /data/wangyuheng/models/Qwen3-4B
+MODEL_A3      = /data/wangyuheng/models/Qwen3-8B
+NUM_GPUS      = 8
+MIXED_PREC    = bf16
+NUM_EPOCHS    = 3
+LR            = 1e-5
+PER_DEV_BATCH = 1
+GRAD_ACCUM    = 4
+MAX_SEQ       = 4096
+MAX_TOK_DROP  = 0.05
+LORA_RANK     = 64
+LORA_ALPHA    = 64
+LORA_DROPOUT  = 0.05
+LOAD_BEST     = 0
+EVAL_FRACTION = 0.05
+PER_AGENT_DATA= 1
+SPLIT_GROUP_BY= problem_id
+REPORT_TO     = tensorboard
+EARLY_STOP    = 3
+DL_WORKERS    = 0
+================================================================
+
+[preflight] Checking Python dependencies...
+[preflight] OK: torch, transformers, accelerate, datasets, peft, tensorboard
+
+[phase 1] Using prebuilt SFT data, skipping data build.
+{
+  "input": [
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.supplement_02.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.supplement_03.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.supplement_04.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.supplement_05.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.supplement_06.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_corr30_balanced_20260723_v2.supplement_07.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_fixed_a1_corr30_20260723_v3.jsonl",
+    "/data/wangyuheng/jca/outputs/gsm_correction_rollout/gsm_fixed_a1_corr30_20260723_v3.supplement_02.jsonl"
+  ],
+  "num_samples": 6600,
+  "counts_by_agent": {
+    "A1": 2200,
+    "A2": 2200,
+    "A3": 2200
+  },
+  "distribution": {
+    "actions": {
+      "global": {
+        "total": 6600,
+        "handoff": 4400,
+        "confirm_stop": 2200,
+        "confirm_ratio": 0.3333333333333333
+      },
+      "by_agent": {
+        "A1": {
+          "total": 2200,
+          "handoff": 2200,
+          "confirm_stop": 0,
+          "confirm_ratio": 0.0
+        },
+        "A2": {
+          "total": 2200,
+          "handoff": 1100,
+          "confirm_stop": 1100,
+          "confirm_ratio": 0.5
+        },
+        "A3": {
+          "total": 2200,
+          "handoff": 1100,
+          "confirm_stop": 1100,
+          "confirm_ratio": 0.5
+        }
+      },
+      "by_turn": {
+        "0": {
+          "total": 2200,
+          "handoff": 2200,
+          "confirm_stop": 0,
+          "confirm_ratio": 0.0
+        },
+        "1": {
+          "total": 2200,
+          "handoff": 2200,
+          "confirm_stop": 0,
+          "confirm_ratio": 0.0
+        },
+        "2": {
+          "total": 2200,
+          "handoff": 0,
+          "confirm_stop": 2200,
+          "confirm_ratio": 1.0
+        }
+      },
+      "by_agent_turn": {
+        "A1": {
+          "0": {
+            "total": 2200,
+            "handoff": 2200,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          },
+          "1": {
+            "total": 0,
+            "handoff": 0,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          },
+          "2": {
+            "total": 0,
+            "handoff": 0,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          }
+        },
+        "A2": {
+          "0": {
+            "total": 0,
+            "handoff": 0,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          },
+          "1": {
+            "total": 1100,
+            "handoff": 1100,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          },
+          "2": {
+            "total": 1100,
+            "handoff": 0,
+            "confirm_stop": 1100,
+            "confirm_ratio": 1.0
+          }
+        },
+        "A3": {
+          "0": {
+            "total": 0,
+            "handoff": 0,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          },
+          "1": {
+            "total": 1100,
+            "handoff": 1100,
+            "confirm_stop": 0,
+            "confirm_ratio": 0.0
+          },
+          "2": {
+            "total": 1100,
+            "handoff": 0,
+            "confirm_stop": 1100,
+            "confirm_ratio": 1.0
+          }
+        }
+      }
+    },
+    "roles": {
+      "A1": "correct turn-0 solver and handoff",
+      "A2": "turn-1 verifier/corrector or turn-2 final confirmer",
+      "A3": "turn-1 verifier/corrector or turn-2 final confirmer"
+    },
+    "selected_unique_trajectories": {
+      "A1_regular": 2200,
+      "verifier_regular": 1540,
+      "correction": 660
+    },
+    "source_shapes_by_supervised_row": {
+      "converted_4_to_3": 1724,
+      "native_3_turn": 4876
+    }
+  },
+  "quality_gate": {
+    "enforced": false,
+    "passed": true,
+    "checks": {
+      "exact_samples_per_agent": {
+        "passed": true,
+        "counts": {
+          "A1": 2200,
+          "A2": 2200,
+          "A3": 2200
+        },
+        "target": 2200
+      },
+      "A1_correct_solver_handoff_role": {
+        "passed": true,
+        "role": "regular turn-0 solver/handoff only"
+      },
+      "A2_correction_ratio": {
+        "passed": true,
+        "count": 660,
+        "value": 0.3,
+        "target": 0.3
+      },
+      "A2_route_balance": {
+        "passed": true,
+        "counts": {
+          "A1>A2>A3": 1100,
+          "A1>A3>A2": 1100
+        }
+      },
+      "A2_error_type_balance": {
+        "passed": true,
+        "counts": {
+          "omitted_multiplier": 110,
+          "percentage": 110,
+          "premature_rounding": 110,
+          "sign": 110,
+          "time_span": 110,
+          "unit_conversion": 110
+        }
+      },
+      "A2_role_action_balance": {
+        "passed": true,
+        "confirm_ratio": 0.5,
+        "expected": 0.5
+      },
+      "A3_correction_ratio": {
+        "passed": true,
+        "count": 660,
+        "value": 0.3,
+        "target": 0.3
+      },
+      "A3_route_balance": {
+        "passed": true,
+        "counts": {
+          "A1>A2>A3": 1100,
+          "A1>A3>A2": 1100
+        }
+      },
+      "A3_error_type_balance": {
+        "passed": true,
+        "counts": {
+          "omitted_multiplier": 110,
+          "percentage": 110,
+          "premature_rounding": 110,
+          "sign": 110,
+          "time_span": 110,
+          "unit_conversion": 110
+        }
+      },
+      "A3_role_action_balance": {
+        "passed": true,
+        "confirm_ratio": 0.5,
+        "expected": 0.5
+      },
+      "A1_route_balance": {
+        "passed": true,
+        "counts": {
+          "A1>A2>A3": 1100,
+          "A1>A3>A2": 1100
+        }
+      },
+      "sign_correction_gold_balance": {
+        "passed": true,
+        "counts": {
+          "negative": 55,
+          "non_negative": 55
+        }
+      },
+      "wrong_A1_context_never_supervised": {
+        "passed": true,
+        "intended_wrong_contexts": 660,
+        "supervised_wrong_A1_targets": 0
+      },
+      "fixed_A1_three_turn_roles": {
+        "passed": true
+      }
+    }
+  },
+  "supplement_plan": {
+    "required": false,
+    "failed_checks": [],
+    "preferred_start_agent": "A1",
+    "suggested_trajectories": 0
+  },
+  "cell_availability": {
+    "regular:A1>A2>A3": 1182,
+    "regular:A1>A3>A2": 1127,
+    "correction:A1>A2>A3:sign": 77,
+    "correction:A1>A2>A3:omitted_multiplier": 71,
+    "correction:A1>A2>A3:unit_conversion": 71,
+    "correction:A1>A2>A3:time_span": 69,
+    "correction:A1>A2>A3:percentage": 69,
+    "correction:A1>A2>A3:premature_rounding": 72,
+    "correction:A1>A3>A2:sign": 75,
+    "correction:A1>A3>A2:omitted_multiplier": 69,
+    "correction:A1>A3>A2:unit_conversion": 71,
+    "correction:A1>A3>A2:time_span": 70,
+    "correction:A1>A3>A2:percentage": 70,
+    "correction:A1>A3>A2:premature_rounding": 73,
+    "correction:A1>A2>A3:sign:negative": 50,
+    "correction:A1>A2>A3:sign:non_negative": 27,
+    "correction:A1>A3>A2:sign:negative": 27,
+    "correction:A1>A3>A2:sign:non_negative": 48
+  },
+  "targets": {
+    "samples_per_agent": 2200,
+    "a1_regular_per_route": 1100,
+    "verifier_regular_per_route": 770,
+    "correction_per_agent": 660,
+    "correction_per_route_error": 55
+  },
+  "filters": {
+    "fixed_start_agent": "A1",
+    "routes": [
+      "A1>A2>A3",
+      "A1>A3>A2"
+    ],
+    "require_correct": true,
+    "correction_fraction_for_A2_A3": 0.3,
+    "max_verifier_reasoning_similarity": 0.85
+  },
+  "stats": {
+    "input_trajectories": 9758,
+    "drop_not_stop": 1552,
+    "drop_not_fixed_a1_route": 5040,
+    "valid_fixed_a1_trajectories": 3166,
+    "valid_correction": 857,
+    "valid_native_3_turn": 2413,
+    "valid_regular": 2309,
+    "valid_converted_4_to_3": 753
+  }
+}
+
+================================================================
+[phase 2] Training A1 — 2200 examples
+  data: /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A1.jsonl
+  base: /data/wangyuheng/models/Qwen3-1.7B
+  out:  jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A1
+================================================================
+The following values were not passed to `accelerate launch` and had defaults used instead:
+	`--num_machines` was set to a value of `1`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+2026-07-23 18:29:18 [INFO] Agent: A1
+2026-07-23 18:29:18 [INFO] Base model: /data/wangyuheng/models/Qwen3-1.7B
+2026-07-23 18:29:18 [INFO] Data: /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A1.jsonl
+2026-07-23 18:29:18 [INFO] Output: jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A1
+2026-07-23 18:29:18 [INFO] Loaded 2200 examples from /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A1.jsonl
+2026-07-23 18:29:18 [INFO] Split by problem_id: train=2090 rows/628 groups, eval=110 rows/36 groups
+2026-07-23 18:29:26 [INFO] Loading tokenizer...
+2026-07-23 18:29:27 [INFO] Tokenizing train set...
+2026-07-23 18:29:31 [INFO] Encoded 2090 examples; skipped 0 (too long or empty label).
+2026-07-23 18:29:31 [INFO] Tokenizing eval set...
+2026-07-23 18:29:31 [INFO] Encoded 110 examples; skipped 0 (too long or empty label).
+2026-07-23 18:29:31 [INFO] Tokenization retained 2200/2200 examples (drop_ratio=0.0000)
+2026-07-23 18:29:31 [INFO] Loading model...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 12243.21it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 13008.64it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s][transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 311/311 [00:00<00:00, 12639.44it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 12872.44it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 12815.40it/s]
+Loading weights: 100%|██████████| 311/311 [00:00<00:00, 13157.04it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 13021.63it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 12803.96it/s]
+trainable params: 25,690,112 || all params: 1,746,265,088 || trainable%: 1.4711
+2026-07-23 18:29:43 [INFO] Dropped unsupported TrainingArguments for this transformers version: overwrite_output_dir
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+2026-07-23 18:29:45 [INFO] ======================================================================
+2026-07-23 18:29:45 [INFO] Starting training
+2026-07-23 18:29:45 [INFO] ======================================================================
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+  0%|          | 0/198 [00:00<?, ?it/s]  1%|          | 1/198 [00:01<05:06,  1.56s/it]  1%|          | 2/198 [00:02<03:56,  1.21s/it]  2%|▏         | 3/198 [00:03<03:33,  1.09s/it]  2%|▏         | 4/198 [00:04<03:22,  1.04s/it]  3%|▎         | 5/198 [00:05<03:17,  1.02s/it]  3%|▎         | 6/198 [00:06<03:27,  1.08s/it]  4%|▎         | 7/198 [00:07<03:20,  1.05s/it]  4%|▍         | 8/198 [00:08<03:15,  1.03s/it]  5%|▍         | 9/198 [00:09<03:13,  1.02s/it]  5%|▌         | 10/198 [00:10<03:10,  1.01s/it]                                                {'loss': '1.006', 'grad_norm': '3.924', 'learning_rate': '9e-06', 'epoch': '0.1527'}
+  5%|▌         | 10/198 [00:10<03:10,  1.01s/it]2026-07-23 18:29:58 [INFO] step 10  loss=1.0059  grad_norm=3.9238  learning_rate=0.0000  epoch=0.1527
+  6%|▌         | 11/198 [00:11<03:08,  1.01s/it]  6%|▌         | 12/198 [00:12<03:19,  1.07s/it]  7%|▋         | 13/198 [00:13<03:15,  1.06s/it]  7%|▋         | 14/198 [00:14<03:11,  1.04s/it]  8%|▊         | 15/198 [00:15<03:08,  1.03s/it]  8%|▊         | 16/198 [00:16<03:05,  1.02s/it]  9%|▊         | 17/198 [00:17<03:06,  1.03s/it]  9%|▉         | 18/198 [00:19<03:14,  1.08s/it] 10%|▉         | 19/198 [00:20<03:07,  1.05s/it] 10%|█         | 20/198 [00:21<03:01,  1.02s/it]                                                {'loss': '0.7454', 'grad_norm': '1.758', 'learning_rate': '9.944e-06', 'epoch': '0.3053'}
+ 10%|█         | 20/198 [00:21<03:01,  1.02s/it]2026-07-23 18:30:08 [INFO] step 20  loss=0.7454  grad_norm=1.7585  learning_rate=0.0000  epoch=0.3053
+ 11%|█         | 21/198 [00:21<02:57,  1.00s/it] 11%|█         | 22/198 [00:22<02:53,  1.01it/s] 12%|█▏        | 23/198 [00:23<02:50,  1.02it/s] 12%|█▏        | 24/198 [00:25<02:59,  1.03s/it] 13%|█▎        | 25/198 [00:25<02:54,  1.01s/it] 13%|█▎        | 26/198 [00:26<02:50,  1.01it/s] 14%|█▎        | 27/198 [00:27<02:47,  1.02it/s] 14%|█▍        | 28/198 [00:28<02:45,  1.03it/s] 15%|█▍        | 29/198 [00:29<02:46,  1.01it/s] 15%|█▌        | 30/198 [00:31<02:58,  1.06s/it]                                                {'loss': '0.4469', 'grad_norm': '0.4604', 'learning_rate': '9.75e-06', 'epoch': '0.458'}
+ 15%|█▌        | 30/198 [00:31<02:58,  1.06s/it]2026-07-23 18:30:18 [INFO] step 30  loss=0.4469  grad_norm=0.4604  learning_rate=0.0000  epoch=0.4580
+ 16%|█▌        | 31/198 [00:32<02:52,  1.03s/it] 16%|█▌        | 32/198 [00:33<02:49,  1.02s/it] 17%|█▋        | 33/198 [00:34<02:45,  1.00s/it] 17%|█▋        | 34/198 [00:35<02:43,  1.00it/s] 18%|█▊        | 35/198 [00:36<02:42,  1.00it/s] 18%|█▊        | 36/198 [00:37<02:42,  1.00s/it] 19%|█▊        | 37/198 [00:38<02:49,  1.05s/it] 19%|█▉        | 38/198 [00:39<02:44,  1.03s/it] 20%|█▉        | 39/198 [00:40<02:40,  1.01s/it] 20%|██        | 40/198 [00:41<02:38,  1.00s/it]                                                {'loss': '0.3723', 'grad_norm': '0.6909', 'learning_rate': '9.424e-06', 'epoch': '0.6107'}
+ 20%|██        | 40/198 [00:41<02:38,  1.00s/it]2026-07-23 18:30:28 [INFO] step 40  loss=0.3723  grad_norm=0.6909  learning_rate=0.0000  epoch=0.6107
+ 21%|██        | 41/198 [00:42<02:37,  1.00s/it] 21%|██        | 42/198 [00:43<02:43,  1.05s/it] 22%|██▏       | 43/198 [00:44<02:40,  1.03s/it] 22%|██▏       | 44/198 [00:45<02:36,  1.02s/it] 23%|██▎       | 45/198 [00:46<02:34,  1.01s/it] 23%|██▎       | 46/198 [00:47<02:31,  1.00it/s] 24%|██▎       | 47/198 [00:48<02:29,  1.01it/s] 24%|██▍       | 48/198 [00:49<02:37,  1.05s/it] 25%|██▍       | 49/198 [00:50<02:32,  1.02s/it] 25%|██▌       | 50/198 [00:51<02:29,  1.01s/it]                                                {'loss': '0.326', 'grad_norm': '0.4592', 'learning_rate': '8.975e-06', 'epoch': '0.7634'}
+ 25%|██▌       | 50/198 [00:51<02:29,  1.01s/it]2026-07-23 18:30:38 [INFO] step 50  loss=0.3260  grad_norm=0.4592  learning_rate=0.0000  epoch=0.7634
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 26.21it/s][A
+ 50%|█████     | 7/14 [00:00<00:00, 22.95it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 21.69it/s][A
+ 93%|█████████▎| 13/14 [00:00<00:00, 20.90it/s][A2026-07-23 18:30:46 [INFO] [eval-sample 0] step=50
+  expected: {"reasoning": "The farmer produces 928840 bales per hour, and the truck removes 3 bales per hour. The net rate of bales added per hour is 928840 - 3 = 928837 bales per hour. Over a 6-hour day, the tot
+  generated: {"reasoning": "The farmer bales 928840 bales per hour, and the truck picks up 3 bales per hour. In a 6-hour day, the farmer bales 928840 * 6 = 5573040 bales. The truck picks up 3 * 6 = 18 bales. The total bales picked up is 18 bales. The bales left in the field is 5573040 - 18 = 5573022 bales.", "te
+2026-07-23 18:30:51 [INFO] [eval-sample 1] step=50
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is B = (3
+  generated: {"reasoning": "First, we calculate the average enrollment at Butler High School. The average enrollment at Norman High School is 8282072 students. Butler High School has 3/4 of that, so we multiply 8282072 by 3/4 to get the enrollment at Butler High School. Then, we subtract the enrollment at Butler
+
+100%|██████████| 14/14 [00:13<00:00, 20.90it/s][A2026-07-23 18:30:57 [INFO] [eval-sample 2] step=50
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is (3/4) 
+  generated: {"reasoning": "First, we calculate the average enrollment at Butler High School. The average enrollment at Norman High School is 8282072 students. Butler High School has 3/4 of that, so we multiply 8282072 by 3/4 to get the enrollment at Butler High School. Then, we subtract the enrollment at Butler
+2026-07-23 18:31:03 [INFO] [eval-sample 3] step=50
+  expected: {"reasoning": "Let the total number of students be x. According to the problem, three-fourths of the students have a desktop computer, which means one-fourth do not. Therefore, x * (1/4) = 6368957. So
+  generated: {"reasoning": "Let the total number of students be $ x $. According to the problem, three-fourths of the students have a desktop computer at home, which means one-fourth do not. So, the number of students who do not have desktop computers is $ \frac{1}{4}x = 6368957 $. Solving for $ x $, we get $ x 
+                                                
+                                               [A{'eval_loss': '0.3335', 'eval_runtime': '24.4', 'eval_samples_per_second': '4.509', 'eval_steps_per_second': '0.574', 'epoch': '0.7634'}
+ 25%|██▌       | 50/198 [01:15<02:29,  1.01s/it]
+100%|██████████| 14/14 [00:24<00:00, 20.90it/s][A2026-07-23 18:31:03 [INFO] step 50  eval_loss=0.3335  eval_runtime=24.3983  eval_samples_per_second=4.5090  eval_steps_per_second=0.5740  epoch=0.7634
+
+                                               [A 26%|██▌       | 51/198 [01:17<21:03,  8.60s/it] 26%|██▋       | 52/198 [01:18<15:21,  6.31s/it] 27%|██▋       | 53/198 [01:19<11:24,  4.72s/it] 27%|██▋       | 54/198 [01:20<08:47,  3.67s/it] 28%|██▊       | 55/198 [01:21<06:48,  2.85s/it] 28%|██▊       | 56/198 [01:22<05:25,  2.29s/it] 29%|██▉       | 57/198 [01:23<04:26,  1.89s/it] 29%|██▉       | 58/198 [01:24<03:46,  1.62s/it] 30%|██▉       | 59/198 [01:25<03:18,  1.43s/it] 30%|███       | 60/198 [01:26<03:05,  1.35s/it]                                                {'loss': '0.2813', 'grad_norm': '0.3928', 'learning_rate': '8.415e-06', 'epoch': '0.916'}
+ 30%|███       | 60/198 [01:26<03:05,  1.35s/it]2026-07-23 18:31:14 [INFO] step 60  loss=0.2813  grad_norm=0.3928  learning_rate=0.0000  epoch=0.9160
+ 31%|███       | 61/198 [01:27<02:50,  1.25s/it] 31%|███▏      | 62/198 [01:28<02:39,  1.17s/it] 32%|███▏      | 63/198 [01:29<02:30,  1.11s/it] 32%|███▏      | 64/198 [01:30<02:23,  1.07s/it] 33%|███▎      | 65/198 [01:31<02:23,  1.08s/it] 33%|███▎      | 66/198 [01:32<02:05,  1.05it/s] 34%|███▍      | 67/198 [01:33<02:05,  1.05it/s] 34%|███▍      | 68/198 [01:34<02:04,  1.04it/s] 35%|███▍      | 69/198 [01:35<02:04,  1.04it/s] 35%|███▌      | 70/198 [01:36<02:03,  1.04it/s]                                                {'loss': '0.2356', 'grad_norm': '0.3847', 'learning_rate': '7.76e-06', 'epoch': '1.061'}
+ 35%|███▌      | 70/198 [01:36<02:03,  1.04it/s]2026-07-23 18:31:23 [INFO] step 70  loss=0.2356  grad_norm=0.3847  learning_rate=0.0000  epoch=1.0611
+ 36%|███▌      | 71/198 [01:37<02:02,  1.03it/s] 36%|███▋      | 72/198 [01:38<02:08,  1.02s/it] 37%|███▋      | 73/198 [01:39<02:06,  1.01s/it] 37%|███▋      | 74/198 [01:40<02:04,  1.01s/it] 38%|███▊      | 75/198 [01:41<02:03,  1.00s/it] 38%|███▊      | 76/198 [01:42<02:02,  1.00s/it] 39%|███▉      | 77/198 [01:43<02:00,  1.00it/s] 39%|███▉      | 78/198 [01:44<02:04,  1.04s/it] 40%|███▉      | 79/198 [01:45<02:02,  1.03s/it] 40%|████      | 80/198 [01:46<02:00,  1.02s/it]                                                {'loss': '0.202', 'grad_norm': '0.315', 'learning_rate': '7.029e-06', 'epoch': '1.214'}
+ 40%|████      | 80/198 [01:46<02:00,  1.02s/it]2026-07-23 18:31:34 [INFO] step 80  loss=0.2020  grad_norm=0.3150  learning_rate=0.0000  epoch=1.2137
+ 41%|████      | 81/198 [01:47<01:57,  1.01s/it] 41%|████▏     | 82/198 [01:48<01:55,  1.01it/s] 42%|████▏     | 83/198 [01:49<01:52,  1.02it/s] 42%|████▏     | 84/198 [01:50<01:56,  1.02s/it] 43%|████▎     | 85/198 [01:51<01:54,  1.01s/it] 43%|████▎     | 86/198 [01:52<01:52,  1.01s/it] 44%|████▍     | 87/198 [01:53<01:51,  1.00s/it] 44%|████▍     | 88/198 [01:54<01:50,  1.00s/it] 45%|████▍     | 89/198 [01:55<01:48,  1.00it/s] 45%|████▌     | 90/198 [01:56<01:50,  1.02s/it]                                                {'loss': '0.1726', 'grad_norm': '0.2352', 'learning_rate': '6.24e-06', 'epoch': '1.366'}
+ 45%|████▌     | 90/198 [01:56<01:50,  1.02s/it]2026-07-23 18:31:44 [INFO] step 90  loss=0.1726  grad_norm=0.2352  learning_rate=0.0000  epoch=1.3664
+ 46%|████▌     | 91/198 [01:57<01:53,  1.06s/it] 46%|████▋     | 92/198 [01:58<01:49,  1.04s/it] 47%|████▋     | 93/198 [01:59<01:46,  1.02s/it] 47%|████▋     | 94/198 [02:00<01:45,  1.01s/it] 48%|████▊     | 95/198 [02:01<01:43,  1.00s/it] 48%|████▊     | 96/198 [02:02<01:47,  1.05s/it] 49%|████▉     | 97/198 [02:03<01:43,  1.03s/it] 49%|████▉     | 98/198 [02:04<01:41,  1.01s/it] 50%|█████     | 99/198 [02:05<01:38,  1.00it/s] 51%|█████     | 100/198 [02:06<01:36,  1.01it/s]                                                 {'loss': '0.1754', 'grad_norm': '0.2141', 'learning_rate': '5.417e-06', 'epoch': '1.519'}
+ 51%|█████     | 100/198 [02:06<01:36,  1.01it/s]2026-07-23 18:31:54 [INFO] step 100  loss=0.1754  grad_norm=0.2141  learning_rate=0.0000  epoch=1.5191
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 27.47it/s][A
+ 50%|█████     | 7/14 [00:00<00:00, 22.93it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 21.51it/s][A
+ 93%|█████████▎| 13/14 [00:00<00:00, 21.22it/s][A2026-07-23 18:32:04 [INFO] [eval-sample 0] step=100
+  expected: {"reasoning": "The farmer produces 928840 bales per hour, and the truck removes 3 bales per hour. The net rate of bales added per hour is 928840 - 3 = 928837 bales per hour. Over a 6-hour day, the tot
+  generated: {"reasoning": "The farmer bales hay at a rate of 928840 bales per hour, and the truck picks up hay at a rate of 3 bales per hour. In a 6-hour day, the farmer bales 928840 * 6 = 5573040 bales. The truck picks up 3 * 6 = 18 bales. The total number of bales picked up is 5573040 + 18 = 5573058 bales. Th
+2026-07-23 18:32:09 [INFO] [eval-sample 1] step=100
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is B = (3
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4)N. The difference in enrollment is N - (3/4)N = (1/4)N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "action": "han
+
+100%|██████████| 14/14 [00:17<00:00, 21.22it/s][A2026-07-23 18:32:15 [INFO] [eval-sample 2] step=100
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is (3/4) 
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4)N. The difference in enrollment is N - (3/4)N = (1/4)N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "action": "han
+2026-07-23 18:32:21 [INFO] [eval-sample 3] step=100
+  expected: {"reasoning": "Let the total number of students be x. According to the problem, three-fourths of the students have a desktop computer, which means one-fourth do not. Therefore, x * (1/4) = 6368957. So
+  generated: {"reasoning": "Let the total number of students be $ x $. According to the problem, three-fourths of the students have a desktop computer at home, which means one-fourth do not. The number of students who do not have desktop computers is given as 6368957. So, we can set up the equation: $ \frac{1}{4
+                                                 
+                                               [A{'eval_loss': '0.1924', 'eval_runtime': '27.64', 'eval_samples_per_second': '3.98', 'eval_steps_per_second': '0.507', 'epoch': '1.519'}
+ 51%|█████     | 100/198 [02:34<01:36,  1.01it/s]
+100%|██████████| 14/14 [00:27<00:00, 21.22it/s][A2026-07-23 18:32:21 [INFO] step 100  eval_loss=0.1924  eval_runtime=27.6371  eval_samples_per_second=3.9800  eval_steps_per_second=0.5070  epoch=1.5191
+
+                                               [A 51%|█████     | 101/198 [02:36<15:29,  9.58s/it] 52%|█████▏    | 102/198 [02:37<11:17,  7.06s/it] 52%|█████▏    | 103/198 [02:38<08:17,  5.23s/it] 53%|█████▎    | 104/198 [02:39<06:12,  3.96s/it] 53%|█████▎    | 105/198 [02:40<04:45,  3.07s/it] 54%|█████▎    | 106/198 [02:41<03:45,  2.45s/it] 54%|█████▍    | 107/198 [02:42<03:06,  2.05s/it] 55%|█████▍    | 108/198 [02:43<02:40,  1.79s/it] 55%|█████▌    | 109/198 [02:44<02:18,  1.56s/it] 56%|█████▌    | 110/198 [02:45<02:02,  1.39s/it]                                                 {'loss': '0.1677', 'grad_norm': '0.2111', 'learning_rate': '4.583e-06', 'epoch': '1.672'}
+ 56%|█████▌    | 110/198 [02:45<02:02,  1.39s/it]2026-07-23 18:32:33 [INFO] step 110  loss=0.1677  grad_norm=0.2111  learning_rate=0.0000  epoch=1.6718
+ 56%|█████▌    | 111/198 [02:46<01:50,  1.27s/it] 57%|█████▋    | 112/198 [02:47<01:42,  1.19s/it] 57%|█████▋    | 113/198 [02:49<01:38,  1.16s/it] 58%|█████▊    | 114/198 [02:50<01:38,  1.17s/it] 58%|█████▊    | 115/198 [02:51<01:32,  1.11s/it] 59%|█████▊    | 116/198 [02:52<01:27,  1.07s/it] 59%|█████▉    | 117/198 [02:53<01:24,  1.04s/it] 60%|█████▉    | 118/198 [02:54<01:21,  1.02s/it] 60%|██████    | 119/198 [02:55<01:21,  1.04s/it] 61%|██████    | 120/198 [02:56<01:23,  1.07s/it]                                                 {'loss': '0.1553', 'grad_norm': '0.2108', 'learning_rate': '3.76e-06', 'epoch': '1.824'}
+ 61%|██████    | 120/198 [02:56<01:23,  1.07s/it]2026-07-23 18:32:43 [INFO] step 120  loss=0.1553  grad_norm=0.2108  learning_rate=0.0000  epoch=1.8244
+ 61%|██████    | 121/198 [02:57<01:23,  1.08s/it] 62%|██████▏   | 122/198 [02:58<01:20,  1.06s/it] 62%|██████▏   | 123/198 [02:59<01:18,  1.04s/it] 63%|██████▎   | 124/198 [03:00<01:16,  1.03s/it] 63%|██████▎   | 125/198 [03:01<01:16,  1.04s/it] 64%|██████▎   | 126/198 [03:02<01:19,  1.10s/it] 64%|██████▍   | 127/198 [03:03<01:15,  1.06s/it] 65%|██████▍   | 128/198 [03:04<01:12,  1.03s/it] 65%|██████▌   | 129/198 [03:05<01:09,  1.01s/it] 66%|██████▌   | 130/198 [03:06<01:08,  1.00s/it]                                                 {'loss': '0.1622', 'grad_norm': '0.2038', 'learning_rate': '2.971e-06', 'epoch': '1.977'}
+ 66%|██████▌   | 130/198 [03:06<01:08,  1.00s/it]2026-07-23 18:32:54 [INFO] step 130  loss=0.1622  grad_norm=0.2038  learning_rate=0.0000  epoch=1.9771
+ 66%|██████▌   | 131/198 [03:07<01:09,  1.03s/it] 67%|██████▋   | 132/198 [03:08<01:00,  1.09it/s] 67%|██████▋   | 133/198 [03:09<01:01,  1.07it/s] 68%|██████▊   | 134/198 [03:10<01:01,  1.03it/s] 68%|██████▊   | 135/198 [03:11<01:00,  1.04it/s] 69%|██████▊   | 136/198 [03:12<00:59,  1.04it/s] 69%|██████▉   | 137/198 [03:13<00:59,  1.03it/s] 70%|██████▉   | 138/198 [03:14<01:01,  1.03s/it] 70%|███████   | 139/198 [03:15<01:00,  1.02s/it] 71%|███████   | 140/198 [03:16<00:59,  1.02s/it]                                                 {'loss': '0.1662', 'grad_norm': '0.2007', 'learning_rate': '2.24e-06', 'epoch': '2.122'}
+ 71%|███████   | 140/198 [03:16<00:59,  1.02s/it]2026-07-23 18:33:03 [INFO] step 140  loss=0.1662  grad_norm=0.2007  learning_rate=0.0000  epoch=2.1221
+ 71%|███████   | 141/198 [03:17<00:57,  1.01s/it] 72%|███████▏  | 142/198 [03:18<00:56,  1.01s/it] 72%|███████▏  | 143/198 [03:19<00:56,  1.03s/it] 73%|███████▎  | 144/198 [03:20<00:55,  1.02s/it] 73%|███████▎  | 145/198 [03:21<00:56,  1.06s/it] 74%|███████▎  | 146/198 [03:22<00:54,  1.04s/it] 74%|███████▍  | 147/198 [03:23<00:52,  1.03s/it] 75%|███████▍  | 148/198 [03:24<00:50,  1.02s/it] 75%|███████▌  | 149/198 [03:25<00:49,  1.01s/it] 76%|███████▌  | 150/198 [03:26<00:50,  1.04s/it]                                                 {'loss': '0.163', 'grad_norm': '0.2117', 'learning_rate': '1.585e-06', 'epoch': '2.275'}
+ 76%|███████▌  | 150/198 [03:26<00:50,  1.04s/it]2026-07-23 18:33:14 [INFO] step 150  loss=0.1630  grad_norm=0.2117  learning_rate=0.0000  epoch=2.2748
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 27.71it/s][A
+ 50%|█████     | 7/14 [00:00<00:00, 23.82it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 22.59it/s][A
+ 93%|█████████▎| 13/14 [00:00<00:00, 21.65it/s][A2026-07-23 18:33:22 [INFO] [eval-sample 0] step=150
+  expected: {"reasoning": "The farmer produces 928840 bales per hour, and the truck removes 3 bales per hour. The net rate of bales added per hour is 928840 - 3 = 928837 bales per hour. Over a 6-hour day, the tot
+  generated: {"reasoning": "The farmer bales hay at a rate of 928840 bales per hour, and the truck picks up hay at a rate of 3 bales per hour. In a 6-hour day, the farmer bales 928840 * 6 = 5573040 bales. The truck picks up 3 * 6 = 18 bales. The total number of bales picked up is 18, so the number of bales left 
+2026-07-23 18:33:27 [INFO] [eval-sample 1] step=150
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is B = (3
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4) * N. The difference in enrollment is N - (3/4) * N = (1/4) * N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "acti
+
+100%|██████████| 14/14 [00:17<00:00, 21.65it/s][A2026-07-23 18:33:33 [INFO] [eval-sample 2] step=150
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is (3/4) 
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4) * N. The difference in enrollment is N - (3/4) * N = (1/4) * N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "acti
+2026-07-23 18:33:39 [INFO] [eval-sample 3] step=150
+  expected: {"reasoning": "Let the total number of students be x. According to the problem, three-fourths of the students have a desktop computer, which means one-fourth do not. Therefore, x * (1/4) = 6368957. So
+  generated: {"reasoning": "Let the total number of students be $ x $. According to the problem, three-fourths of the students have a desktop computer at home, which means one-fourth do not. The number of students who do not have desktop computers is given as 6368957. So, we can set up the equation: $ \frac{1}{4
+                                                 
+                                               [A{'eval_loss': '0.184', 'eval_runtime': '25.58', 'eval_samples_per_second': '4.3', 'eval_steps_per_second': '0.547', 'epoch': '2.275'}
+ 76%|███████▌  | 150/198 [03:52<00:50,  1.04s/it]
+100%|██████████| 14/14 [00:25<00:00, 21.65it/s][A2026-07-23 18:33:39 [INFO] step 150  eval_loss=0.1840  eval_runtime=25.5839  eval_samples_per_second=4.3000  eval_steps_per_second=0.5470  epoch=2.2748
+
+                                               [A 76%|███████▋  | 151/198 [03:54<07:03,  9.01s/it] 77%|███████▋  | 152/198 [03:55<05:03,  6.61s/it] 77%|███████▋  | 153/198 [03:56<03:41,  4.92s/it] 78%|███████▊  | 154/198 [03:57<02:44,  3.74s/it] 78%|███████▊  | 155/198 [03:58<02:08,  2.98s/it] 79%|███████▉  | 156/198 [03:59<01:41,  2.42s/it] 79%|███████▉  | 157/198 [04:00<01:21,  2.00s/it] 80%|███████▉  | 158/198 [04:01<01:07,  1.70s/it] 80%|████████  | 159/198 [04:02<00:57,  1.48s/it] 81%|████████  | 160/198 [04:03<00:50,  1.33s/it]                                                 {'loss': '0.1584', 'grad_norm': '0.2753', 'learning_rate': '1.025e-06', 'epoch': '2.427'}
+ 81%|████████  | 160/198 [04:03<00:50,  1.33s/it]2026-07-23 18:33:51 [INFO] step 160  loss=0.1584  grad_norm=0.2753  learning_rate=0.0000  epoch=2.4275
+ 81%|████████▏ | 161/198 [04:04<00:45,  1.22s/it] 82%|████████▏ | 162/198 [04:05<00:42,  1.19s/it] 82%|████████▏ | 163/198 [04:06<00:39,  1.12s/it] 83%|████████▎ | 164/198 [04:07<00:36,  1.09s/it] 83%|████████▎ | 165/198 [04:08<00:35,  1.07s/it] 84%|████████▍ | 166/198 [04:09<00:33,  1.05s/it] 84%|████████▍ | 167/198 [04:10<00:32,  1.04s/it] 85%|████████▍ | 168/198 [04:11<00:32,  1.08s/it] 85%|████████▌ | 169/198 [04:12<00:30,  1.06s/it] 86%|████████▌ | 170/198 [04:13<00:29,  1.04s/it]                                                 {'loss': '0.1557', 'grad_norm': '0.176', 'learning_rate': '5.757e-07', 'epoch': '2.58'}
+ 86%|████████▌ | 170/198 [04:13<00:29,  1.04s/it]2026-07-23 18:34:01 [INFO] step 170  loss=0.1557  grad_norm=0.1760  learning_rate=0.0000  epoch=2.5802
+ 86%|████████▋ | 171/198 [04:14<00:27,  1.02s/it] 87%|████████▋ | 172/198 [04:15<00:26,  1.01s/it] 87%|████████▋ | 173/198 [04:16<00:24,  1.00it/s] 88%|████████▊ | 174/198 [04:18<00:25,  1.05s/it] 88%|████████▊ | 175/198 [04:19<00:23,  1.03s/it] 89%|████████▉ | 176/198 [04:20<00:22,  1.01s/it] 89%|████████▉ | 177/198 [04:21<00:21,  1.01s/it] 90%|████████▉ | 178/198 [04:21<00:19,  1.00it/s] 90%|█████████ | 179/198 [04:23<00:19,  1.04s/it] 91%|█████████ | 180/198 [04:24<00:18,  1.05s/it]                                                 {'loss': '0.1558', 'grad_norm': '0.2116', 'learning_rate': '2.499e-07', 'epoch': '2.733'}
+ 91%|█████████ | 180/198 [04:24<00:18,  1.05s/it]2026-07-23 18:34:11 [INFO] step 180  loss=0.1558  grad_norm=0.2116  learning_rate=0.0000  epoch=2.7328
+ 91%|█████████▏| 181/198 [04:25<00:17,  1.03s/it] 92%|█████████▏| 182/198 [04:26<00:16,  1.01s/it] 92%|█████████▏| 183/198 [04:27<00:15,  1.00s/it] 93%|█████████▎| 184/198 [04:28<00:13,  1.01it/s] 93%|█████████▎| 185/198 [04:29<00:13,  1.03s/it] 94%|█████████▍| 186/198 [04:30<00:12,  1.07s/it] 94%|█████████▍| 187/198 [04:31<00:11,  1.04s/it] 95%|█████████▍| 188/198 [04:32<00:10,  1.03s/it] 95%|█████████▌| 189/198 [04:33<00:09,  1.03s/it] 96%|█████████▌| 190/198 [04:34<00:08,  1.03s/it]                                                 {'loss': '0.1538', 'grad_norm': '0.2129', 'learning_rate': '5.644e-08', 'epoch': '2.885'}
+ 96%|█████████▌| 190/198 [04:34<00:08,  1.03s/it]2026-07-23 18:34:21 [INFO] step 190  loss=0.1538  grad_norm=0.2129  learning_rate=0.0000  epoch=2.8855
+ 96%|█████████▋| 191/198 [04:35<00:07,  1.06s/it] 97%|█████████▋| 192/198 [04:36<00:06,  1.07s/it] 97%|█████████▋| 193/198 [04:37<00:05,  1.04s/it] 98%|█████████▊| 194/198 [04:38<00:04,  1.02s/it] 98%|█████████▊| 195/198 [04:39<00:03,  1.01s/it] 99%|█████████▉| 196/198 [04:40<00:01,  1.00it/s] 99%|█████████▉| 197/198 [04:41<00:01,  1.04s/it]100%|██████████| 198/198 [04:42<00:00,  1.09it/s]
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 21%|██▏       | 3/14 [00:00<00:00, 29.74it/s][A
+ 43%|████▎     | 6/14 [00:00<00:00, 23.14it/s][A
+ 64%|██████▍   | 9/14 [00:00<00:00, 21.58it/s][A
+ 86%|████████▌ | 12/14 [00:00<00:00, 20.94it/s][A2026-07-23 18:34:38 [INFO] [eval-sample 0] step=198
+  expected: {"reasoning": "The farmer produces 928840 bales per hour, and the truck removes 3 bales per hour. The net rate of bales added per hour is 928840 - 3 = 928837 bales per hour. Over a 6-hour day, the tot
+  generated: {"reasoning": "The farmer bales hay at a rate of 928840 bales per hour, and the truck picks up hay at a rate of 3 bales per hour. Over a 6-hour day, the farmer bales 928840 * 6 = 5573040 bales. The truck picks up 3 * 6 = 18 bales. The total number of bales picked up is 18, so the number of bales lef
+
+100%|██████████| 14/14 [00:12<00:00, 20.94it/s][A2026-07-23 18:34:44 [INFO] [eval-sample 1] step=198
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is B = (3
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4) * N. The difference in enrollment is N - (3/4) * N = (1/4) * N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "acti
+2026-07-23 18:34:49 [INFO] [eval-sample 2] step=198
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is (3/4) 
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4) * N. The difference in enrollment is N - (3/4) * N = (1/4) * N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "acti
+2026-07-23 18:34:56 [INFO] [eval-sample 3] step=198
+  expected: {"reasoning": "Let the total number of students be x. According to the problem, three-fourths of the students have a desktop computer, which means one-fourth do not. Therefore, x * (1/4) = 6368957. So
+  generated: {"reasoning": "Let the total number of students be $ x $. According to the problem, three-fourths of the students have a desktop computer at home, which means one-fourth do not. The number of students who do not have desktop computers is given as 6368957. So, we can set up the equation: $ \frac{1}{4
+                                                 
+                                               [A{'eval_loss': '0.1833', 'eval_runtime': '26.67', 'eval_samples_per_second': '4.124', 'eval_steps_per_second': '0.525', 'epoch': '3'}
+100%|██████████| 198/198 [05:08<00:00,  1.09it/s]
+100%|██████████| 14/14 [00:26<00:00, 20.94it/s][A2026-07-23 18:34:56 [INFO] step 198  eval_loss=0.1833  eval_runtime=26.6748  eval_samples_per_second=4.1240  eval_steps_per_second=0.5250  epoch=3.0000
+
+                                               [A                                                 {'train_runtime': '310', 'train_samples_per_second': '20.23', 'train_steps_per_second': '0.639', 'train_loss': '0.2788', 'epoch': '3'}
+100%|██████████| 198/198 [05:09<00:00,  1.09it/s]2026-07-23 18:34:57 [INFO] step 198  train_runtime=309.9596  train_samples_per_second=20.2280  train_steps_per_second=0.6390  total_flos=48374442140631040.0000  train_loss=0.2788  epoch=3.0000
+100%|██████████| 198/198 [05:09<00:00,  1.57s/it]
+  0%|          | 0/14 [00:00<?, ?it/s] 21%|██▏       | 3/14 [00:00<00:00, 29.27it/s] 43%|████▎     | 6/14 [00:00<00:00, 23.17it/s] 64%|██████▍   | 9/14 [00:00<00:00, 21.99it/s] 86%|████████▌ | 12/14 [00:00<00:00, 21.59it/s]2026-07-23 18:35:05 [INFO] [eval-sample 0] step=198
+  expected: {"reasoning": "The farmer produces 928840 bales per hour, and the truck removes 3 bales per hour. The net rate of bales added per hour is 928840 - 3 = 928837 bales per hour. Over a 6-hour day, the tot
+  generated: {"reasoning": "The farmer bales hay at a rate of 928840 bales per hour, and the truck picks up hay at a rate of 3 bales per hour. Over a 6-hour day, the farmer bales 928840 * 6 = 5573040 bales. The truck picks up 3 * 6 = 18 bales. The total number of bales picked up is 18, so the number of bales lef
+2026-07-23 18:35:11 [INFO] [eval-sample 1] step=198
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is B = (3
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4) * N. The difference in enrollment is N - (3/4) * N = (1/4) * N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "acti
+100%|██████████| 14/14 [00:14<00:00, 21.59it/s]2026-07-23 18:35:17 [INFO] [eval-sample 2] step=198
+  expected: {"reasoning": "Let the average enrollment at Norman High School be N = 8282072. Butler High School enrolls 3/4 as many students as Norman High School, so the enrollment at Butler High School is (3/4) 
+  generated: {"reasoning": "Let the average enrollment at Norman High School be N. Then the average enrollment at Butler High School is (3/4) * N. The difference in enrollment is N - (3/4) * N = (1/4) * N. Given that N = 8282072, the difference is (1/4) * 8282072 = 2070518.", "tentative_answer": "2070518", "acti
+2026-07-23 18:35:23 [INFO] [eval-sample 3] step=198
+  expected: {"reasoning": "Let the total number of students be x. According to the problem, three-fourths of the students have a desktop computer, which means one-fourth do not. Therefore, x * (1/4) = 6368957. So
+  generated: {"reasoning": "Let the total number of students be $ x $. According to the problem, three-fourths of the students have a desktop computer at home, which means one-fourth do not. The number of students who do not have desktop computers is given as 6368957. So, we can set up the equation: $ \frac{1}{4
+2026-07-23 18:35:23 [INFO] step 198  eval_loss=0.1833  eval_runtime=25.9643  eval_samples_per_second=4.2370  eval_steps_per_second=0.5390  epoch=3.0000
+100%|██████████| 14/14 [00:25<00:00,  1.85s/it]
+2026-07-23 18:35:23 [INFO] Final eval metrics: {'eval_loss': 0.1833035945892334, 'eval_runtime': 25.9643, 'eval_samples_per_second': 4.237, 'eval_steps_per_second': 0.539, 'epoch': 3.0}
+2026-07-23 18:35:23 [INFO] Final model saved to jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A1/final
+2026-07-23 18:35:23 [INFO] ======================================================================
+2026-07-23 18:35:23 [INFO] Training complete.
+2026-07-23 18:35:23 [INFO] ======================================================================
+[rank0]:[W723 18:35:24.083757114 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[done] A1 trained — final adapter at jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A1/final
+
+================================================================
+[phase 2] Training A2 — 2200 examples
+  data: /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A2.jsonl
+  base: /data/wangyuheng/models/Qwen3-4B
+  out:  jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A2
+================================================================
+The following values were not passed to `accelerate launch` and had defaults used instead:
+	`--num_machines` was set to a value of `1`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+2026-07-23 18:35:32 [INFO] Agent: A2
+2026-07-23 18:35:32 [INFO] Base model: /data/wangyuheng/models/Qwen3-4B
+2026-07-23 18:35:32 [INFO] Data: /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A2.jsonl
+2026-07-23 18:35:32 [INFO] Output: jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A2
+2026-07-23 18:35:32 [INFO] Loaded 2200 examples from /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A2.jsonl
+2026-07-23 18:35:32 [INFO] Split by problem_id: train=2090 rows/662 groups, eval=110 rows/31 groups
+2026-07-23 18:35:41 [INFO] Loading tokenizer...
+2026-07-23 18:35:41 [INFO] Tokenizing train set...
+2026-07-23 18:35:46 [INFO] Encoded 2090 examples; skipped 0 (too long or empty label).
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]2026-07-23 18:35:46 [INFO] Tokenizing eval set...
+Loading weights: 100%|██████████| 398/398 [00:00<00:00, 12309.99it/s]
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s][transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 398/398 [00:00<00:00, 12095.74it/s]
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 12692.62it/s]
+2026-07-23 18:35:47 [INFO] Encoded 110 examples; skipped 0 (too long or empty label).
+2026-07-23 18:35:47 [INFO] Tokenization retained 2200/2200 examples (drop_ratio=0.0000)
+2026-07-23 18:35:47 [INFO] Loading model...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 12698.60it/s]
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 11658.25it/s]
+Loading weights: 100%|██████████| 398/398 [00:00<00:00, 11341.19it/s]
+Loading weights: 100%|██████████| 398/398 [00:00<00:00, 11402.55it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights: 100%|██████████| 398/398 [00:00<00:00, 12301.64it/s]
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+trainable params: 47,185,920 || all params: 4,069,654,016 || trainable%: 1.1595
+2026-07-23 18:36:10 [INFO] Dropped unsupported TrainingArguments for this transformers version: overwrite_output_dir
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+2026-07-23 18:36:13 [INFO] ======================================================================
+2026-07-23 18:36:13 [INFO] Starting training
+2026-07-23 18:36:13 [INFO] ======================================================================
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+  0%|          | 0/198 [00:00<?, ?it/s]  1%|          | 1/198 [00:02<06:43,  2.05s/it]  1%|          | 2/198 [00:03<05:16,  1.61s/it]  2%|▏         | 3/198 [00:04<04:50,  1.49s/it]  2%|▏         | 4/198 [00:06<04:52,  1.51s/it]  3%|▎         | 5/198 [00:07<04:42,  1.46s/it]  3%|▎         | 6/198 [00:08<04:35,  1.43s/it]  4%|▎         | 7/198 [00:10<04:28,  1.41s/it]  4%|▍         | 8/198 [00:11<04:21,  1.37s/it]  5%|▍         | 9/198 [00:13<04:27,  1.42s/it]  5%|▌         | 10/198 [00:14<04:19,  1.38s/it]                                                {'loss': '0.3566', 'grad_norm': '1.411', 'learning_rate': '9e-06', 'epoch': '0.1527'}
+  5%|▌         | 10/198 [00:14<04:19,  1.38s/it]2026-07-23 18:36:30 [INFO] step 10  loss=0.3566  grad_norm=1.4109  learning_rate=0.0000  epoch=0.1527
+  6%|▌         | 11/198 [00:15<04:14,  1.36s/it]  6%|▌         | 12/198 [00:17<04:08,  1.33s/it]  7%|▋         | 13/198 [00:18<04:05,  1.33s/it]  7%|▋         | 14/198 [00:19<04:13,  1.38s/it]  8%|▊         | 15/198 [00:21<04:10,  1.37s/it]  8%|▊         | 16/198 [00:22<04:08,  1.37s/it]  9%|▊         | 17/198 [00:23<04:05,  1.36s/it]  9%|▉         | 18/198 [00:25<04:12,  1.40s/it] 10%|▉         | 19/198 [00:26<04:08,  1.39s/it] 10%|█         | 20/198 [00:28<04:06,  1.39s/it]                                                {'loss': '0.2478', 'grad_norm': '0.5309', 'learning_rate': '9.944e-06', 'epoch': '0.3053'}
+ 10%|█         | 20/198 [00:28<04:06,  1.39s/it]2026-07-23 18:36:44 [INFO] step 20  loss=0.2478  grad_norm=0.5309  learning_rate=0.0000  epoch=0.3053
+ 11%|█         | 21/198 [00:29<04:11,  1.42s/it] 11%|█         | 22/198 [00:31<04:13,  1.44s/it] 12%|█▏        | 23/198 [00:32<04:06,  1.41s/it] 12%|█▏        | 24/198 [00:33<03:58,  1.37s/it] 13%|█▎        | 25/198 [00:35<03:56,  1.37s/it] 13%|█▎        | 26/198 [00:36<04:02,  1.41s/it] 14%|█▎        | 27/198 [00:37<03:56,  1.38s/it] 14%|█▍        | 28/198 [00:39<03:49,  1.35s/it] 15%|█▍        | 29/198 [00:40<03:58,  1.41s/it] 15%|█▌        | 30/198 [00:42<03:51,  1.38s/it]                                                {'loss': '0.1484', 'grad_norm': '0.1947', 'learning_rate': '9.75e-06', 'epoch': '0.458'}
+ 15%|█▌        | 30/198 [00:42<03:51,  1.38s/it]2026-07-23 18:36:58 [INFO] step 30  loss=0.1484  grad_norm=0.1947  learning_rate=0.0000  epoch=0.4580
+ 16%|█▌        | 31/198 [00:43<03:47,  1.36s/it] 16%|█▌        | 32/198 [00:44<03:43,  1.34s/it] 17%|█▋        | 33/198 [00:46<03:42,  1.35s/it] 17%|█▋        | 34/198 [00:47<03:48,  1.39s/it] 18%|█▊        | 35/198 [00:48<03:39,  1.35s/it] 18%|█▊        | 36/198 [00:50<03:36,  1.34s/it] 19%|█▊        | 37/198 [00:51<03:39,  1.36s/it] 19%|█▉        | 38/198 [00:52<03:34,  1.34s/it] 20%|█▉        | 39/198 [00:54<03:38,  1.37s/it] 20%|██        | 40/198 [00:55<03:32,  1.35s/it]                                                {'loss': '0.149', 'grad_norm': '0.1591', 'learning_rate': '9.424e-06', 'epoch': '0.6107'}
+ 20%|██        | 40/198 [00:55<03:32,  1.35s/it]2026-07-23 18:37:11 [INFO] step 40  loss=0.1490  grad_norm=0.1591  learning_rate=0.0000  epoch=0.6107
+ 21%|██        | 41/198 [00:56<03:32,  1.35s/it] 21%|██        | 42/198 [00:58<03:28,  1.33s/it] 22%|██▏       | 43/198 [00:59<03:33,  1.38s/it] 22%|██▏       | 44/198 [01:00<03:27,  1.34s/it] 23%|██▎       | 45/198 [01:02<03:23,  1.33s/it] 23%|██▎       | 46/198 [01:03<03:24,  1.34s/it] 24%|██▎       | 47/198 [01:05<03:28,  1.38s/it] 24%|██▍       | 48/198 [01:06<03:21,  1.35s/it] 25%|██▍       | 49/198 [01:07<03:19,  1.34s/it] 25%|██▌       | 50/198 [01:09<03:17,  1.34s/it]                                                {'loss': '0.1471', 'grad_norm': '0.1347', 'learning_rate': '8.975e-06', 'epoch': '0.7634'}
+ 25%|██▌       | 50/198 [01:09<03:17,  1.34s/it]2026-07-23 18:37:25 [INFO] step 50  loss=0.1471  grad_norm=0.1347  learning_rate=0.0000  epoch=0.7634
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 18.49it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 10.90it/s][A
+ 43%|████▎     | 6/14 [00:00<00:00, 10.57it/s][A
+ 57%|█████▋    | 8/14 [00:00<00:00, 10.33it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 10.17it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00, 10.33it/s][A
+100%|██████████| 14/14 [00:01<00:00, 10.47it/s][A2026-07-23 18:37:33 [INFO] [eval-sample 0] step=50
+  expected: {"reasoning": "First, calculate the total hours Jordan would work in a week by multiplying the daily hours (2) by the number of days in a week (7), resulting in 14 hours. Then, multiply this total by 
+  generated: {"reasoning": "Jordan plays video games for 2 hours every day. If he spent this time working instead, he would work 2 hours per day. In one week (7 days), he would work 2 * 7 = 14 hours. He earns $6771144 per hour, so his earnings in one week would be 14 * 6771144.", "tentative_answer": "94796016", 
+
+100%|██████████| 14/14 [00:11<00:00, 10.47it/s][A2026-07-23 18:37:44 [INFO] [eval-sample 1] step=50
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours Kimo spends on classes on Mondays, Wednesdays, and Fridays. He has three 1-hour classes each day, so 3 hours per day. There are 3 days (Monday, Wednesday, Friday) in a week, so 3 * 3 = 9 hours per week. Next, calculate the total hours on Tuesdays and T
+2026-07-23 18:37:51 [INFO] [eval-sample 2] step=50
+  expected: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10. Then, multiply the new price by the number of computers (500) 
+  generated: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10. Then, multiply the new price by the number of computers (500) to get the total amount paid.", "tentative_answer": "9267038", "action": "handoff", "handoff_target"
+2026-07-23 18:37:58 [INFO] [eval-sample 3] step=50
+  expected: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 5387
+  generated: {"reasoning": "The total number of employees that can join the day trip is the sum of the capacities of the buses, minibusses, and minivans. The calculation is as follows: (4 buses * 60 employees per bus) + (6 minibusses * 30 employees per minibus) + (10 minivans * 5387984 employees per minivan).", 
+                                                
+                                               [A{'eval_loss': '0.1377', 'eval_runtime': '32.74', 'eval_samples_per_second': '3.36', 'eval_steps_per_second': '0.428', 'epoch': '0.7634'}
+ 25%|██▌       | 50/198 [01:41<03:17,  1.34s/it]
+100%|██████████| 14/14 [00:32<00:00, 10.47it/s][A2026-07-23 18:37:58 [INFO] step 50  eval_loss=0.1377  eval_runtime=32.7360  eval_samples_per_second=3.3600  eval_steps_per_second=0.4280  epoch=0.7634
+
+                                               [A 26%|██▌       | 51/198 [01:44<28:27, 11.61s/it] 26%|██▋       | 52/198 [01:45<20:44,  8.52s/it] 27%|██▋       | 53/198 [01:47<15:23,  6.37s/it] 27%|██▋       | 54/198 [01:48<11:37,  4.85s/it] 28%|██▊       | 55/198 [01:50<09:11,  3.85s/it] 28%|██▊       | 56/198 [01:51<07:16,  3.07s/it] 29%|██▉       | 57/198 [01:52<05:58,  2.54s/it] 29%|██▉       | 58/198 [01:54<05:11,  2.22s/it] 30%|██▉       | 59/198 [01:55<04:31,  1.95s/it] 30%|███       | 60/198 [01:56<04:02,  1.76s/it]                                                {'loss': '0.1285', 'grad_norm': '0.1292', 'learning_rate': '8.415e-06', 'epoch': '0.916'}
+ 30%|███       | 60/198 [01:56<04:02,  1.76s/it]2026-07-23 18:38:13 [INFO] step 60  loss=0.1285  grad_norm=0.1292  learning_rate=0.0000  epoch=0.9160
+ 31%|███       | 61/198 [01:58<03:46,  1.65s/it] 31%|███▏      | 62/198 [01:59<03:31,  1.56s/it] 32%|███▏      | 63/198 [02:00<03:25,  1.52s/it] 32%|███▏      | 64/198 [02:02<03:18,  1.48s/it] 33%|███▎      | 65/198 [02:03<03:07,  1.41s/it] 33%|███▎      | 66/198 [02:04<02:36,  1.19s/it] 34%|███▍      | 67/198 [02:05<02:39,  1.21s/it] 34%|███▍      | 68/198 [02:06<02:47,  1.29s/it] 35%|███▍      | 69/198 [02:08<02:48,  1.31s/it] 35%|███▌      | 70/198 [02:09<02:46,  1.30s/it]                                                {'loss': '0.1266', 'grad_norm': '0.1302', 'learning_rate': '7.76e-06', 'epoch': '1.061'}
+ 35%|███▌      | 70/198 [02:09<02:46,  1.30s/it]2026-07-23 18:38:25 [INFO] step 70  loss=0.1266  grad_norm=0.1302  learning_rate=0.0000  epoch=1.0611
+ 36%|███▌      | 71/198 [02:10<02:46,  1.31s/it] 36%|███▋      | 72/198 [02:12<02:51,  1.36s/it] 37%|███▋      | 73/198 [02:13<02:51,  1.37s/it] 37%|███▋      | 74/198 [02:15<02:47,  1.35s/it] 38%|███▊      | 75/198 [02:16<02:44,  1.33s/it] 38%|███▊      | 76/198 [02:17<02:46,  1.37s/it] 39%|███▉      | 77/198 [02:19<02:47,  1.39s/it] 39%|███▉      | 78/198 [02:20<02:42,  1.36s/it] 40%|███▉      | 79/198 [02:21<02:39,  1.34s/it] 40%|████      | 80/198 [02:23<02:43,  1.38s/it]                                                {'loss': '0.1179', 'grad_norm': '0.1239', 'learning_rate': '7.029e-06', 'epoch': '1.214'}
+ 40%|████      | 80/198 [02:23<02:43,  1.38s/it]2026-07-23 18:38:39 [INFO] step 80  loss=0.1179  grad_norm=0.1239  learning_rate=0.0000  epoch=1.2137
+ 41%|████      | 81/198 [02:24<02:42,  1.39s/it] 41%|████▏     | 82/198 [02:26<02:38,  1.37s/it] 42%|████▏     | 83/198 [02:27<02:34,  1.35s/it] 42%|████▏     | 84/198 [02:28<02:37,  1.38s/it] 43%|████▎     | 85/198 [02:30<02:35,  1.37s/it] 43%|████▎     | 86/198 [02:31<02:30,  1.35s/it] 44%|████▍     | 87/198 [02:32<02:29,  1.35s/it] 44%|████▍     | 88/198 [02:34<02:28,  1.35s/it] 45%|████▍     | 89/198 [02:35<02:31,  1.39s/it] 45%|████▌     | 90/198 [02:36<02:26,  1.36s/it]                                                {'loss': '0.1129', 'grad_norm': '0.1236', 'learning_rate': '6.24e-06', 'epoch': '1.366'}
+ 45%|████▌     | 90/198 [02:37<02:26,  1.36s/it]2026-07-23 18:38:53 [INFO] step 90  loss=0.1129  grad_norm=0.1236  learning_rate=0.0000  epoch=1.3664
+ 46%|████▌     | 91/198 [02:38<02:26,  1.37s/it] 46%|████▋     | 92/198 [02:39<02:22,  1.34s/it] 47%|████▋     | 93/198 [02:40<02:19,  1.33s/it] 47%|████▋     | 94/198 [02:42<02:22,  1.37s/it] 48%|████▊     | 95/198 [02:43<02:19,  1.35s/it] 48%|████▊     | 96/198 [02:45<02:19,  1.37s/it] 49%|████▉     | 97/198 [02:46<02:15,  1.35s/it] 49%|████▉     | 98/198 [02:47<02:18,  1.39s/it] 50%|█████     | 99/198 [02:49<02:15,  1.37s/it] 51%|█████     | 100/198 [02:50<02:13,  1.36s/it]                                                 {'loss': '0.116', 'grad_norm': '0.1267', 'learning_rate': '5.417e-06', 'epoch': '1.519'}
+ 51%|█████     | 100/198 [02:50<02:13,  1.36s/it]2026-07-23 18:39:06 [INFO] step 100  loss=0.1160  grad_norm=0.1267  learning_rate=0.0000  epoch=1.5191
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 18.47it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 10.71it/s][A
+ 43%|████▎     | 6/14 [00:00<00:00, 10.61it/s][A
+ 57%|█████▋    | 8/14 [00:00<00:00, 10.30it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 10.18it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00, 10.37it/s][A
+100%|██████████| 14/14 [00:01<00:00, 10.51it/s][A2026-07-23 18:39:14 [INFO] [eval-sample 0] step=100
+  expected: {"reasoning": "First, calculate the total hours Jordan would work in a week by multiplying the daily hours (2) by the number of days in a week (7), resulting in 14 hours. Then, multiply this total by 
+  generated: {"reasoning": "First, calculate the total hours Jordan would work in a week: 2 hours/day * 7 days = 14 hours. Then, multiply this by his hourly wage: 14 hours * $6771144/hour = $94796016.", "tentative_answer": "94796016", "action": "handoff", "handoff_target": "A3", "handoff_note": "Independently re
+2026-07-23 18:39:25 [INFO] [eval-sample 1] step=100
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours Kimo spends on classes on Mondays, Wednesdays, and Fridays. He has three 1-hour classes each day, so 3 hours per day. There are 3 days (Monday, Wednesday, Friday) in a week, so 3 * 3 = 9 hours per week. Next, calculate the total hours on Tuesdays and T
+
+100%|██████████| 14/14 [00:20<00:00, 10.51it/s][A2026-07-23 18:39:33 [INFO] [eval-sample 2] step=100
+  expected: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10. Then, multiply the new price by the number of computers (500) 
+  generated: {"reasoning": "First, calculate the new price per computer by increasing the original price by 10%. This is 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500) to get the total amount paid: 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action
+2026-07-23 18:39:42 [INFO] [eval-sample 3] step=100
+  expected: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 5387
+  generated: {"reasoning": "First, calculate the total capacity of the buses: 4 buses * 60 employees per bus = 240 employees. Then, calculate the total capacity of the minibusses: 6 minibusses * 30 employees per minibus = 180 employees. Finally, calculate the total capacity of the minivans: 10 minivans * 5387984
+                                                 
+                                               [A{'eval_loss': '0.1153', 'eval_runtime': '36.05', 'eval_samples_per_second': '3.052', 'eval_steps_per_second': '0.388', 'epoch': '1.519'}
+ 51%|█████     | 100/198 [03:26<02:13,  1.36s/it]
+100%|██████████| 14/14 [00:36<00:00, 10.51it/s][A2026-07-23 18:39:43 [INFO] step 100  eval_loss=0.1153  eval_runtime=36.0467  eval_samples_per_second=3.0520  eval_steps_per_second=0.3880  epoch=1.5191
+
+                                               [A 51%|█████     | 101/198 [03:29<20:24, 12.62s/it] 52%|█████▏    | 102/198 [03:30<14:52,  9.30s/it] 52%|█████▏    | 103/198 [03:32<10:57,  6.92s/it] 53%|█████▎    | 104/198 [03:33<08:15,  5.27s/it] 53%|█████▎    | 105/198 [03:35<06:19,  4.08s/it] 54%|█████▎    | 106/198 [03:36<05:03,  3.30s/it] 54%|█████▍    | 107/198 [03:37<04:08,  2.73s/it] 55%|█████▍    | 108/198 [03:39<03:27,  2.31s/it] 55%|█████▌    | 109/198 [03:40<03:02,  2.05s/it] 56%|█████▌    | 110/198 [03:42<02:40,  1.83s/it]                                                 {'loss': '0.1009', 'grad_norm': '0.1071', 'learning_rate': '4.583e-06', 'epoch': '1.672'}
+ 56%|█████▌    | 110/198 [03:42<02:40,  1.83s/it]2026-07-23 18:39:58 [INFO] step 110  loss=0.1009  grad_norm=0.1071  learning_rate=0.0000  epoch=1.6718
+ 56%|█████▌    | 111/198 [03:43<02:26,  1.68s/it] 57%|█████▋    | 112/198 [03:44<02:17,  1.59s/it] 57%|█████▋    | 113/198 [03:46<02:12,  1.56s/it] 58%|█████▊    | 114/198 [03:47<02:04,  1.48s/it] 58%|█████▊    | 115/198 [03:48<01:59,  1.44s/it] 59%|█████▊    | 116/198 [03:50<01:55,  1.41s/it] 59%|█████▉    | 117/198 [03:51<01:52,  1.38s/it] 60%|█████▉    | 118/198 [03:53<01:52,  1.41s/it] 60%|██████    | 119/198 [03:54<01:48,  1.38s/it] 61%|██████    | 120/198 [03:55<01:49,  1.40s/it]                                                 {'loss': '0.1066', 'grad_norm': '0.1322', 'learning_rate': '3.76e-06', 'epoch': '1.824'}
+ 61%|██████    | 120/198 [03:55<01:49,  1.40s/it]2026-07-23 18:40:12 [INFO] step 120  loss=0.1066  grad_norm=0.1322  learning_rate=0.0000  epoch=1.8244
+ 61%|██████    | 121/198 [03:57<01:47,  1.39s/it] 62%|██████▏   | 122/198 [03:58<01:44,  1.37s/it] 62%|██████▏   | 123/198 [03:59<01:45,  1.40s/it] 63%|██████▎   | 124/198 [04:01<01:44,  1.41s/it] 63%|██████▎   | 125/198 [04:02<01:40,  1.37s/it] 64%|██████▎   | 126/198 [04:03<01:37,  1.35s/it] 64%|██████▍   | 127/198 [04:05<01:38,  1.38s/it] 65%|██████▍   | 128/198 [04:06<01:38,  1.40s/it] 65%|██████▌   | 129/198 [04:08<01:34,  1.37s/it] 66%|██████▌   | 130/198 [04:09<01:31,  1.35s/it]                                                 {'loss': '0.1145', 'grad_norm': '0.1772', 'learning_rate': '2.971e-06', 'epoch': '1.977'}
+ 66%|██████▌   | 130/198 [04:09<01:31,  1.35s/it]2026-07-23 18:40:25 [INFO] step 130  loss=0.1145  grad_norm=0.1772  learning_rate=0.0000  epoch=1.9771
+ 66%|██████▌   | 131/198 [04:10<01:33,  1.39s/it] 67%|██████▋   | 132/198 [04:11<01:18,  1.18s/it] 67%|██████▋   | 133/198 [04:13<01:20,  1.24s/it] 68%|██████▊   | 134/198 [04:14<01:20,  1.26s/it] 68%|██████▊   | 135/198 [04:15<01:22,  1.31s/it] 69%|██████▊   | 136/198 [04:17<01:21,  1.31s/it] 69%|██████▉   | 137/198 [04:18<01:20,  1.31s/it] 70%|██████▉   | 138/198 [04:19<01:19,  1.32s/it] 70%|███████   | 139/198 [04:21<01:21,  1.38s/it] 71%|███████   | 140/198 [04:22<01:18,  1.35s/it]                                                 {'loss': '0.1108', 'grad_norm': '0.1334', 'learning_rate': '2.24e-06', 'epoch': '2.122'}
+ 71%|███████   | 140/198 [04:22<01:18,  1.35s/it]2026-07-23 18:40:38 [INFO] step 140  loss=0.1108  grad_norm=0.1334  learning_rate=0.0000  epoch=2.1221
+ 71%|███████   | 141/198 [04:23<01:15,  1.33s/it] 72%|███████▏  | 142/198 [04:25<01:14,  1.33s/it] 72%|███████▏  | 143/198 [04:26<01:13,  1.33s/it] 73%|███████▎  | 144/198 [04:27<01:13,  1.36s/it] 73%|███████▎  | 145/198 [04:29<01:13,  1.39s/it] 74%|███████▎  | 146/198 [04:30<01:12,  1.39s/it] 74%|███████▍  | 147/198 [04:32<01:10,  1.37s/it] 75%|███████▍  | 148/198 [04:33<01:08,  1.36s/it] 75%|███████▌  | 149/198 [04:34<01:08,  1.39s/it] 76%|███████▌  | 150/198 [04:36<01:07,  1.40s/it]                                                 {'loss': '0.103', 'grad_norm': '0.1103', 'learning_rate': '1.585e-06', 'epoch': '2.275'}
+ 76%|███████▌  | 150/198 [04:36<01:07,  1.40s/it]2026-07-23 18:40:52 [INFO] step 150  loss=0.1030  grad_norm=0.1103  learning_rate=0.0000  epoch=2.2748
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 18.67it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 10.91it/s][A
+ 43%|████▎     | 6/14 [00:00<00:00, 10.61it/s][A
+ 57%|█████▋    | 8/14 [00:00<00:00, 10.16it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 10.22it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00, 10.37it/s][A
+100%|██████████| 14/14 [00:01<00:00, 10.50it/s][A2026-07-23 18:41:00 [INFO] [eval-sample 0] step=150
+  expected: {"reasoning": "First, calculate the total hours Jordan would work in a week by multiplying the daily hours (2) by the number of days in a week (7), resulting in 14 hours. Then, multiply this total by 
+  generated: {"reasoning": "First, calculate the total hours Jordan would work in a week: 2 hours/day * 7 days = 14 hours. Then, multiply this by his hourly wage: 14 hours * $6771144/hour = $94796016.", "tentative_answer": "94796016", "action": "handoff", "handoff_target": "A3", "handoff_note": "Independently re
+
+100%|██████████| 14/14 [00:14<00:00, 10.50it/s][A2026-07-23 18:41:11 [INFO] [eval-sample 1] step=150
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours Kimo spends on classes on Mondays, Wednesdays, and Fridays. He has three 1-hour classes each day, so 3 hours per day. There are 3 days (Monday, Wednesday, Friday) in a week, so 3 * 3 = 9 hours per week. Next, calculate the total hours on Tuesdays and T
+2026-07-23 18:41:18 [INFO] [eval-sample 2] step=150
+  expected: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10. Then, multiply the new price by the number of computers (500) 
+  generated: {"reasoning": "First, calculate the new price per computer by increasing the original price by 10%. This is 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500) to get the total amount paid: 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action
+2026-07-23 18:41:28 [INFO] [eval-sample 3] step=150
+  expected: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 5387
+  generated: {"reasoning": "First, calculate the total capacity of the buses: 4 buses * 60 employees per bus = 240 employees. Then, calculate the total capacity of the minibusses: 6 minibusses * 30 employees per minibus = 180 employees. Finally, calculate the total capacity of the minivans: 10 minivans * 5387984
+                                                 
+                                               [A{'eval_loss': '0.1077', 'eval_runtime': '35.61', 'eval_samples_per_second': '3.089', 'eval_steps_per_second': '0.393', 'epoch': '2.275'}
+ 76%|███████▌  | 150/198 [05:11<01:07,  1.40s/it]
+100%|██████████| 14/14 [00:35<00:00, 10.50it/s][A2026-07-23 18:41:28 [INFO] step 150  eval_loss=0.1077  eval_runtime=35.6106  eval_samples_per_second=3.0890  eval_steps_per_second=0.3930  epoch=2.2748
+
+                                               [A 76%|███████▋  | 151/198 [05:14<09:44, 12.44s/it] 77%|███████▋  | 152/198 [05:15<06:58,  9.09s/it] 77%|███████▋  | 153/198 [05:17<05:07,  6.84s/it] 78%|███████▊  | 154/198 [05:18<03:47,  5.17s/it] 78%|███████▊  | 155/198 [05:20<02:53,  4.04s/it] 79%|███████▉  | 156/198 [05:21<02:15,  3.22s/it] 79%|███████▉  | 157/198 [05:22<01:50,  2.69s/it] 80%|███████▉  | 158/198 [05:24<01:31,  2.28s/it] 80%|████████  | 159/198 [05:25<01:18,  2.00s/it] 81%|████████  | 160/198 [05:26<01:07,  1.79s/it]                                                 {'loss': '0.1002', 'grad_norm': '0.1103', 'learning_rate': '1.025e-06', 'epoch': '2.427'}
+ 81%|████████  | 160/198 [05:26<01:07,  1.79s/it]2026-07-23 18:41:43 [INFO] step 160  loss=0.1002  grad_norm=0.1103  learning_rate=0.0000  epoch=2.4275
+ 81%|████████▏ | 161/198 [05:28<01:02,  1.69s/it] 82%|████████▏ | 162/198 [05:29<00:57,  1.59s/it] 82%|████████▏ | 163/198 [05:30<00:52,  1.50s/it] 83%|████████▎ | 164/198 [05:32<00:49,  1.45s/it] 83%|████████▎ | 165/198 [05:33<00:47,  1.45s/it] 84%|████████▍ | 166/198 [05:34<00:45,  1.41s/it] 84%|████████▍ | 167/198 [05:36<00:44,  1.42s/it] 85%|████████▍ | 168/198 [05:37<00:42,  1.43s/it] 85%|████████▌ | 169/198 [05:39<00:40,  1.39s/it] 86%|████████▌ | 170/198 [05:40<00:39,  1.40s/it]                                                 {'loss': '0.1028', 'grad_norm': '0.1247', 'learning_rate': '5.757e-07', 'epoch': '2.58'}
+ 86%|████████▌ | 170/198 [05:40<00:39,  1.40s/it]2026-07-23 18:41:56 [INFO] step 170  loss=0.1028  grad_norm=0.1247  learning_rate=0.0000  epoch=2.5802
+ 86%|████████▋ | 171/198 [05:41<00:37,  1.39s/it] 87%|████████▋ | 172/198 [05:43<00:35,  1.38s/it] 87%|████████▋ | 173/198 [05:44<00:34,  1.36s/it] 88%|████████▊ | 174/198 [05:46<00:33,  1.40s/it] 88%|████████▊ | 175/198 [05:47<00:32,  1.41s/it] 89%|████████▉ | 176/198 [05:48<00:30,  1.38s/it] 89%|████████▉ | 177/198 [05:50<00:28,  1.37s/it] 90%|████████▉ | 178/198 [05:51<00:27,  1.40s/it] 90%|█████████ | 179/198 [05:53<00:26,  1.37s/it] 91%|█████████ | 180/198 [05:54<00:25,  1.43s/it]                                                 {'loss': '0.1058', 'grad_norm': '0.1597', 'learning_rate': '2.499e-07', 'epoch': '2.733'}
+ 91%|█████████ | 180/198 [05:54<00:25,  1.43s/it]2026-07-23 18:42:10 [INFO] step 180  loss=0.1058  grad_norm=0.1597  learning_rate=0.0000  epoch=2.7328
+ 91%|█████████▏| 181/198 [05:55<00:23,  1.38s/it] 92%|█████████▏| 182/198 [05:57<00:22,  1.40s/it] 92%|█████████▏| 183/198 [05:58<00:20,  1.36s/it] 93%|█████████▎| 184/198 [05:59<00:19,  1.36s/it] 93%|█████████▎| 185/198 [06:01<00:17,  1.36s/it] 94%|█████████▍| 186/198 [06:02<00:16,  1.40s/it] 94%|█████████▍| 187/198 [06:04<00:15,  1.38s/it] 95%|█████████▍| 188/198 [06:05<00:13,  1.35s/it] 95%|█████████▌| 189/198 [06:06<00:12,  1.35s/it] 96%|█████████▌| 190/198 [06:08<00:10,  1.37s/it]                                                 {'loss': '0.1032', 'grad_norm': '0.108', 'learning_rate': '5.644e-08', 'epoch': '2.885'}
+ 96%|█████████▌| 190/198 [06:08<00:10,  1.37s/it]2026-07-23 18:42:24 [INFO] step 190  loss=0.1032  grad_norm=0.1080  learning_rate=0.0000  epoch=2.8855
+ 96%|█████████▋| 191/198 [06:09<00:09,  1.36s/it] 97%|█████████▋| 192/198 [06:10<00:08,  1.35s/it] 97%|█████████▋| 193/198 [06:12<00:06,  1.40s/it] 98%|█████████▊| 194/198 [06:13<00:05,  1.44s/it] 98%|█████████▊| 195/198 [06:15<00:04,  1.40s/it] 99%|█████████▉| 196/198 [06:16<00:02,  1.42s/it] 99%|█████████▉| 197/198 [06:17<00:01,  1.38s/it]100%|██████████| 198/198 [06:18<00:00,  1.16s/it]
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 18.50it/s][A
+ 29%|██▊       | 4/14 [00:00<00:00, 10.90it/s][A
+ 43%|████▎     | 6/14 [00:00<00:00, 10.58it/s][A
+ 57%|█████▋    | 8/14 [00:00<00:00, 10.30it/s][A
+ 71%|███████▏  | 10/14 [00:00<00:00, 10.17it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00, 10.36it/s][A
+100%|██████████| 14/14 [00:01<00:00, 10.51it/s][A2026-07-23 18:42:42 [INFO] [eval-sample 0] step=198
+  expected: {"reasoning": "First, calculate the total hours Jordan would work in a week by multiplying the daily hours (2) by the number of days in a week (7), resulting in 14 hours. Then, multiply this total by 
+  generated: {"reasoning": "First, calculate the total hours Jordan would work in a week: 2 hours/day * 7 days = 14 hours. Then, multiply this by his hourly wage: 14 hours * $6771144/hour = $94796016.", "tentative_answer": "94796016", "action": "handoff", "handoff_target": "A3", "handoff_note": "Independently re
+
+100%|██████████| 14/14 [00:12<00:00, 10.51it/s][A2026-07-23 18:42:52 [INFO] [eval-sample 1] step=198
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours on Mondays, Wednesdays, and Fridays. He has three 1-hour classes each day, so 3 hours per day. There are 3 days in a week, so 3 * 3 = 9 hours per week. Next, calculate the total hours on Tuesdays and Thursdays. He has two 2-hour classes each day, so 4 
+2026-07-23 18:42:59 [INFO] [eval-sample 2] step=198
+  expected: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10. Then, multiply the new price by the number of computers (500) 
+  generated: {"reasoning": "First, calculate the new price per computer by increasing the original price by 10%. This is 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500) to get the total amount paid: 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action
+2026-07-23 18:43:08 [INFO] [eval-sample 3] step=198
+  expected: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 5387
+  generated: {"reasoning": "First, calculate the total capacity of the buses: 4 buses * 60 employees per bus = 240 employees. Then, calculate the total capacity of the minibusses: 6 minibusses * 30 employees per minibus = 180 employees. Finally, calculate the total capacity of the minivans: 10 minivans * 5387984
+                                                 
+                                               [A{'eval_loss': '0.1072', 'eval_runtime': '34.04', 'eval_samples_per_second': '3.231', 'eval_steps_per_second': '0.411', 'epoch': '3'}
+100%|██████████| 198/198 [06:52<00:00,  1.16s/it]
+100%|██████████| 14/14 [00:34<00:00, 10.51it/s][A2026-07-23 18:43:09 [INFO] step 198  eval_loss=0.1072  eval_runtime=34.0431  eval_samples_per_second=3.2310  eval_steps_per_second=0.4110  epoch=3.0000
+
+                                               [A                                                 {'train_runtime': '414.2', 'train_samples_per_second': '15.14', 'train_steps_per_second': '0.478', 'train_loss': '0.1347', 'epoch': '3'}
+100%|██████████| 198/198 [06:54<00:00,  1.16s/it]2026-07-23 18:43:10 [INFO] step 198  train_runtime=414.1617  train_samples_per_second=15.1390  train_steps_per_second=0.4780  total_flos=155903825868226560.0000  train_loss=0.1347  epoch=3.0000
+100%|██████████| 198/198 [06:54<00:00,  2.09s/it]
+  0%|          | 0/14 [00:00<?, ?it/s] 14%|█▍        | 2/14 [00:00<00:00, 17.56it/s] 29%|██▊       | 4/14 [00:00<00:00, 11.13it/s] 43%|████▎     | 6/14 [00:00<00:00, 10.72it/s] 57%|█████▋    | 8/14 [00:00<00:00, 10.38it/s] 71%|███████▏  | 10/14 [00:00<00:00, 10.21it/s] 86%|████████▌ | 12/14 [00:01<00:00, 10.38it/s]100%|██████████| 14/14 [00:01<00:00, 10.52it/s]2026-07-23 18:43:18 [INFO] [eval-sample 0] step=198
+  expected: {"reasoning": "First, calculate the total hours Jordan would work in a week by multiplying the daily hours (2) by the number of days in a week (7), resulting in 14 hours. Then, multiply this total by 
+  generated: {"reasoning": "First, calculate the total hours Jordan would work in a week: 2 hours/day * 7 days = 14 hours. Then, multiply this by his hourly wage: 14 hours * $6771144/hour = $94796016.", "tentative_answer": "94796016", "action": "handoff", "handoff_target": "A3", "handoff_note": "Independently re
+100%|██████████| 14/14 [00:16<00:00, 10.52it/s]2026-07-23 18:43:28 [INFO] [eval-sample 1] step=198
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours on Mondays, Wednesdays, and Fridays. He has three 1-hour classes each day, so 3 hours per day. There are 3 days in a week, so 3 * 3 = 9 hours per week. Next, calculate the total hours on Tuesdays and Thursdays. He has two 2-hour classes each day, so 4 
+2026-07-23 18:43:35 [INFO] [eval-sample 2] step=198
+  expected: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10. Then, multiply the new price by the number of computers (500) 
+  generated: {"reasoning": "First, calculate the new price per computer by increasing the original price by 10%. This is 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500) to get the total amount paid: 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action
+2026-07-23 18:43:45 [INFO] [eval-sample 3] step=198
+  expected: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 5387
+  generated: {"reasoning": "First, calculate the total capacity of the buses: 4 buses * 60 employees per bus = 240 employees. Then, calculate the total capacity of the minibusses: 6 minibusses * 30 employees per minibus = 180 employees. Finally, calculate the total capacity of the minivans: 10 minivans * 5387984
+2026-07-23 18:43:45 [INFO] step 198  eval_loss=0.1072  eval_runtime=33.9581  eval_samples_per_second=3.2390  eval_steps_per_second=0.4120  epoch=3.0000
+100%|██████████| 14/14 [00:33<00:00,  2.42s/it]
+2026-07-23 18:43:45 [INFO] Final eval metrics: {'eval_loss': 0.10719823837280273, 'eval_runtime': 33.9581, 'eval_samples_per_second': 3.239, 'eval_steps_per_second': 0.412, 'epoch': 3.0}
+2026-07-23 18:43:45 [INFO] Final model saved to jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A2/final
+2026-07-23 18:43:45 [INFO] ======================================================================
+2026-07-23 18:43:45 [INFO] Training complete.
+2026-07-23 18:43:45 [INFO] ======================================================================
+[rank0]:[W723 18:43:45.315200653 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[done] A2 trained — final adapter at jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A2/final
+
+================================================================
+[phase 2] Training A3 — 2200 examples
+  data: /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A3.jsonl
+  base: /data/wangyuheng/models/Qwen3-8B
+  out:  jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A3
+================================================================
+The following values were not passed to `accelerate launch` and had defaults used instead:
+	`--num_machines` was set to a value of `1`
+	`--dynamo_backend` was set to a value of `'no'`
+To avoid this warning pass in values for each of the problematic parameters or run `accelerate config`.
+2026-07-23 18:43:53 [INFO] Agent: A3
+2026-07-23 18:43:53 [INFO] Base model: /data/wangyuheng/models/Qwen3-8B
+2026-07-23 18:43:53 [INFO] Data: /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A3.jsonl
+2026-07-23 18:43:53 [INFO] Output: jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A3
+2026-07-23 18:43:53 [INFO] Loaded 2200 examples from /data/wangyuheng/jca/sft_data/gsm_fixed_a1_corr30_20260723_v3/A3.jsonl
+2026-07-23 18:43:53 [INFO] Split by problem_id: train=2090 rows/662 groups, eval=110 rows/31 groups
+2026-07-23 18:44:02 [INFO] Loading tokenizer...
+2026-07-23 18:44:02 [INFO] Tokenizing train set...
+2026-07-23 18:44:07 [INFO] Encoded 2090 examples; skipped 0 (too long or empty label).
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+2026-07-23 18:44:07 [INFO] Tokenizing eval set...
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s][transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 12191.41it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11001.07it/s]
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11708.88it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]2026-07-23 18:44:08 [INFO] Encoded 110 examples; skipped 0 (too long or empty label).
+2026-07-23 18:44:08 [INFO] Tokenization retained 2200/2200 examples (drop_ratio=0.0000)
+2026-07-23 18:44:08 [INFO] Loading model...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11997.64it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 12300.19it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11554.32it/s]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 10960.37it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights: 100%|██████████| 399/399 [00:00<00:00, 11916.57it/s]
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+trainable params: 61,341,696 || all params: 8,252,077,056 || trainable%: 0.7433
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+2026-07-23 18:44:56 [INFO] Dropped unsupported TrainingArguments for this transformers version: overwrite_output_dir
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] warmup_ratio is deprecated and will be removed in v5.2. Use `warmup_steps` instead.
+[transformers] `logging_dir` is deprecated and will be removed in v5.2. Please set `TENSORBOARD_LOGGING_DIR` instead.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+2026-07-23 18:45:01 [INFO] ======================================================================
+2026-07-23 18:45:01 [INFO] Starting training
+2026-07-23 18:45:01 [INFO] ======================================================================
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+[transformers] Using EarlyStoppingCallback without load_best_model_at_end=True. Once training is finished, the best model will not be loaded automatically.
+  0%|          | 0/198 [00:00<?, ?it/s]  1%|          | 1/198 [00:02<07:46,  2.37s/it]  1%|          | 2/198 [00:04<06:36,  2.02s/it]  2%|▏         | 3/198 [00:05<06:06,  1.88s/it]  2%|▏         | 4/198 [00:07<06:08,  1.90s/it]  3%|▎         | 5/198 [00:09<05:50,  1.82s/it]  3%|▎         | 6/198 [00:11<05:42,  1.78s/it]  4%|▎         | 7/198 [00:12<05:32,  1.74s/it]  4%|▍         | 8/198 [00:14<05:24,  1.71s/it]  5%|▍         | 9/198 [00:16<05:30,  1.75s/it]  5%|▌         | 10/198 [00:17<05:24,  1.72s/it]                                                {'loss': '0.2137', 'grad_norm': '0.4501', 'learning_rate': '9e-06', 'epoch': '0.1527'}
+  5%|▌         | 10/198 [00:17<05:24,  1.72s/it]2026-07-23 18:45:20 [INFO] step 10  loss=0.2137  grad_norm=0.4501  learning_rate=0.0000  epoch=0.1527
+  6%|▌         | 11/198 [00:19<05:23,  1.73s/it]  6%|▌         | 12/198 [00:21<05:17,  1.71s/it]  7%|▋         | 13/198 [00:23<05:24,  1.75s/it]  7%|▋         | 14/198 [00:25<05:29,  1.79s/it]  8%|▊         | 15/198 [00:26<05:20,  1.75s/it]  8%|▊         | 16/198 [00:28<05:19,  1.76s/it]  9%|▊         | 17/198 [00:30<05:18,  1.76s/it]  9%|▉         | 18/198 [00:32<05:23,  1.80s/it] 10%|▉         | 19/198 [00:33<05:18,  1.78s/it] 10%|█         | 20/198 [00:35<05:14,  1.77s/it]                                                {'loss': '0.1737', 'grad_norm': '0.1914', 'learning_rate': '9.944e-06', 'epoch': '0.3053'}
+ 10%|█         | 20/198 [00:35<05:14,  1.77s/it]2026-07-23 18:45:38 [INFO] step 20  loss=0.1737  grad_norm=0.1914  learning_rate=0.0000  epoch=0.3053
+ 11%|█         | 21/198 [00:37<05:09,  1.75s/it] 11%|█         | 22/198 [00:39<05:09,  1.76s/it] 12%|█▏        | 23/198 [00:40<05:06,  1.75s/it] 12%|█▏        | 24/198 [00:42<05:00,  1.73s/it] 13%|█▎        | 25/198 [00:44<05:01,  1.74s/it] 13%|█▎        | 26/198 [00:46<05:08,  1.79s/it] 14%|█▎        | 27/198 [00:47<05:00,  1.76s/it] 14%|█▍        | 28/198 [00:49<05:00,  1.77s/it] 15%|█▍        | 29/198 [00:51<05:01,  1.79s/it] 15%|█▌        | 30/198 [00:53<05:03,  1.80s/it]                                                {'loss': '0.1401', 'grad_norm': '0.1013', 'learning_rate': '9.75e-06', 'epoch': '0.458'}
+ 15%|█▌        | 30/198 [00:53<05:03,  1.80s/it]2026-07-23 18:45:56 [INFO] step 30  loss=0.1401  grad_norm=0.1013  learning_rate=0.0000  epoch=0.4580
+ 16%|█▌        | 31/198 [00:55<04:58,  1.79s/it] 16%|█▌        | 32/198 [00:56<04:49,  1.74s/it] 17%|█▋        | 33/198 [00:58<04:44,  1.73s/it] 17%|█▋        | 34/198 [01:00<04:46,  1.75s/it] 18%|█▊        | 35/198 [01:01<04:42,  1.73s/it] 18%|█▊        | 36/198 [01:03<04:38,  1.72s/it] 19%|█▊        | 37/198 [01:05<04:37,  1.72s/it] 19%|█▉        | 38/198 [01:07<04:34,  1.72s/it] 20%|█▉        | 39/198 [01:08<04:41,  1.77s/it] 20%|██        | 40/198 [01:10<04:37,  1.76s/it]                                                {'loss': '0.1322', 'grad_norm': '0.1022', 'learning_rate': '9.424e-06', 'epoch': '0.6107'}
+ 20%|██        | 40/198 [01:10<04:37,  1.76s/it]2026-07-23 18:46:13 [INFO] step 40  loss=0.1322  grad_norm=0.1022  learning_rate=0.0000  epoch=0.6107
+ 21%|██        | 41/198 [01:12<04:36,  1.76s/it] 21%|██        | 42/198 [01:14<04:35,  1.77s/it] 22%|██▏       | 43/198 [01:16<04:35,  1.78s/it] 22%|██▏       | 44/198 [01:17<04:29,  1.75s/it] 23%|██▎       | 45/198 [01:19<04:25,  1.73s/it] 23%|██▎       | 46/198 [01:21<04:23,  1.74s/it] 24%|██▎       | 47/198 [01:22<04:23,  1.75s/it] 24%|██▍       | 48/198 [01:24<04:22,  1.75s/it] 25%|██▍       | 49/198 [01:26<04:16,  1.72s/it] 25%|██▌       | 50/198 [01:28<04:13,  1.71s/it]                                                {'loss': '0.1216', 'grad_norm': '0.07299', 'learning_rate': '8.975e-06', 'epoch': '0.7634'}
+ 25%|██▌       | 50/198 [01:28<04:13,  1.71s/it]2026-07-23 18:46:30 [INFO] step 50  loss=0.1216  grad_norm=0.0730  learning_rate=0.0000  epoch=0.7634
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 14.44it/s][A
+ 29%|██▊       | 4/14 [00:00<00:01,  8.08it/s][A
+ 36%|███▌      | 5/14 [00:00<00:01,  7.68it/s][A
+ 43%|████▎     | 6/14 [00:00<00:01,  7.75it/s][A
+ 50%|█████     | 7/14 [00:00<00:00,  7.46it/s][A
+ 57%|█████▋    | 8/14 [00:01<00:00,  7.37it/s][A
+ 64%|██████▍   | 9/14 [00:01<00:00,  7.23it/s][A
+ 71%|███████▏  | 10/14 [00:01<00:00,  7.21it/s][A
+ 79%|███████▊  | 11/14 [00:01<00:00,  7.18it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00,  6.81it/s][A
+ 93%|█████████▎| 13/14 [00:01<00:00,  7.18it/s][A
+100%|██████████| 14/14 [00:01<00:00,  6.82it/s][A2026-07-23 18:46:40 [INFO] [eval-sample 0] step=50
+  expected: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earning
+  generated: {"reasoning": "Jordan plays video games for 2 hours every day. If he spent this time working instead, he would work 2 hours per day. In one week (7 days), he would work 2 * 7 = 14 hours. He earns $6771144 per hour, so his earnings in one week would be 14 * 6771144 = 94796016.", "tentative_answer": "
+2026-07-23 18:46:51 [INFO] [eval-sample 1] step=50
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours Kimo spends on classes on Mondays, Wednesdays, and Fridays. He has three 1-hour classes each day, so 3 hours per day. There are 3 days (Monday, Wednesday, Friday) in a week, so 3 * 3 = 9 hours per week. Next, calculate the total hours on Tuesdays and T
+2026-07-23 18:46:59 [INFO] [eval-sample 2] step=50
+  expected: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 185340
+  generated: {"reasoning": "The original price per computer was $1684916. The price increased by 10%, so the new price per computer is 1684916 * 1.10 = 1853407.6. Then, multiply the new price by the number of computers (500) to get the total amount paid: 1853407.6 * 500 = 926703800.", "tentative_answer": "926703
+2026-07-23 18:47:07 [INFO] [eval-sample 3] step=50
+  expected: {"reasoning": "Calculate the total capacity by summing the capacities of all vehicles: (4 * 60) + (6 * 30) + (10 * 5387984). First, compute each term separately: 4 * 60 = 240, 6 * 30 = 180, and 10 * 5
+  generated: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 53879840. Finally, sum all the capacities: 240 + 180 + 53879840 = 53880260.", "tentative_answer": "53880
+                                                
+                                               [A{'eval_loss': '0.1251', 'eval_runtime': '36.4', 'eval_samples_per_second': '3.022', 'eval_steps_per_second': '0.385', 'epoch': '0.7634'}
+ 25%|██▌       | 50/198 [02:04<04:13,  1.71s/it]
+100%|██████████| 14/14 [00:36<00:00,  6.82it/s][A2026-07-23 18:47:07 [INFO] step 50  eval_loss=0.1251  eval_runtime=36.3986  eval_samples_per_second=3.0220  eval_steps_per_second=0.3850  epoch=0.7634
+
+                                               [A 26%|██▌       | 51/198 [02:07<32:13, 13.15s/it] 26%|██▋       | 52/198 [02:09<23:38,  9.72s/it] 27%|██▋       | 53/198 [02:11<17:37,  7.29s/it] 27%|██▋       | 54/198 [02:13<13:31,  5.64s/it] 28%|██▊       | 55/198 [02:14<10:40,  4.48s/it] 28%|██▊       | 56/198 [02:16<08:35,  3.63s/it] 29%|██▉       | 57/198 [02:18<07:13,  3.07s/it] 29%|██▉       | 58/198 [02:20<06:19,  2.71s/it] 30%|██▉       | 59/198 [02:21<05:36,  2.42s/it] 30%|███       | 60/198 [02:23<05:05,  2.21s/it]                                                {'loss': '0.1175', 'grad_norm': '0.09065', 'learning_rate': '8.415e-06', 'epoch': '0.916'}
+ 30%|███       | 60/198 [02:23<05:05,  2.21s/it]2026-07-23 18:47:26 [INFO] step 60  loss=0.1175  grad_norm=0.0907  learning_rate=0.0000  epoch=0.9160
+ 31%|███       | 61/198 [02:25<04:43,  2.07s/it] 31%|███▏      | 62/198 [02:26<04:25,  1.95s/it] 32%|███▏      | 63/198 [02:28<04:17,  1.91s/it] 32%|███▏      | 64/198 [02:30<04:09,  1.86s/it] 33%|███▎      | 65/198 [02:32<03:56,  1.78s/it] 33%|███▎      | 66/198 [02:32<03:19,  1.51s/it] 34%|███▍      | 67/198 [02:34<03:23,  1.55s/it] 34%|███▍      | 68/198 [02:36<03:40,  1.69s/it] 35%|███▍      | 69/198 [02:38<03:38,  1.70s/it] 35%|███▌      | 70/198 [02:40<03:37,  1.70s/it]                                                {'loss': '0.1042', 'grad_norm': '0.06947', 'learning_rate': '7.76e-06', 'epoch': '1.061'}
+ 35%|███▌      | 70/198 [02:40<03:37,  1.70s/it]2026-07-23 18:47:42 [INFO] step 70  loss=0.1042  grad_norm=0.0695  learning_rate=0.0000  epoch=1.0611
+ 36%|███▌      | 71/198 [02:41<03:36,  1.71s/it] 36%|███▋      | 72/198 [02:43<03:38,  1.73s/it] 37%|███▋      | 73/198 [02:45<03:36,  1.74s/it] 37%|███▋      | 74/198 [02:47<03:35,  1.74s/it] 38%|███▊      | 75/198 [02:48<03:34,  1.75s/it] 38%|███▊      | 76/198 [02:50<03:33,  1.75s/it] 39%|███▉      | 77/198 [02:52<03:34,  1.77s/it] 39%|███▉      | 78/198 [02:54<03:29,  1.75s/it] 40%|███▉      | 79/198 [02:55<03:26,  1.74s/it] 40%|████      | 80/198 [02:57<03:26,  1.75s/it]                                                {'loss': '0.09887', 'grad_norm': '0.09754', 'learning_rate': '7.029e-06', 'epoch': '1.214'}
+ 40%|████      | 80/198 [02:57<03:26,  1.75s/it]2026-07-23 18:48:00 [INFO] step 80  loss=0.0989  grad_norm=0.0975  learning_rate=0.0000  epoch=1.2137
+ 41%|████      | 81/198 [02:59<03:31,  1.81s/it] 41%|████▏     | 82/198 [03:01<03:25,  1.78s/it] 42%|████▏     | 83/198 [03:03<03:23,  1.77s/it] 42%|████▏     | 84/198 [03:04<03:25,  1.80s/it] 43%|████▎     | 85/198 [03:06<03:23,  1.80s/it] 43%|████▎     | 86/198 [03:08<03:19,  1.78s/it] 44%|████▍     | 87/198 [03:10<03:17,  1.78s/it] 44%|████▍     | 88/198 [03:12<03:17,  1.79s/it] 45%|████▍     | 89/198 [03:13<03:16,  1.81s/it] 45%|████▌     | 90/198 [03:15<03:11,  1.77s/it]                                                {'loss': '0.091', 'grad_norm': '0.0984', 'learning_rate': '6.24e-06', 'epoch': '1.366'}
+ 45%|████▌     | 90/198 [03:15<03:11,  1.77s/it]2026-07-23 18:48:18 [INFO] step 90  loss=0.0910  grad_norm=0.0984  learning_rate=0.0000  epoch=1.3664
+ 46%|████▌     | 91/198 [03:17<03:12,  1.80s/it] 46%|████▋     | 92/198 [03:19<03:06,  1.76s/it] 47%|████▋     | 93/198 [03:20<03:04,  1.76s/it] 47%|████▋     | 94/198 [03:22<03:05,  1.79s/it] 48%|████▊     | 95/198 [03:24<03:02,  1.78s/it] 48%|████▊     | 96/198 [03:26<03:00,  1.77s/it] 49%|████▉     | 97/198 [03:27<02:54,  1.73s/it] 49%|████▉     | 98/198 [03:29<02:54,  1.75s/it] 50%|█████     | 99/198 [03:31<02:51,  1.73s/it] 51%|█████     | 100/198 [03:32<02:46,  1.70s/it]                                                 {'loss': '0.09721', 'grad_norm': '0.1136', 'learning_rate': '5.417e-06', 'epoch': '1.519'}
+ 51%|█████     | 100/198 [03:32<02:46,  1.70s/it]2026-07-23 18:48:35 [INFO] step 100  loss=0.0972  grad_norm=0.1136  learning_rate=0.0000  epoch=1.5191
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 14.44it/s][A
+ 29%|██▊       | 4/14 [00:00<00:01,  8.03it/s][A
+ 36%|███▌      | 5/14 [00:00<00:01,  7.61it/s][A
+ 43%|████▎     | 6/14 [00:00<00:01,  7.68it/s][A
+ 50%|█████     | 7/14 [00:00<00:00,  7.45it/s][A
+ 57%|█████▋    | 8/14 [00:01<00:00,  7.35it/s][A
+ 64%|██████▍   | 9/14 [00:01<00:00,  7.22it/s][A
+ 71%|███████▏  | 10/14 [00:01<00:00,  7.21it/s][A
+ 79%|███████▊  | 11/14 [00:01<00:00,  7.18it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00,  6.80it/s][A
+ 93%|█████████▎| 13/14 [00:01<00:00,  7.17it/s][A
+100%|██████████| 14/14 [00:01<00:00,  6.80it/s][A2026-07-23 18:48:45 [INFO] [eval-sample 0] step=100
+  expected: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earning
+  generated: {"reasoning": "Jordan plays video games for 2 hours every day. If he spent this time working instead, he would work 2 hours per day. In one week (7 days), he would work 2 * 7 = 14 hours. He earns $6771144 per hour, so his earnings in one week would be 14 * 6771144 = 94796016.", "tentative_answer": "
+2026-07-23 18:48:53 [INFO] [eval-sample 1] step=100
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the total hours for the days with three 1-hour classes: 3 days * 3 hours/day = 9 hours per week. Then, calculate the total hours for the days with two 2-hour classes: 2 days * 4 hours/day = 8 hours per week. Add these weekly totals: 9 + 8 = 17 hours per week. Multiply
+2026-07-23 18:49:00 [INFO] [eval-sample 2] step=100
+  expected: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 185340
+  generated: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action": "confirm_stop", "handoff_target"
+2026-07-23 18:49:08 [INFO] [eval-sample 3] step=100
+  expected: {"reasoning": "Calculate the total capacity by summing the capacities of all vehicles: (4 * 60) + (6 * 30) + (10 * 5387984). First, compute each term separately: 4 * 60 = 240, 6 * 30 = 180, and 10 * 5
+  generated: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 53879840. Finally, sum all the capacities: 240 + 180 + 53879840 = 53880260.", "tentative_answer": "53880
+                                                 
+                                               [A{'eval_loss': '0.09288', 'eval_runtime': '33.1', 'eval_samples_per_second': '3.323', 'eval_steps_per_second': '0.423', 'epoch': '1.519'}
+ 51%|█████     | 100/198 [04:06<02:46,  1.70s/it]
+100%|██████████| 14/14 [00:33<00:00,  6.80it/s][A2026-07-23 18:49:08 [INFO] step 100  eval_loss=0.0929  eval_runtime=33.1049  eval_samples_per_second=3.3230  eval_steps_per_second=0.4230  epoch=1.5191
+
+                                               [A 51%|█████     | 101/198 [04:09<19:43, 12.20s/it] 52%|█████▏    | 102/198 [04:11<14:31,  9.08s/it] 52%|█████▏    | 103/198 [04:13<10:52,  6.87s/it] 53%|█████▎    | 104/198 [04:15<08:31,  5.44s/it] 53%|█████▎    | 105/198 [04:16<06:40,  4.30s/it] 54%|█████▎    | 106/198 [04:18<05:30,  3.59s/it] 54%|█████▍    | 107/198 [04:20<04:41,  3.09s/it] 55%|█████▍    | 108/198 [04:22<04:04,  2.72s/it] 55%|█████▌    | 109/198 [04:24<03:38,  2.46s/it] 56%|█████▌    | 110/198 [04:26<03:15,  2.22s/it]                                                 {'loss': '0.08332', 'grad_norm': '0.09205', 'learning_rate': '4.583e-06', 'epoch': '1.672'}
+ 56%|█████▌    | 110/198 [04:26<03:15,  2.22s/it]2026-07-23 18:49:29 [INFO] step 110  loss=0.0833  grad_norm=0.0921  learning_rate=0.0000  epoch=1.6718
+ 56%|█████▌    | 111/198 [04:27<02:57,  2.04s/it] 57%|█████▋    | 112/198 [04:29<02:47,  1.95s/it] 57%|█████▋    | 113/198 [04:31<02:40,  1.89s/it] 58%|█████▊    | 114/198 [04:32<02:34,  1.84s/it] 58%|█████▊    | 115/198 [04:34<02:29,  1.80s/it] 59%|█████▊    | 116/198 [04:36<02:24,  1.76s/it] 59%|█████▉    | 117/198 [04:38<02:23,  1.77s/it] 60%|█████▉    | 118/198 [04:40<02:24,  1.80s/it] 60%|██████    | 119/198 [04:41<02:19,  1.77s/it] 61%|██████    | 120/198 [04:43<02:19,  1.78s/it]                                                 {'loss': '0.08583', 'grad_norm': '0.08195', 'learning_rate': '3.76e-06', 'epoch': '1.824'}
+ 61%|██████    | 120/198 [04:43<02:19,  1.78s/it]2026-07-23 18:49:46 [INFO] step 120  loss=0.0858  grad_norm=0.0819  learning_rate=0.0000  epoch=1.8244
+ 61%|██████    | 121/198 [04:45<02:15,  1.75s/it] 62%|██████▏   | 122/198 [04:47<02:17,  1.81s/it] 62%|██████▏   | 123/198 [04:49<02:18,  1.84s/it] 63%|██████▎   | 124/198 [04:50<02:14,  1.82s/it] 63%|██████▎   | 125/198 [04:52<02:11,  1.80s/it] 64%|██████▎   | 126/198 [04:54<02:07,  1.77s/it] 64%|██████▍   | 127/198 [04:56<02:06,  1.78s/it] 65%|██████▍   | 128/198 [04:57<02:06,  1.81s/it] 65%|██████▌   | 129/198 [04:59<01:59,  1.73s/it] 66%|██████▌   | 130/198 [05:01<02:02,  1.81s/it]                                                 {'loss': '0.0796', 'grad_norm': '0.1198', 'learning_rate': '2.971e-06', 'epoch': '1.977'}
+ 66%|██████▌   | 130/198 [05:01<02:02,  1.81s/it]2026-07-23 18:50:04 [INFO] step 130  loss=0.0796  grad_norm=0.1198  learning_rate=0.0000  epoch=1.9771
+ 66%|██████▌   | 131/198 [05:03<02:00,  1.80s/it] 67%|██████▋   | 132/198 [05:04<01:40,  1.52s/it] 67%|██████▋   | 133/198 [05:05<01:41,  1.56s/it] 68%|██████▊   | 134/198 [05:07<01:42,  1.60s/it] 68%|██████▊   | 135/198 [05:09<01:46,  1.68s/it] 69%|██████▊   | 136/198 [05:11<01:45,  1.71s/it] 69%|██████▉   | 137/198 [05:12<01:42,  1.69s/it] 70%|██████▉   | 138/198 [05:14<01:40,  1.68s/it] 70%|███████   | 139/198 [05:16<01:42,  1.73s/it] 71%|███████   | 140/198 [05:17<01:38,  1.71s/it]                                                 {'loss': '0.08429', 'grad_norm': '0.1084', 'learning_rate': '2.24e-06', 'epoch': '2.122'}
+ 71%|███████   | 140/198 [05:17<01:38,  1.71s/it]2026-07-23 18:50:20 [INFO] step 140  loss=0.0843  grad_norm=0.1084  learning_rate=0.0000  epoch=2.1221
+ 71%|███████   | 141/198 [05:19<01:35,  1.67s/it] 72%|███████▏  | 142/198 [05:21<01:34,  1.68s/it] 72%|███████▏  | 143/198 [05:22<01:32,  1.69s/it] 73%|███████▎  | 144/198 [05:24<01:32,  1.71s/it] 73%|███████▎  | 145/198 [05:26<01:34,  1.77s/it] 74%|███████▎  | 146/198 [05:28<01:31,  1.76s/it] 74%|███████▍  | 147/198 [05:30<01:29,  1.75s/it] 75%|███████▍  | 148/198 [05:31<01:28,  1.77s/it] 75%|███████▌  | 149/198 [05:33<01:27,  1.79s/it] 76%|███████▌  | 150/198 [05:35<01:24,  1.76s/it]                                                 {'loss': '0.07538', 'grad_norm': '0.1014', 'learning_rate': '1.585e-06', 'epoch': '2.275'}
+ 76%|███████▌  | 150/198 [05:35<01:24,  1.76s/it]2026-07-23 18:50:38 [INFO] step 150  loss=0.0754  grad_norm=0.1014  learning_rate=0.0000  epoch=2.2748
+
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 14.38it/s][A
+ 29%|██▊       | 4/14 [00:00<00:01,  8.07it/s][A
+ 36%|███▌      | 5/14 [00:00<00:01,  7.68it/s][A
+ 43%|████▎     | 6/14 [00:00<00:01,  7.76it/s][A
+ 50%|█████     | 7/14 [00:00<00:00,  7.48it/s][A
+ 57%|█████▋    | 8/14 [00:01<00:00,  7.35it/s][A
+ 64%|██████▍   | 9/14 [00:01<00:00,  7.23it/s][A
+ 71%|███████▏  | 10/14 [00:01<00:00,  7.22it/s][A
+ 79%|███████▊  | 11/14 [00:01<00:00,  7.16it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00,  6.81it/s][A
+ 93%|█████████▎| 13/14 [00:01<00:00,  7.15it/s][A
+100%|██████████| 14/14 [00:01<00:00,  6.80it/s][A2026-07-23 18:50:47 [INFO] [eval-sample 0] step=150
+  expected: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earning
+  generated: {"reasoning": "Jordan plays video games for 2 hours every day. If he spent this time working instead, he would work 2 hours per day. In one week (7 days), he would work 2 * 7 = 14 hours. He earns $6771144 per hour, so his earnings in one week would be 14 * 6771144 = 94796016.", "tentative_answer": "
+2026-07-23 18:50:55 [INFO] [eval-sample 1] step=150
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day (3 classes * 1 hour each), so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day (2 classes * 2 hours each), so 2 * 4 = 8 hours. Total weekly hours = 9 + 8 = 1
+2026-07-23 18:51:03 [INFO] [eval-sample 2] step=150
+  expected: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 185340
+  generated: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action": "confirm_stop", "handoff_target"
+2026-07-23 18:51:11 [INFO] [eval-sample 3] step=150
+  expected: {"reasoning": "Calculate the total capacity by summing the capacities of all vehicles: (4 * 60) + (6 * 30) + (10 * 5387984). First, compute each term separately: 4 * 60 = 240, 6 * 30 = 180, and 10 * 5
+  generated: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 53879840. Finally, sum all the capacities: 240 + 180 + 53879840 = 53880260.", "tentative_answer": "53880
+                                                 
+                                               [A{'eval_loss': '0.08011', 'eval_runtime': '33.52', 'eval_samples_per_second': '3.282', 'eval_steps_per_second': '0.418', 'epoch': '2.275'}
+ 76%|███████▌  | 150/198 [06:08<01:24,  1.76s/it]
+100%|██████████| 14/14 [00:33<00:00,  6.80it/s][A2026-07-23 18:51:11 [INFO] step 150  eval_loss=0.0801  eval_runtime=33.5208  eval_samples_per_second=3.2820  eval_steps_per_second=0.4180  epoch=2.2748
+
+                                               [A 76%|███████▋  | 151/198 [06:12<09:36, 12.27s/it] 77%|███████▋  | 152/198 [06:13<06:58,  9.10s/it] 77%|███████▋  | 153/198 [06:15<05:12,  6.94s/it] 78%|███████▊  | 154/198 [06:17<03:55,  5.36s/it] 78%|███████▊  | 155/198 [06:19<03:04,  4.28s/it] 79%|███████▉  | 156/198 [06:21<02:28,  3.52s/it] 79%|███████▉  | 157/198 [06:22<02:03,  3.01s/it] 80%|███████▉  | 158/198 [06:24<01:45,  2.64s/it] 80%|████████  | 159/198 [06:26<01:32,  2.37s/it] 81%|████████  | 160/198 [06:28<01:23,  2.21s/it]                                                 {'loss': '0.07361', 'grad_norm': '0.1065', 'learning_rate': '1.025e-06', 'epoch': '2.427'}
+ 81%|████████  | 160/198 [06:28<01:23,  2.21s/it]2026-07-23 18:51:31 [INFO] step 160  loss=0.0736  grad_norm=0.1065  learning_rate=0.0000  epoch=2.4275
+ 81%|████████▏ | 161/198 [06:29<01:16,  2.08s/it] 82%|████████▏ | 162/198 [06:31<01:11,  1.98s/it] 82%|████████▏ | 163/198 [06:33<01:07,  1.94s/it] 83%|████████▎ | 164/198 [06:35<01:03,  1.87s/it] 83%|████████▎ | 165/198 [06:37<01:01,  1.87s/it] 84%|████████▍ | 166/198 [06:38<00:57,  1.79s/it] 84%|████████▍ | 167/198 [06:40<00:57,  1.84s/it] 85%|████████▍ | 168/198 [06:42<00:54,  1.83s/it] 85%|████████▌ | 169/198 [06:44<00:52,  1.81s/it] 86%|████████▌ | 170/198 [06:45<00:49,  1.77s/it]                                                 {'loss': '0.07736', 'grad_norm': '0.09966', 'learning_rate': '5.757e-07', 'epoch': '2.58'}
+ 86%|████████▌ | 170/198 [06:45<00:49,  1.77s/it]2026-07-23 18:51:48 [INFO] step 170  loss=0.0774  grad_norm=0.0997  learning_rate=0.0000  epoch=2.5802
+ 86%|████████▋ | 171/198 [06:47<00:47,  1.75s/it] 87%|████████▋ | 172/198 [06:49<00:45,  1.75s/it] 87%|████████▋ | 173/198 [06:51<00:44,  1.76s/it] 88%|████████▊ | 174/198 [06:53<00:43,  1.81s/it] 88%|████████▊ | 175/198 [06:54<00:41,  1.79s/it] 89%|████████▉ | 176/198 [06:56<00:38,  1.74s/it] 89%|████████▉ | 177/198 [06:58<00:36,  1.75s/it] 90%|████████▉ | 178/198 [07:00<00:35,  1.78s/it] 90%|█████████ | 179/198 [07:01<00:33,  1.76s/it] 91%|█████████ | 180/198 [07:03<00:32,  1.78s/it]                                                 {'loss': '0.07896', 'grad_norm': '0.08923', 'learning_rate': '2.499e-07', 'epoch': '2.733'}
+ 91%|█████████ | 180/198 [07:03<00:32,  1.78s/it]2026-07-23 18:52:06 [INFO] step 180  loss=0.0790  grad_norm=0.0892  learning_rate=0.0000  epoch=2.7328
+ 91%|█████████▏| 181/198 [07:05<00:29,  1.72s/it] 92%|█████████▏| 182/198 [07:06<00:27,  1.74s/it] 92%|█████████▏| 183/198 [07:08<00:25,  1.72s/it] 93%|█████████▎| 184/198 [07:10<00:24,  1.73s/it] 93%|█████████▎| 185/198 [07:12<00:22,  1.72s/it] 94%|█████████▍| 186/198 [07:13<00:21,  1.77s/it] 94%|█████████▍| 187/198 [07:15<00:19,  1.75s/it] 95%|█████████▍| 188/198 [07:17<00:17,  1.77s/it] 95%|█████████▌| 189/198 [07:19<00:15,  1.76s/it] 96%|█████████▌| 190/198 [07:21<00:14,  1.78s/it]                                                 {'loss': '0.07125', 'grad_norm': '0.1095', 'learning_rate': '5.644e-08', 'epoch': '2.885'}
+ 96%|█████████▌| 190/198 [07:21<00:14,  1.78s/it]2026-07-23 18:52:23 [INFO] step 190  loss=0.0713  grad_norm=0.1095  learning_rate=0.0000  epoch=2.8855
+ 96%|█████████▋| 191/198 [07:22<00:12,  1.78s/it] 97%|█████████▋| 192/198 [07:24<00:10,  1.77s/it] 97%|█████████▋| 193/198 [07:26<00:09,  1.82s/it] 98%|█████████▊| 194/198 [07:28<00:07,  1.87s/it] 98%|█████████▊| 195/198 [07:30<00:05,  1.82s/it] 99%|█████████▉| 196/198 [07:31<00:03,  1.81s/it] 99%|█████████▉| 197/198 [07:33<00:01,  1.75s/it]100%|██████████| 198/198 [07:34<00:00,  1.50s/it]
+  0%|          | 0/14 [00:00<?, ?it/s][A
+ 14%|█▍        | 2/14 [00:00<00:00, 14.24it/s][A
+ 29%|██▊       | 4/14 [00:00<00:01,  8.06it/s][A
+ 36%|███▌      | 5/14 [00:00<00:01,  7.68it/s][A
+ 43%|████▎     | 6/14 [00:00<00:01,  7.78it/s][A
+ 50%|█████     | 7/14 [00:00<00:00,  7.52it/s][A
+ 57%|█████▋    | 8/14 [00:01<00:00,  7.38it/s][A
+ 64%|██████▍   | 9/14 [00:01<00:00,  7.24it/s][A
+ 71%|███████▏  | 10/14 [00:01<00:00,  7.23it/s][A
+ 79%|███████▊  | 11/14 [00:01<00:00,  7.17it/s][A
+ 86%|████████▌ | 12/14 [00:01<00:00,  6.82it/s][A
+ 93%|█████████▎| 13/14 [00:01<00:00,  7.16it/s][A
+100%|██████████| 14/14 [00:01<00:00,  6.79it/s][A2026-07-23 18:52:46 [INFO] [eval-sample 0] step=198
+  expected: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earning
+  generated: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earnings would be 14 * 6771144 = 94796016.", "tentative_answer": "94796016", "action": "confirm_stop", "han
+2026-07-23 18:52:55 [INFO] [eval-sample 1] step=198
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 classes of 1 hour each, totaling 3 hours per day. There are 3 such days, so 3 * 3 = 9 hours per week. On Tuesdays and Thursdays, he has 2 classes of 2 hours each, totaling 4 hours per day. 
+2026-07-23 18:53:02 [INFO] [eval-sample 2] step=198
+  expected: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 185340
+  generated: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action": "confirm_stop", "handoff_target"
+2026-07-23 18:53:11 [INFO] [eval-sample 3] step=198
+  expected: {"reasoning": "Calculate the total capacity by summing the capacities of all vehicles: (4 * 60) + (6 * 30) + (10 * 5387984). First, compute each term separately: 4 * 60 = 240, 6 * 30 = 180, and 10 * 5
+  generated: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 53879840. Finally, sum all the capacities: 240 + 180 + 53879840 = 53880260.", "tentative_answer": "53880
+                                                 
+                                               [A{'eval_loss': '0.07885', 'eval_runtime': '33.63', 'eval_samples_per_second': '3.271', 'eval_steps_per_second': '0.416', 'epoch': '3'}
+100%|██████████| 198/198 [08:08<00:00,  1.50s/it]
+100%|██████████| 14/14 [00:33<00:00,  6.79it/s][A2026-07-23 18:53:11 [INFO] step 198  eval_loss=0.0789  eval_runtime=33.6322  eval_samples_per_second=3.2710  eval_steps_per_second=0.4160  epoch=3.0000
+
+                                               [A                                                 {'train_runtime': '489.9', 'train_samples_per_second': '12.8', 'train_steps_per_second': '0.404', 'train_loss': '0.1037', 'epoch': '3'}
+100%|██████████| 198/198 [08:09<00:00,  1.50s/it]2026-07-23 18:53:12 [INFO] step 198  train_runtime=489.8569  train_samples_per_second=12.8000  train_steps_per_second=0.4040  total_flos=322672156984999936.0000  train_loss=0.1037  epoch=3.0000
+100%|██████████| 198/198 [08:09<00:00,  2.47s/it]
+  0%|          | 0/14 [00:00<?, ?it/s] 14%|█▍        | 2/14 [00:00<00:00, 14.64it/s] 29%|██▊       | 4/14 [00:00<00:01,  8.50it/s] 36%|███▌      | 5/14 [00:00<00:01,  7.94it/s] 43%|████▎     | 6/14 [00:00<00:01,  7.96it/s] 50%|█████     | 7/14 [00:00<00:00,  7.64it/s] 57%|█████▋    | 8/14 [00:00<00:00,  7.47it/s] 64%|██████▍   | 9/14 [00:01<00:00,  7.33it/s] 71%|███████▏  | 10/14 [00:01<00:00,  7.30it/s] 79%|███████▊  | 11/14 [00:01<00:00,  7.24it/s] 86%|████████▌ | 12/14 [00:01<00:00,  6.89it/s] 93%|█████████▎| 13/14 [00:01<00:00,  7.23it/s]100%|██████████| 14/14 [00:01<00:00,  6.88it/s]2026-07-23 18:53:22 [INFO] [eval-sample 0] step=198
+  expected: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earning
+  generated: {"reasoning": "Jordan plays video games for 2 hours per day. If he worked instead, he would work 2 hours per day. Over 7 days, this totals 2 * 7 = 14 hours. At a rate of $6771144 per hour, his earnings would be 14 * 6771144 = 94796016.", "tentative_answer": "94796016", "action": "confirm_stop", "han
+2026-07-23 18:53:31 [INFO] [eval-sample 1] step=198
+  expected: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 hours per day, so 3 * 3 = 9 hours. On Tuesdays and Thursdays, he has 4 hours per day, so 
+  generated: {"reasoning": "First, calculate the weekly hours for each day. On Mondays, Wednesdays, and Fridays, Kimo has 3 classes of 1 hour each, totaling 3 hours per day. There are 3 such days, so 3 * 3 = 9 hours per week. On Tuesdays and Thursdays, he has 2 classes of 2 hours each, totaling 4 hours per day. 
+2026-07-23 18:53:39 [INFO] [eval-sample 2] step=198
+  expected: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 185340
+  generated: {"reasoning": "The original price per computer is $1684916. A 10% increase means multiplying by 1.10: 1684916 * 1.10 = 1853407.6. Then, multiply this new price by the number of computers (500): 1853407.6 * 500 = 926703800.", "tentative_answer": "926703800", "action": "confirm_stop", "handoff_target"
+2026-07-23 18:53:47 [INFO] [eval-sample 3] step=198
+  expected: {"reasoning": "Calculate the total capacity by summing the capacities of all vehicles: (4 * 60) + (6 * 30) + (10 * 5387984). First, compute each term separately: 4 * 60 = 240, 6 * 30 = 180, and 10 * 5
+  generated: {"reasoning": "First, calculate the capacity of the buses: 4 * 60 = 240. Next, calculate the capacity of the minibusses: 6 * 30 = 180. Then, calculate the capacity of the minivans: 10 * 5387984 = 53879840. Finally, sum all the capacities: 240 + 180 + 53879840 = 53880260.", "tentative_answer": "53880
+2026-07-23 18:53:47 [INFO] step 198  eval_loss=0.0789  eval_runtime=34.2899  eval_samples_per_second=3.2080  eval_steps_per_second=0.4080  epoch=3.0000
+100%|██████████| 14/14 [00:34<00:00,  2.44s/it]
+2026-07-23 18:53:47 [INFO] Final eval metrics: {'eval_loss': 0.07885497063398361, 'eval_runtime': 34.2899, 'eval_samples_per_second': 3.208, 'eval_steps_per_second': 0.408, 'epoch': 3.0}
+2026-07-23 18:53:47 [INFO] Final model saved to jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A3/final
+2026-07-23 18:53:47 [INFO] ======================================================================
+2026-07-23 18:53:47 [INFO] Training complete.
+2026-07-23 18:53:47 [INFO] ======================================================================
+[rank0]:[W723 18:53:48.981506680 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[done] A3 trained — final adapter at jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/A3/final
+
+================================================================
+All requested agents trained.
+Run logs:    jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/*/train_*.log
+TensorBoard: tensorboard --logdir jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3
+Final adapters: jca/sft_runs/gsm_fixed_a1_corr30_20260723_v3/{A1,A2,A3}/final
+================================================================
