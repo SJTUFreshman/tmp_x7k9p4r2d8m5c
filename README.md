@@ -1,29 +1,34 @@
-<h1 align="center">Reallocating Reasoning across Models<br>via Learned Collaboration</h1>
+# Reallocating Reasoning across Models via Learned Collaboration
 
-<p align="center">
-  <strong>Collaborative Learning (CL)</strong><br>
-  Heterogeneous models · Learned task-state handoffs · Five reasoning benchmarks
-</p>
+This repository is the curated reproduction release for **Collaborative Learning (CL)**, a heterogeneous multi-agent reasoning system. It contains the selected experiment implementations, benchmark-specific evaluators, paper-result records, configurations, analysis outputs, logs, and the five rendered figures used in the paper.
 
-<p align="center">
-  <a href="#reported-results">Results</a> ·
-  <a href="#quickstart-score-the-stored-math-results">Quickstart</a>
-</p>
+The release is intentionally focused on the experiments reported in the paper. It does not include the manuscript source, model weights, adapter checkpoints, benchmark datasets, teacher pools, or unrelated historical debugging material.
 
-## Overview
+## What the method does
 
-This repository accompanies **Reallocating Reasoning across Models via Learned Collaboration**. It contains the curated experiment code, evaluation records, analysis artifacts, training configurations, and logs associated with the paper. Large retained artifacts are distributed through **Git LFS**.
+CL reallocates the parameter budget of a single large model across three independently parameterized collaborators:
 
-Collaborative Learning trains smaller models to reassess, extend, and correct one another's reasoning through explicit task-state handoffs. It combines:
+- Qwen3-1.7B (A1), Qwen3-4B (A2), and Qwen3-8B (A3), totaling 13.7B parameters;
+- explicit handoffs of task state, so each model can question, extend, revise, or preserve another model's reasoning;
+- pyramid supervision, which combines protocol distillation, step-level deliberative scores, and task-level rewards.
 
-- **Model slicing:** Qwen3-1.7B, Qwen3-4B, and Qwen3-8B form a heterogeneous pool with 13.7B total parameters, comparable to Qwen3-14B. These are independently parameterized models; slicing does not partition a single checkpoint's weights.
-- **Pyramid supervision:** protocol distillation initializes collaboration, followed by step-level feedback and task rewards that refine reasoning and interaction decisions.
+The paper evaluates this system on five tasks: multi-hop question answering (MuSiQue), mathematical reasoning (GSM-Hard and MATH), code generation (an eight-language MultiPL-E subset), and constrained generation (Conifer).
 
-The paper evaluates multi-hop question answering, mathematical reasoning, code generation, and constrained generation using MuSiQue, GSM-Hard, MATH, an eight-language MultiPL-E subset, and Conifer.
+## Paper figures
+
+The original rendered figures are available for reuse. They are kept as standalone PDFs; the paper's TeX, BibTeX, style files, and figure-generation source are not part of this repository.
+
+| Figure | Description | File |
+| --- | --- | --- |
+| 1 | Model slicing and learned collaboration | [Figure1.pdf](assets/figures/Figure1.pdf) |
+| 2 | Collaborative-learning and pyramid-supervision overview | [Figure2.pdf](assets/figures/Figure2.pdf) |
+| 3 | Ablation study across the five benchmarks | [Figure3.pdf](assets/figures/Figure3.pdf) |
+| 4 | Computation cost versus task performance | [Figure4.pdf](assets/figures/Figure4.pdf) |
+| 5 | Post-training interaction topology | [Figure5.pdf](assets/figures/Figure5.pdf) |
 
 ## Reported results
 
-The following values reproduce Table 1 of the manuscript. All scores are percentages; higher is better. The first three benchmarks report **accuracy / F1**, MultiPL-E reports **weighted / macro-language pass@1**, and Conifer reports **Coverage / Explicit**.
+The table below records the paper's main comparison. Values are percentages and are shown as **first metric / second metric**: accuracy / F1 for MuSiQue, GSM-Hard, and MATH; weighted / macro-language pass@1 for MultiPL-E; and Coverage / Explicit for Conifer.
 
 | Method | MuSiQue | GSM-Hard | MATH | MultiPL-E | Conifer |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -40,48 +45,48 @@ The following values reproduce Table 1 of the manuscript. All scores are percent
 | Homo. CL | 36.00 / 47.19 | 60.61 / 76.51 | 68.60 / 77.95 | 53.33 / 52.65 | 88.15 / 95.22 |
 | **CL (ours)** | **42.37 / 53.43** | **71.97 / 81.15** | **78.40 / 85.25** | **59.39 / 59.63** | **88.90 / 95.90** |
 
-CL achieves the best or joint-best score on six of the ten metrics and improves over Qwen3-14B on all ten, with a mean absolute gain of 2.38 percentage points. These are the paper's reported results, not results from rerunning every experiment during repository preparation.
+CL is best or joint-best on six of the ten reported metrics and improves on Qwen3-14B across all ten. These values are the paper's reported results; they should not be interpreted as a claim that every historical experiment was rerun while preparing this release.
 
 ## Repository layout
 
-```text
+~~~text
+assets/
+  figures/                  Rendered paper figures (PDF only)
 reproduction/
-  code/                   Experiment implementations and runtime dependencies
-    jca/                  CL, task evaluators, analysis code, and MAS baselines
-    jca_homo_gsm/          Homogeneous GSM-Hard implementation
-    jca_homo_math/         Homogeneous MATH implementation
-    jca_homo_launchers/    Homogeneous experiment launchers
-    MAGRPO/               MAGRPO experiment implementation
-    MAPoRL/               MAPoRL experiment implementation
-    AT-GRPO/              AT-GRPO experiment implementation
-    math_se_rl/           MATH self-evaluated RL implementation
-  results/                Selected evaluation records, configurations, and logs
-  training/               Training configurations, logs, and summaries
-  analysis/               Saved analysis results
-```
+  code/                     Selected experiment implementations and evaluators
+    jca/                    CL code, shared utilities, benchmark evaluators, analyses
+    jca_homo_gsm/           Homogeneous GSM-Hard implementation
+    jca_homo_math/          Homogeneous MATH implementation
+    jca_homo_launchers/     Homogeneous launchers
+    MAGRPO/                 MAGRPO baseline
+    MAPoRL/                 MAPoRL baseline
+    AT-GRPO/                AT-GRPO baseline
+    math_se_rl/             MATH self-evaluated RL implementation
+  results/                  Selected paper-result records, configs, and logs
+  training/                 Selected training records and summaries
+  analysis/                 Saved analysis artifacts
+~~~
 
-`results/` and `training/` are organized by benchmark: `MuSiQue`, `GSM-Hard`, `MATH`, `MultiPL-E`, and `Conifer`. Analysis scripts live primarily in [`reproduction/code/jca/analysis/`](reproduction/code/jca/analysis/); [`reproduction/analysis/`](reproduction/analysis/) holds saved analysis artifacts.
+The retained files are grouped by MuSiQue, GSM-Hard, MATH, MultiPL-E, and Conifer. The MATH entry point and related evaluators are in reproduction/code/jca/experiments/math_specific_sft_rl_v1/. Shared analysis utilities are in reproduction/code/jca/analysis/.
 
-The release excludes model weights, adapter checkpoints, benchmark datasets, teacher pools, and SFT/RL training inputs. Obtain these external resources separately before training or generating new predictions. Stored evaluation outputs retain the information present in their source records. Some experiments survive as aggregate results or logs rather than complete per-example trajectories.
+## Download the release
 
-## Download the artifacts
+Several result files are large and are tracked with Git LFS.
 
-Install [Git LFS](https://git-lfs.com/) before cloning:
-
-```bash
+~~~bash
 git lfs install
 git clone https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c.git
 cd tmp_x7k9p4r2d8m5c
 git lfs pull
-```
+~~~
 
-Run the examples below from the repository root. A checkout containing LFS pointer text instead of JSONL or other artifact content is not ready for scoring.
+If a JSONL file contains only a short LFS pointer instead of its recorded content, run git lfs pull before scoring.
 
-## Quickstart: score the stored MATH results
+## Quickstart: score the stored MATH result
 
-This path recomputes the MATH CL main-table metrics without a GPU, model server, or benchmark download. Use Python 3.10 or newer and install SymPy for symbolic answer comparison:
+This CPU-only command recomputes the MATH CL main-table metrics from the retained result records. It does not need a GPU, a model server, or a benchmark download.
 
-```bash
+~~~bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -91,57 +96,59 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
   summarize \
   --input reproduction/results/MATH/CL/math_specific_sft_rl_20260830/eval/results.jsonl \
   --output runs/math-main-table-summary.log
-```
+~~~
 
-Expected result: **500 problems, 392 correct, accuracy 78.40%, F1 85.25%**. The summary includes the input hash, scorer version, aggregate metrics, and per-problem scores. Its output path must not already exist.
+The expected summary is **500 problems, 392 correct, 78.40% accuracy, and 85.25% F1**. The command writes a separate summary, records the input hash and scorer version, and leaves the retained JSONL unchanged. The output path must not already exist.
 
-### MATH scoring convention
+The paper rule keeps the final answer within the three recorded protocol turns. Trajectories that exceed the limit, or reach the limit without a successful stop, fall back to their first tentative answer. The retained evaluation.log is a consolidated scoring summary of the stored records and should be read as such rather than as a raw execution transcript.
 
-The main-table rule retains the final answer within three recorded protocol turns. A trajectory with more than three turns, or exactly three turns without a successful stop, is scored using its first tentative answer. The scorer preserves the original result file and writes a separate scoring summary.
+## Run a new MATH evaluation
 
-[`evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py) and its [`06_eval_suite.sh`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh) wrapper provide the consolidated entry point. The retained [`evaluation.log`](reproduction/results/MATH/CL/math_specific_sft_rl_20260830/logs/evaluation.log) is derived from the stored result records and explicitly labeled as a scoring summary, rather than an execution transcript.
+The run subcommand starts a fresh evaluation against external MATH parquet files and three already-running OpenAI-compatible model endpoints. It requires the intended Qwen3-1.7B, Qwen3-4B, and Qwen3-8B adapters, plus the original fixed shard.
 
-## Run a new MATH CL evaluation
-
-The endpoint client requires the external MATH parquet files, the original `shard_04.jsonl`, and three already-running OpenAI-compatible endpoints serving the intended final adapters. Install parquet support in the client environment:
-
-```bash
+~~~bash
 python -m pip install pandas pyarrow
 
-python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py run \
+python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py \
+  run \
   --source-root /path/to/MATH \
   --shard-file /path/to/test_10x500_seed42/shard_04.jsonl \
   --output-root runs/math-cl-new \
   --api-base-a1 http://127.0.0.1:8201/v1 --api-model-a1 A1 \
   --api-base-a2 http://127.0.0.1:8212/v1 --api-model-a2 A2 \
   --api-base-a3 http://127.0.0.1:8223/v1 --api-model-a3 A3
-```
+~~~
 
-`--source-root` contains one subject directory per MATH subject, each with `test-00000-of-00001.parquet`. The shard must match the recorded SHA-256 `3d4b0649a1a4f6198ed22b138fb82b31d7339be65997af4175bf9bdcc6343183`. The endpoint model names must refer to the trained adapters: A1 is Qwen3-1.7B, A2 is Qwen3-4B, and A3 is Qwen3-8B for this MATH run. The endpoints must support the runner's structured JSON output requests. Set `OPENAI_API_KEY` if authentication is required.
+source-root must contain one MATH subject directory per subject, each with test-00000-of-00001.parquet. The fixed shard used by this release has SHA-256 3d4b0649a1a4f6198ed22b138fb82b31d7339be65997af4175bf9bdcc6343183. The endpoints must support the runner's structured JSON requests. Provide authentication through the environment variables supported by the selected client; credentials are not stored in this repository.
 
-The command builds the fixed evaluation shard, creates fresh state, runs the protocol, finalizes raw records, and appends the paper-rule scores to `evaluation.log`. It fixes A3 bootstrap and initial A3 handoff, enables incumbent-preservation guidance, disables thinking, uses one rollout, and limits execution to three recorded protocol turns. It refuses an existing output directory. The shell wrapper accepts the same arguments after the `run` subcommand has been omitted.
-
-Start model servers and prepare the trained adapters before invoking this entry point. New generations depend on the supplied checkpoints and serving environment. The stored-result scoring command has been verified; the model evaluation has not been rerun during repository preparation.
+The runner creates a new output directory, generates raw records, finalizes them, and writes the same paper-rule score summary. It does not reuse an existing output directory. The shell wrapper 06_eval_suite.sh accepts the same arguments after the run subcommand.
 
 ## Other benchmarks and training
 
-The code retains the experiment-specific organization and selected configurations. Useful starting points include:
+The release keeps benchmark-specific launchers and evaluators together with the selected records that support the paper table.
 
-| Area | Location |
+| Area | Starting point |
 | --- | --- |
-| CL and shared evaluation utilities | [`reproduction/code/jca/scripts/`](reproduction/code/jca/scripts/) |
-| MATH CL | [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/) |
-| Conifer | [`reproduction/code/jca/conifer_training_hub/`](reproduction/code/jca/conifer_training_hub/) |
-| MultiPL-E execution evaluators | [`reproduction/code/jca/Code/MultiPL-E/`](reproduction/code/jca/Code/MultiPL-E/) |
-| MAS baseline implementations | [`reproduction/code/jca/baseline/`](reproduction/code/jca/baseline/) |
-| Per-benchmark training records | [`reproduction/training/`](reproduction/training/) |
+| CL and shared evaluation utilities | reproduction/code/jca/scripts/ |
+| MATH CL | reproduction/code/jca/experiments/math_specific_sft_rl_v1/ |
+| Conifer | reproduction/code/jca/conifer_training_hub/ |
+| MultiPL-E evaluators | reproduction/code/jca/Code/MultiPL-E/ |
+| Multi-agent baselines | reproduction/code/jca/baseline/ |
+| Training records | reproduction/training/ |
 
-Before running an experiment, use its retained configuration and logs to set dataset, checkpoint, interpreter, and output paths for your environment. Original server paths and experiment-specific defaults remain in many scripts; a generic launcher default is not necessarily the setting behind a paper result. Keep bundled task-specific evaluators with their corresponding runs, particularly the MATH evaluator variants.
+There is no single environment lockfile for all experiments. Depending on the benchmark, a run may need Python 3.10+, PyTorch/CUDA, Transformers, PEFT, Accelerate, vLLM, language runtimes, or the evaluator container used by MultiPL-E. Before launching a job, use the retained configuration and logs to set local dataset, adapter, interpreter, and output paths; server-specific paths in individual scripts are historical experiment settings.
 
-Embedded API-key and authenticated-proxy defaults have been cleared in the public code. Supply credentials through the environment variables supported by the selected script; do not commit credentials.
+## Release boundaries
 
-There is no single environment lockfile for all experiments. Training and local model serving additionally require a compatible CUDA/PyTorch stack and the packages used by the selected implementation, such as Transformers, PEFT, Accelerate, and vLLM. MultiPL-E execution also needs the relevant language runtimes or its evaluator container. The paper reports training on eight NVIDIA A800-SXM4-80GB GPUs; this is the experimental setup, not a requirement for the CPU-only summary command.
+The following are deliberately obtained separately and are not included here:
 
-## Manuscript
+- base-model weights, LoRA/adapters, and checkpoints;
+- benchmark datasets and the teacher-model pool;
+- SFT/RL training inputs and other external private resources;
+- manuscript TeX/BibTeX sources and unrelated historical scripts or logs.
 
-The manuscript TeX sources are intentionally kept outside this reproduction repository. The benchmark results and method names above follow the paper supplied with the artifact; the repository does not infer author identities or publication status.
+The rendered figures in assets/figures/ are the exception: they are included because they are reusable paper artifacts and do not require the manuscript source to view. Public code has had embedded API-key and authenticated-proxy defaults removed; use environment variables or local configuration when a selected script requires credentials, and do not commit secrets.
+
+## Citation
+
+If you use this release, cite **Reallocating Reasoning across Models via Learned Collaboration** and identify the benchmark, result record, and code entry point used. The repository contains the artifacts needed to inspect the reported results, while the manuscript source remains outside the release.
