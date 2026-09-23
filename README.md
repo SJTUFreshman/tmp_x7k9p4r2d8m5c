@@ -6,28 +6,24 @@
 </p>
 
 <p align="center">
-  <a href="paper/README.md">Paper source</a> ·
-  <a href="paper/figures/Figure2.pdf">Method overview</a> ·
   <a href="#reported-results">Results</a> ·
   <a href="#quickstart-score-the-stored-math-results">Quickstart</a>
 </p>
 
 ## Overview
 
-This repository accompanies **Reallocating Reasoning across Models via Learned Collaboration**. It contains the curated experiment code, evaluation records, analysis artifacts, training configurations and logs, and manuscript sources associated with the paper. Large retained artifacts are distributed through **Git LFS**.
+This repository accompanies **Reallocating Reasoning across Models via Learned Collaboration**. It contains the curated experiment code, evaluation records, analysis artifacts, training configurations, and logs associated with the paper. Large retained artifacts are distributed through **Git LFS**.
 
 Collaborative Learning trains smaller models to reassess, extend, and correct one another's reasoning through explicit task-state handoffs. It combines:
 
 - **Model slicing:** Qwen3-1.7B, Qwen3-4B, and Qwen3-8B form a heterogeneous pool with 13.7B total parameters, comparable to Qwen3-14B. These are independently parameterized models; slicing does not partition a single checkpoint's weights.
 - **Pyramid supervision:** protocol distillation initializes collaboration, followed by step-level feedback and task rewards that refine reasoning and interaction decisions.
 
-The paper evaluates multi-hop question answering, mathematical reasoning, code generation, and constrained generation using MuSiQue, GSM-Hard, MATH, an eight-language MultiPL-E subset, and Conifer. See [Figure 2](paper/figures/Figure2.pdf) for the method and [Figure 4](paper/figures/Figure4.pdf) for the efficiency analysis.
-
-![Overview of model slicing, protocol distillation, and step-level supervision](paper/figures/Figure2.png)
+The paper evaluates multi-hop question answering, mathematical reasoning, code generation, and constrained generation using MuSiQue, GSM-Hard, MATH, an eight-language MultiPL-E subset, and Conifer.
 
 ## Reported results
 
-The following values reproduce [Table 1 of the manuscript](paper/main_results.tex). All scores are percentages; higher is better. The first three benchmarks report **accuracy / F1**, MultiPL-E reports **weighted / macro-language pass@1**, and Conifer reports **Coverage / Explicit**.
+The following values reproduce Table 1 of the manuscript. All scores are percentages; higher is better. The first three benchmarks report **accuracy / F1**, MultiPL-E reports **weighted / macro-language pass@1**, and Conifer reports **Coverage / Explicit**.
 
 | Method | MuSiQue | GSM-Hard | MATH | MultiPL-E | Conifer |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -49,7 +45,6 @@ CL achieves the best or joint-best score on six of the ten metrics and improves 
 ## Repository layout
 
 ```text
-paper/                    Manuscript, bibliography, style files, and figures
 reproduction/
   code/                   Experiment implementations and runtime dependencies
     jca/                  CL, task evaluators, analysis code, and MAS baselines
@@ -149,4 +144,4 @@ There is no single environment lockfile for all experiments. Training and local 
 
 ## Manuscript
 
-The manuscript title, method description, and table above follow the included TeX sources. See [`paper/README.md`](paper/README.md) for the source inventory and build instructions. The release preserves the anonymous manuscript source and does not infer author identities or publication status from the template metadata.
+The manuscript TeX sources are intentionally kept outside this reproduction repository. The benchmark results and method names above follow the paper supplied with the artifact; the repository does not infer author identities or publication status.
