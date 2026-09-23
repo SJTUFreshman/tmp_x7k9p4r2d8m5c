@@ -1,21 +1,25 @@
-<h1 align="center">Reallocating Reasoning across Models<br>via Learned Collaboration</h1>
+<h1 align="center">Reasoning across Sliced Models via Collaborative Learning</h1>
 
 <p align="center">
   <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-1.png" alt="Collaborative Learning overview: model slicing and learned collaboration" width="960"></a>
 </p>
 
 <p align="center">
-  <b>A heterogeneous team of small language models that learns when to hand off, verify, and preserve reasoning.</b>
-</p>
-
-<p align="center">
-  <a href="https://github.com/SJTUFreshman/tmp_x7k9p4r2d8m5c">Code and results</a>
+  <a href="#-overview">Overview</a>
   &nbsp;·&nbsp;
-  <a href="#quickstart">Quickstart</a>
+  <a href="#-evaluation">Evaluation</a>
   &nbsp;·&nbsp;
-  <a href="#evaluation">Evaluation</a>
+  <a href="#-workflow">Workflow</a>
   &nbsp;·&nbsp;
-  <a href="#documentation">Documentation</a>
+  <a href="#-repository-layout">Repository layout</a>
+  &nbsp;·&nbsp;
+  <a href="#-quickstart">Quickstart</a>
+  &nbsp;·&nbsp;
+  <a href="#-training-and-other-evaluations">Training and other evaluations</a>
+  &nbsp;·&nbsp;
+  <a href="#-documentation">Documentation</a>
+  &nbsp;·&nbsp;
+  <a href="#-system-requirements-and-release-scope">System requirements and release scope</a>
 </p>
 
 ## ✨ Overview
@@ -195,18 +199,6 @@ There is no single environment lockfile. A full run may require Python 3.10+, Py
 
 The MATH training chain is an external-resource workflow: `00_build_sft_data.sh` → `01_train_sft.sh` → `02_reuse_sampled_rl.sh` → `03_score_rl.sh` → `04_prepare_rl.sh` → `05_train_rl.sh` → `06_eval_suite.sh`. These stages expect model checkpoints, benchmark data, GPU workers, and endpoint configuration from `config.env`; the CPU-only scorer below is the reproducible starting point for a fresh checkout.
 
-## 🖼️ Figures
-
-All five paper figures are included as standalone PDFs with PNG previews for GitHub.
-
-| Figure | Contents | Files |
-| --- | --- | --- |
-| 1 | Model slicing and learned collaboration | [PDF](assets/figures/Figure1.pdf), [preview](assets/figures/previews/Figure1-1.png) |
-| 2 | Collaboration protocol and pyramid supervision | [PDF](assets/figures/Figure2.pdf), [preview](assets/figures/previews/Figure2-1.png) |
-| 3 | Benchmark ablations | [PDF](assets/figures/Figure3.pdf), [preview](assets/figures/previews/Figure3-1.png) |
-| 4 | Computation cost versus task performance | [PDF](assets/figures/Figure4.pdf), [preview](assets/figures/previews/Figure4-1.png) |
-| 5 | Learned interaction topology | [PDF](assets/figures/Figure5.pdf), [preview](assets/figures/previews/Figure5-1.png) |
-
 ## 📚 Documentation
 
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): the consolidated MATH `run` and `summarize` entry point.
@@ -217,9 +209,8 @@ All five paper figures are included as standalone PDFs with PNG previews for Git
 
 Included:
 
-- selected implementation code, benchmark evaluators, launchers, and vendor utilities;
-- paper-result records, manifests, configurations, logs, and selected training metrics;
-- five rendered paper figures and GitHub-friendly previews;
+- implementation code, benchmark evaluators, launchers, and vendor utilities;
+- paper-result records, manifests, configurations, logs, and training metrics;
 - public code with embedded API keys and authenticated proxy defaults removed.
 
 Obtained separately for full training or fresh evaluation:
