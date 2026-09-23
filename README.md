@@ -1,7 +1,7 @@
 <h1 align="center">Reasoning across Sliced Models via Collaborative Learning</h1>
 
 <p align="center">
-  <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-1.png" alt="Collaborative Learning overview: model slicing and learned collaboration" width="960"></a>
+  <a href="assets/figures/Figure1.pdf"><img src="assets/figures/previews/Figure1-1.png" alt="Collaborative Learning overview: model slicing, protocol distillation, and pyramid supervision" width="960"></a>
 </p>
 
 <p align="center">
@@ -24,23 +24,21 @@
 
 ## ✨ Overview
 
-This repository is the public code and artifact release for **Collaborative Learning (CL)**. It contains all training and evaluation code, benchmark scorers, result records, configurations, and analysis outputs associated with the project.
+**Collaborative Learning (CL)** studies how sliced models can collaborate on reasoning while keeping the overall parameter budget comparable to a single larger model. The method combines model slicing, protocol distillation, and pyramid supervision so that models can build on shared task state across multiple reasoning steps.
 
-CL studies collaborative reasoning across heterogeneous model parameterizations. It reallocates a comparable parameter budget across smaller models and trains them to reassess, extend, and refine shared reasoning through model slicing, protocol distillation, and pyramid supervision.
-
-The release covers four task categories and five benchmarks: multi-hop question answering on MuSiQue, mathematical reasoning on GSM-Hard and MATH, code generation on MultiPL-E, and constrained generation on Conifer.
+This repository bundles the complete implementation and evaluation stack for the study: training code, benchmark scorers, result records, configurations, and analysis artifacts. It covers four task families—multi-hop question answering, mathematics, code generation, and constrained generation—across MuSiQue, GSM-Hard, MATH, MultiPL-E, and Conifer.
 
 <p align="center">
   <a href="assets/figures/Figure2.pdf">
-    <img src="assets/figures/previews/Figure2-1.png" alt="Collaborative learning and pyramid supervision" width="920">
+    <img src="assets/figures/previews/Figure2-1.png" alt="Model slicing, protocol distillation, and pyramid supervision" width="920">
   </a>
 </p>
 
 ## 🧪 Evaluation
 
-Evaluation is organized around four task categories and five benchmarks:
+We evaluate CL on four task families and five benchmarks:
 
-| Category | Benchmark | Capability tested | Code and artifact paths |
+| Task family | Benchmark | What it measures | Relevant paths |
 | --- | --- | --- | --- |
 | Multi-hop QA | [MuSiQue](https://github.com/StonyBrookNLP/musique) | Compositional retrieval and reasoning | <code>reproduction/code/jca/</code>, <code>reproduction/results/MuSiQue/</code> |
 | Mathematical reasoning | **GSM-Hard** | Robust numerical reasoning | <code>reproduction/code/jca_homo_gsm/</code>, <code>reproduction/results/GSM-Hard/</code> |
@@ -50,7 +48,7 @@ Evaluation is organized around four task categories and five benchmarks:
 
 ### 📊 Results
 
-The table presents the paper's main comparison. Values are percentages. MuSiQue, GSM-Hard, and MATH use **accuracy / F1**; MultiPL-E uses **weighted / macro-language pass@1**; Conifer uses **Coverage / Explicit**.
+The table below compares CL with the main single-model and multi-model baselines. All values are percentages. MuSiQue, GSM-Hard, and MATH use **accuracy / F1**; MultiPL-E uses **weighted / macro-language pass@1**; Conifer uses **Coverage / Explicit**.
 
 | Method | MuSiQue | GSM-Hard | MATH | MultiPL-E | Conifer |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -73,13 +71,13 @@ The table presents the paper's main comparison. Values are percentages. MuSiQue,
   </a>
 </p>
 
-The retained CL records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 500 MATH problems, 1,352 MultiPL-E test problems, and 1,402 Conifer trajectories. CL is best or joint-best on **6 of 10 metrics**, improves over Qwen3-14B on all ten, and gains an average of **2.38 percentage points** over that single-model reference. The stored MATH evaluation scores **392/500 correct**, or **78.40% accuracy and 85.25% F1**, under the paper scorer.
+The released evaluation records contain 2,417 MuSiQue examples, 132 GSM-Hard examples, 500 MATH problems, 1,352 MultiPL-E test problems, and 1,402 Conifer trajectories.
 
-> **Result provenance.** These are the paper's results and the retained evaluation records. Preparing this repository does not claim to rerun every historical training or baseline experiment.
+CL is best or joint-best on **6 of 10 metrics**, improves over Qwen3-14B on all ten, and gains an average of **2.38 percentage points** over that single-model reference. On the released MATH shard, CL scores **392/500 correct**, or **78.40% accuracy and 85.25% F1**, under the released scorer.
 
 ### 📉 Efficiency and task performance
 
-The paper also presents the trade-off between task performance, parameter-weighted output cost, and average model invocations. Each panel compares CL with established multi-model baselines on one benchmark.
+Figure 4 compares task performance with parameter-weighted output cost and average model invocations across the five benchmarks.
 
 <p align="center">
   <a href="assets/figures/Figure4.pdf"><img src="assets/figures/previews/Figure4-1.png" alt="Computation cost versus task performance across five benchmarks" width="960"></a>
@@ -87,7 +85,7 @@ The paper also presents the trade-off between task performance, parameter-weight
 
 ### 🧭 Emergent interaction topology
 
-The learned policy does not force one universal model order. Its interaction topology changes with the task: models learn when to draft, review, refine, enrich, or terminate.
+Figure 5 visualizes the task-dependent interaction topology. The model order changes with the task, allowing CL to draft, review, refine, enrich, or terminate as needed.
 
 <p align="center">
   <a href="assets/figures/Figure5.pdf"><img src="assets/figures/previews/Figure5-1.png" alt="Task-dependent learned interaction topology" width="960"></a>
@@ -96,48 +94,42 @@ The learned policy does not force one universal model order. Its interaction top
 ## 🧭 Workflow
 
 ```text
-task query
-    |
-    v
- A1: Qwen3-1.7B ---- continue ----+
-    |                              |
-    +--------- handoff(j) ---------+--> A2: Qwen3-4B --> A3: Qwen3-8B
-                                      |                    |
-                                      +---- handoff -------+
-                                                           |
-                                      terminate <-----------+
-                                                           |
-                                                           v
-                                                  task-specific evaluator
+task query + current reasoning state
+                  |
+                  v
+          sliced model pool
+                  |
+                  v
+           protocol decision
+          /        |          \
+     continue   handoff     terminate
+        |          |            |
+        +------> next model    v
+                              final answer
+                                   |
+                                   v
+                          task-specific evaluator
 ```
 
-Protocol distillation supplies coordination traces, the large-model inspector scores each reasoning and interaction step, and the benchmark grader supplies the final task reward. The learned protocol can produce different interaction patterns for QA, math, code, and constrained generation.
+At each step, the current task state is processed by one model from the sliced-model pool. The learned protocol can continue the current thread, hand the state to another model, or terminate with a final answer. Protocol distillation provides coordination traces, pyramid supervision scores the reasoning process and final output, and each benchmark supplies a task-specific evaluator.
 
 ## 📦 Repository layout
 
-~~~
-assets/
-  figures/                         Paper figures (PDF) and GitHub previews (PNG)
-reproduction/
-  code/
-    jca/                           CL implementation, utilities, evaluators, analysis
-    jca_homo_gsm/                  Homogeneous GSM-Hard implementation
-    jca_homo_math/                 Homogeneous MATH implementation
-    jca_homo_launchers/            Cluster launchers and helpers
-    AT-GRPO/ MAGRPO/ MAPoRL/       Baseline implementations
-    math_se_rl/                    MATH self-evaluated RL baseline
-  results/                         Outputs, configs, manifests, and logs
-  training/                        Selected SFT/RL records and metrics
-  analysis/                        Saved analysis artifacts
-~~~
+| Path | Contents |
+| --- | --- |
+| `assets/figures/` | Released figures and GitHub previews |
+| `reproduction/code/` | CL implementation, controls, baselines, evaluators, and analysis tools |
+| `reproduction/results/` | Evaluation outputs, configurations, manifests, and logs |
+| `reproduction/training/` | Training records and metrics |
+| `reproduction/analysis/` | Saved analysis artifacts |
 
-Each benchmark result tree keeps the method name, run configuration, raw or scored records, and summaries together.
+Each benchmark directory keeps its method name, configuration, scored records, and summaries together.
 
 ## 🚀 Quickstart
 
-### 1️⃣ Download the artifact release
+### 1️⃣ Clone the repository and fetch large files
 
-Eight large Conifer scored files are tracked with Git LFS.
+The repository uses Git LFS for eight large Conifer score files.
 
 ~~~
 git lfs install
@@ -146,9 +138,9 @@ cd tmp_x7k9p4r2d8m5c
 git lfs pull
 ~~~
 
-### 2️⃣ Re-score the stored MATH result
+### 2️⃣ Recompute the MATH summary from the bundled records
 
-This CPU-only path needs no benchmark download, model server, or GPU.
+This CPU-only path requires no dataset download, model server, or GPU.
 
 ~~~
 python3 -m venv .venv
@@ -162,11 +154,11 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
   --output runs/math-main-table-summary.log
 ~~~
 
-The output path must be new. The scorer retains the final answer within three recorded protocol turns; if a trajectory exceeds the limit or does not stop by turn three, it falls back to the first tentative answer. The fixed shard has SHA-256 <code>3d4b0649a1a4f6198ed22b138fb82b31d7339be65997af4175bf9bdcc6343183</code>.
+Use a new output path for each run. The scorer keeps the final answer from the three recorded protocol turns; for longer or non-terminating trajectories, it falls back to the first tentative answer. The fixed shard has SHA-256 <code>3d4b0649a1a4f6198ed22b138fb82b31d7339be65997af4175bf9bdcc6343183</code>.
 
 ### 3️⃣ Run a fresh MATH evaluation
 
-Supply the external MATH parquet root, the original <code>shard_04.jsonl</code>, and three OpenAI-compatible endpoints serving the final A1/A2/A3 adapters.
+For a fresh run, provide the external MATH parquet root, the original <code>shard_04.jsonl</code>, and three OpenAI-compatible endpoints for the final A1/A2/A3 adapters.
 
 ~~~
 python -m pip install pandas pyarrow
@@ -181,11 +173,11 @@ python reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_t
   --api-base-a3 http://127.0.0.1:8223/v1 --api-model-a3 A3
 ~~~
 
-The source root must contain one subject directory per MATH subject, each with <code>test-00000-of-00001.parquet</code>. The runner creates a new output root, executes shard construction, initialization, evaluation, and finalization, then writes the score summary. Authentication is supplied through the client environment or <code>--api-key</code>; credentials are not stored here.
+The source root must contain one subject directory per MATH subject, each with <code>test-00000-of-00001.parquet</code>. The runner creates a new output root, builds the shard, initializes the evaluation, runs the endpoints, and writes the score summary. Authentication comes from the client environment or <code>--api-key</code>; credentials are not stored here.
 
 ## 🧰 Training and other evaluations
 
-| Goal | Entry point |
+| Area | Entry point |
 | --- | --- |
 | Shared CL utilities and analysis | <code>reproduction/code/jca/scripts/</code> |
 | MATH CL training and evaluation | <code>reproduction/code/jca/experiments/math_specific_sft_rl_v1/</code> |
@@ -195,29 +187,29 @@ The source root must contain one subject directory per MATH subject, each with <
 | Baseline methods | <code>reproduction/code/AT-GRPO/</code>, <code>reproduction/code/MAGRPO/</code>, <code>reproduction/code/MAPoRL/</code> |
 | Saved training records | <code>reproduction/training/</code> |
 
-There is no single environment lockfile. A full run may require Python 3.10+, PyTorch/CUDA, Transformers, PEFT, Accelerate, vLLM, language runtimes, and benchmark-specific evaluators. Use the checked-in configs and logs for paths, seeds, model servers, and output conventions.
+The repository does not use a single environment lockfile. A full run may require Python 3.10+, PyTorch/CUDA, Transformers, PEFT, Accelerate, vLLM, language runtimes, and benchmark-specific evaluators. Use the checked-in configurations and logs for paths, seeds, model servers, and output conventions.
 
-The MATH training chain is an external-resource workflow: `00_build_sft_data.sh` → `01_train_sft.sh` → `02_reuse_sampled_rl.sh` → `03_score_rl.sh` → `04_prepare_rl.sh` → `05_train_rl.sh` → `06_eval_suite.sh`. These stages expect model checkpoints, benchmark data, GPU workers, and endpoint configuration from `config.env`; the CPU-only scorer below is the reproducible starting point for a fresh checkout.
+The MATH training chain is an external-resource workflow: `00_build_sft_data.sh` → `01_train_sft.sh` → `02_reuse_sampled_rl.sh` → `03_score_rl.sh` → `04_prepare_rl.sh` → `05_train_rl.sh` → `06_eval_suite.sh`. These stages require model checkpoints, benchmark data, GPU workers, and endpoint settings from `config.env`. For a fresh checkout, start with the CPU-only scorer in Quickstart.
 
 ## 📚 Documentation
 
-- [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): the consolidated MATH `run` and `summarize` entry point.
+- [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/evaluate_main_table.py): consolidated MATH `run` and `summarize` commands.
 - [`reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh`](reproduction/code/jca/experiments/math_specific_sft_rl_v1/06_eval_suite.sh): shell wrapper for a fresh MATH evaluation.
 - [`reproduction/code/jca/scripts/`](reproduction/code/jca/scripts/): shared rollout, serving, evaluation, and analysis utilities.
 
 ## 🛠️ System requirements and release scope
 
-Included:
+The repository includes:
 
-- implementation code, benchmark evaluators, launchers, and vendor utilities;
-- paper-result records, manifests, configurations, logs, and training metrics;
-- public code with embedded API keys and authenticated proxy defaults removed.
+- all implementation code included in this release, benchmark evaluators, launchers, and vendor utilities;
+- result records, manifests, configurations, logs, and training metrics;
+- sanitized public code with embedded API keys and authenticated proxy defaults removed.
 
-Obtained separately for full training or fresh evaluation:
+A full training run or fresh evaluation additionally requires:
 
 - base-model weights, LoRA/adapters, and checkpoints;
 - benchmark datasets, teacher-model pools, and external SFT/RL inputs;
 - manuscript TeX/BibTeX source and unrelated historical material;
 - GPU resources and model-serving endpoints.
 
-Do not commit credentials or private dataset paths. Use environment variables or a local untracked configuration when a selected script requires authentication.
+Keep credentials and private dataset paths out of commits. Use environment variables or a local untracked configuration when a script requires authentication.
