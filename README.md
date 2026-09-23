@@ -18,32 +18,13 @@
   <a href="#documentation">Documentation</a>
 </p>
 
-This repository is the public code and artifact release for **Collaborative Learning (CL)**. CL reallocates a comparable parameter budget across three independently parameterized Qwen3 models and trains them to exchange intermediate task state. The release contains all training and evaluation code, benchmark scorers, result records, configurations, and analysis outputs.
-
 ## ✨ Overview
 
-CL uses three collaborators with different capacities:
+This repository is the public code and artifact release for **Collaborative Learning (CL)**. It contains all training and evaluation code, benchmark scorers, reported result records, configurations, and analysis outputs associated with the project.
 
-| Model | Backbone | Collaboration role |
-| --- | --- | --- |
-| **A1** | Qwen3-1.7B | Produces an initial solution or focused correction |
-| **A2** | Qwen3-4B | Rechecks the current state and develops the next step |
-| **A3** | Qwen3-8B | Higher-capacity collaborator that may verify or finalize under the learned protocol |
+CL studies collaborative reasoning across heterogeneous model parameterizations. It reallocates a comparable parameter budget across smaller models and trains them to reassess, extend, and refine shared reasoning through model slicing, protocol distillation, and pyramid supervision.
 
-These are three independently parameterized models, not slices of one checkpoint. Together they contain **13.7B parameters**, comparable to Qwen3-14B, while each forward pass uses one collaborator. Every model receives the current task state and chooses one protocol action:
-
-- `continue`: extend or refine the current reasoning;
-- `handoff(j)`: pass the state to another collaborator;
-- `terminate`: emit the final answer and stop.
-
-The training protocol combines:
-
-1. **Explicit handoffs:** a model receives the current task state and may extend, revise, verify, or preserve it.
-2. **Protocol distillation:** useful collaboration traces supervise how models interact.
-3. **Step-level supervision:** intermediate reasoning quality is scored during the interaction.
-4. **Task-level rewards:** the final answer remains tied to the benchmark evaluator.
-
-The resulting supervision forms a pyramid: protocol behavior at the bottom, deliberative process signals in the middle, and task success at the top.
+The release covers four task categories and five benchmarks: multi-hop question answering on MuSiQue, mathematical reasoning on GSM-Hard and MATH, code generation on MultiPL-E, and constrained generation on Conifer.
 
 <p align="center">
   <a href="assets/figures/Figure2.pdf">
@@ -53,7 +34,7 @@ The resulting supervision forms a pyramid: protocol behavior at the bottom, deli
 
 ## 🧪 Evaluation
 
-The release covers four task categories and five benchmarks:
+Evaluation is organized around four task categories and five benchmarks:
 
 | Category | Benchmark | Capability tested | Code and artifact paths |
 | --- | --- | --- | --- |
